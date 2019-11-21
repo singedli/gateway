@@ -1,0 +1,28 @@
+server:
+  port: 9000
+  servlet:
+      context-path: /gateway
+
+spring :
+  profiles:
+    active: dev
+  jackson:
+      default-property-inclusion: non_null
+      time-zone: GMT+8
+      locale: zh
+
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: com.ocft.gateway.entity
+  global-config:
+    db-config:
+      id-type: UUID
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: false
+
+mapper:
+  not-empty: false

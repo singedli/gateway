@@ -1,0 +1,20 @@
+spring:
+  # 数据库连接
+  datasource:
+      name: druidDataSource
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://106.14.226.254:3306/gateway?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: root123
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      druid:
+        initial-size: 10
+        min-idle: 10
+        max-active: 50
+        max-wait: 6000
+        test-on-borrow: false
+        test-on-return: false
+        test-while-idle: true
+        validation-query: SELECT 'X'
+        connection-init-sqls: SELECT 'X'
+        time-between-eviction-runs-millis: 600
