@@ -1,6 +1,7 @@
 package com.ocft.gateway.controller;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
+import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.handler.IControllerHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +36,14 @@ public class CompositeBussinessController extends BaseController {
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
                                                   HttpServletResponse response) throws Exception{
-        HandlerType type = getType(request);
 
-        IControllerHandler handler = handlerTypeCache.getHandler(type);
+        GatewayInterface gateWayInterface = super.getGateWayInterface(request);
+        String type = gateWayInterface.getType();
+
+        IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
         Map<String, Object> result = null;
         try{
-            result = handler.handle(body, request, response);
+            result = handler.handle(body, request, response,gateWayInterface);
         }catch (Exception e){
             throw e;
         }

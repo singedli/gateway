@@ -35,14 +35,12 @@ public class BaseController {
         return requestURI.replace(contextPath,"");
     }
 
-    private HandlerType getType(String uri){
-        GatewayInterface one = gatewayInterfaceService.getOne(new QueryWrapper<GatewayInterface>().eq("url", uri).eq("status", "1"));
-        String type = one.getType();
-        return HandlerType.valueOf(type);
+    private GatewayInterface getGateWayInterface(String uri){
+        return gatewayInterfaceService.getOne(new QueryWrapper<GatewayInterface>().eq("url", uri).eq("status", "1"));
     }
 
-    protected HandlerType getType(HttpServletRequest req){
+    protected GatewayInterface getGateWayInterface(HttpServletRequest req){
         String uri = this.getURI(req);
-        return this.getType(uri);
+        return this.getGateWayInterface(uri);
     }
 }

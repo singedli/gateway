@@ -44,6 +44,7 @@ IF NOT EXISTS `gateway_interface` (
 	`id` VARCHAR (64) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`url` varchar(255) NOT NULL DEFAULT '',
+	`backon_url` varchar(255) NOT NULL DEFAULT '',
 	`type` varchar(50) DEFAULT NULL COMMENT '1.表示透传接口 2.串行化组合接口 3.并行化组合接口 4.复杂逻辑组合接口',
 	`status` tinyint(1) DEFAULT NULL COMMENT '状态信息:1 表示启用,0 表示停用',
 	`http_method` varchar(10) NOT NULL DEFAULT 'post' COMMENT '请求后台的方式get or post',

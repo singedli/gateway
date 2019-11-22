@@ -41,6 +41,8 @@ public class GatewayInterface implements Serializable {
      */
     private String httpMethod;
 
+    private String backonUrl;
+
     /**
      * 该接口调用的系统,如涉及多个系统则用逗号隔开
      */

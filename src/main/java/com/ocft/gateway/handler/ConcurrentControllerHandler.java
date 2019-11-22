@@ -1,5 +1,6 @@
 package com.ocft.gateway.handler;
 
+import com.ocft.gateway.entity.GatewayInterface;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class ConcurrentControllerHandler extends AbstractControllerHandler {
     }
 
     @Override
-    public String sendToBacon(String header, String body) {
+    public String sendToBacon(String header, String body,GatewayInterface gatewayInterface) {
         return null;
     }
 
