@@ -3,6 +3,7 @@ package com.ocft.gateway.config;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/11/22上午9:19
  * @Description: http工具的配置类
  */
+@Configuration
 public class HttpConfig {
     @Bean
     public X509TrustManager x509TrustManager() {

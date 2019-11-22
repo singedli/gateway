@@ -1,5 +1,7 @@
 package com.ocft.gateway.handler;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import java.util.Map;
  * @date 2019/11/21下午6:19
  * @Description: 透传类型的处理器
  */
+@Component
 public class PassThroughControllerHandler extends AbstractControllerHandler {
     @Override
     public String buildReqHeader() {

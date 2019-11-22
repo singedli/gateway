@@ -1,8 +1,8 @@
 package com.ocft.gateway.controller;
 
-import com.ocft.gateway.ctx.SpringContextHolder;
+import com.ocft.gateway.enums.HandlerType;
+import com.ocft.gateway.handler.IControllerHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +24,19 @@ import java.util.Map;
  */
 @Slf4j
 @Controller
-public class CompositeBussinessController {
+public class CompositeBussinessController extends BaseController {
+
+
 
     @RequestMapping(value = "/**", method = { RequestMethod.POST }, produces = "application/json; charset=utf-8")
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
                                                   HttpServletResponse response) throws Exception{
+        //HandlerType type = getType(request);
+
+        String name = HandlerType.PASS.name();
+        System.out.println(name);
+        //IControllerHandler iControllerHandler = handlerTypeCache.get(HandlerType.PASS);
         return null;
     }
 }

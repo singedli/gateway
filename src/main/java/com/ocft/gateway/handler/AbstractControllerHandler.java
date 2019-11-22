@@ -1,5 +1,7 @@
 package com.ocft.gateway.handler;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Map;
  * @date 2019/11/21下午6:18
  * @Description: 抽象处理器控制器类
  */
+@Component
 public abstract class AbstractControllerHandler implements IControllerHandler {
 
     /**
