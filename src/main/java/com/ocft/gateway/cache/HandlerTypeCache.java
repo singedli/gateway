@@ -18,13 +18,15 @@ import java.util.Map;
  * @Title: HandlerTypeCache
  * @ProjectName gateway
  * @date 2019/11/22下午2:18
- * @Description: TODO
+ * @Description: 处理器缓存，项目启动时初始化
  */
 @Slf4j
 @Component
 public class HandlerTypeCache implements CommandLineRunner {
 
-    private Map<HandlerType, IControllerHandler> cache;
+    private static Map<HandlerType, IControllerHandler> cache;
+
+    private HandlerTypeCache(){}
 
     @Override
     public void run(String... args) throws Exception {
@@ -33,5 +35,10 @@ public class HandlerTypeCache implements CommandLineRunner {
         cache.put(HandlerType.CONCURRENT,SpringContextHolder.getBean(ConcurrentControllerHandler.class));
         cache.put(HandlerType.COMPLICATE,SpringContextHolder.getBean(ComplicatedControllerHandler.class));
         log.info("loading controller handler finished！type is [{},{},{}]",HandlerType.PASS.name(),HandlerType.CONCURRENT.name(),HandlerType.COMPLICATE.name());
+    }
+
+
+    public IControllerHandler getHandler(HandlerType type){
+        return cache.get(type);
     }
 }

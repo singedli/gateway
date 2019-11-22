@@ -3,15 +3,12 @@ package com.ocft.gateway.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
-import com.ocft.gateway.handler.IControllerHandler;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * @author lijiaxing
@@ -27,15 +24,12 @@ public class BaseController {
     @Autowired
     private IGatewayInterfaceService gatewayInterfaceService;
 
-//    @Resource
-//    protected Map<HandlerType,IControllerHandler> handlerTypeCache;
-
     /**
      *
      * @param req
      * @return
      */
-    protected String getURI(HttpServletRequest req){
+    private String getURI(HttpServletRequest req){
         String requestURI = req.getRequestURI();
         String contextPath = req.getContextPath();
         return requestURI.replace(contextPath,"");
