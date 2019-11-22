@@ -4,7 +4,7 @@ IF NOT EXISTS `backon` (
 	`id` INT (11) NOT NULL AUTO_INCREMENT,
 	`system` VARCHAR (255) NOT NULL DEFAULT '' COMMENT '系统标识',
 	`domain` VARCHAR (255) NOT NULL COMMENT '后台系统的域名或ip',
-	`suffix` VARCHAR (20) DEFAULT '' COMMENT '后缀,系统接口的后缀如 .htm 或.do等',
+	`suffix` VARCHAR (20) DEFAULT '' COMMENT '后缀,系统接口的后缀如 .htm 或.do等,默认为空',
 	`status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '状态信息:1表示有效，0表示失效',
 	`description` varchar(255) DEFAULT NULL COMMENT '描述信息',
 	`success_code` varchar(50) DEFAULT NULL COMMENT '返回码键',
