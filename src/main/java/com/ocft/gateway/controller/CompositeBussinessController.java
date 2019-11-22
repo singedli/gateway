@@ -1,6 +1,8 @@
 package com.ocft.gateway.controller;
 
+import com.ocft.gateway.ctx.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +29,7 @@ public class CompositeBussinessController {
     @RequestMapping(value = "/**", method = { RequestMethod.POST }, produces = "application/json; charset=utf-8")
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
-                                                HttpServletResponse response) throws Exception{
+                                                  HttpServletResponse response) throws Exception{
         return null;
     }
 }

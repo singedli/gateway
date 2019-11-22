@@ -1,7 +1,7 @@
 -- 后台系统表
 CREATE TABLE
 IF NOT EXISTS `backon` (
-	`id` INT (11) NOT NULL AUTO_INCREMENT,
+	`id` VARCHAR (64) NOT NULL,
 	`system` VARCHAR (255) NOT NULL DEFAULT '' COMMENT '系统标识',
 	`domain` VARCHAR (255) NOT NULL COMMENT '后台系统的域名或ip',
 	`suffix` VARCHAR (20) DEFAULT '' COMMENT '后缀,系统接口的后缀如 .htm 或.do等,默认为空',
@@ -13,7 +13,7 @@ IF NOT EXISTS `backon` (
 	`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`create_by` VARCHAR (40) DEFAULT NULL,
-	`update_by` VARCHAR (40) DEFAULT NULL
+	`update_by` VARCHAR (40) DEFAULT NULL,
 PRIMARY KEY (`id`),
   UNIQUE KEY `pk_backon_system` (`system`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
@@ -21,7 +21,7 @@ PRIMARY KEY (`id`),
 -- 后台系统接口表
 CREATE TABLE
 IF NOT EXISTS `backon_interface` (
-	`id` INT (11) NOT NULL AUTO_INCREMENT,
+	`id` VARCHAR (64) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`system` VARCHAR (255) NOT NULL DEFAULT '' COMMENT '接口所属的系统，对应于backon表的system字段',
 	`url` varchar(255) NOT NULL DEFAULT '',
@@ -32,7 +32,7 @@ IF NOT EXISTS `backon_interface` (
 	`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`create_by` varchar(40) DEFAULT NULL,
-	`update_by` varchar(40) DEFAULT NULL
+	`update_by` varchar(40) DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `pk_backon_system` (`system`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
@@ -41,7 +41,7 @@ IF NOT EXISTS `backon_interface` (
 -- 自定义接口表
 CREATE TABLE
 IF NOT EXISTS `gateway_interface` (
-	`id` INT (11) NOT NULL AUTO_INCREMENT,
+	`id` VARCHAR (64) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`url` varchar(255) NOT NULL DEFAULT '',
 	`type` varchar(50) DEFAULT NULL COMMENT '1.表示透传接口 2.串行化组合接口 3.并行化组合接口 4.复杂逻辑组合接口',
@@ -54,7 +54,7 @@ IF NOT EXISTS `gateway_interface` (
 	`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`create_by` varchar(40) DEFAULT NULL,
-	`update_by` varchar(40) DEFAULT NULL
+	`update_by` varchar(40) DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;

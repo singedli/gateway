@@ -5,6 +5,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Service;
 
 /**
  * @author lijiaxing
@@ -13,6 +14,7 @@ import org.springframework.context.ApplicationContextAware;
  * @date 2019/11/22上午9:15
  * @Description: spring 容器
  */
+@Service
 public class SpringContextHolder implements ApplicationContextAware, InitializingBean, DisposableBean {
     private static ApplicationContext applicationContext = null;
 
