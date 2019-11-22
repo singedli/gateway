@@ -1,5 +1,5 @@
 spring:
-  # 鏁版嵁搴撹繛鎺�
+  # 数据库配置
   datasource:
       name: druidDataSource
       type: com.alibaba.druid.pool.DruidDataSource
