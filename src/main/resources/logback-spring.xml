@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <property name="rootPath" value="/Users/lijiaxing/log" />
-    <property name="baseFile" value="rmes"></property>
+    <property name="baseFile" value="gateway"></property>
     <property name="log.root.level" value="WARN"></property>
-    <property name="LOG_HOME" value="rmes"></property>
+    <property name="LOG_HOME" value="gateway"></property>
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -72,7 +72,7 @@
     </logger>
 
 
-    <logger name="com.paoc.rmes" additivity="false">
+    <logger name="com.ocft.gateway" additivity="false">
         <level value="TRACE" />
         <appender-ref ref="STDOUT" />
         <appender-ref ref="ASYNC" />
