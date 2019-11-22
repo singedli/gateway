@@ -16,7 +16,9 @@ import java.util.Map;
  * @Title: CompositeBussinessController
  * @ProjectName gateway
  * @date 2019/11/21下午6:12
- * @Description: TODO
+ * @Description: 主控制器
+ *
+ * 所有的接口请求都由主控制器根据配置分发给对应的Handler处理
  */
 @Slf4j
 @Controller
