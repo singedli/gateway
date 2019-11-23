@@ -10,10 +10,10 @@ import lombok.Getter;
 @Getter
 public enum ResponseEnum {
     SUCCESS("200","成功"),
-    FAIL("500","服务器异常")
-    ;
-    private String code;
+    FAIL("500","服务器异常");
 
+
+    private String code;
     private String message;
 
     ResponseEnum(String code, String message) {

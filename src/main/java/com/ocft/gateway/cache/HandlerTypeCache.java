@@ -1,6 +1,6 @@
 package com.ocft.gateway.cache;
 
-import com.ocft.gateway.ctx.SpringContextHolder;
+import com.ocft.gateway.spring.SpringContextHolder;
 import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.handler.ComplicatedControllerHandler;
 import com.ocft.gateway.handler.ConcurrentControllerHandler;

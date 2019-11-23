@@ -22,14 +22,12 @@ public class GwException extends RuntimeException {
     public GwException(String code, String message) {
         //传到父类的message里
         super(message);
-
         this.code = code;
     }
 
     public GwException(String code, String message,Throwable throwable) {
         //传到父类的message里
         super(message,throwable);
-
         this.code = code;
     }
 

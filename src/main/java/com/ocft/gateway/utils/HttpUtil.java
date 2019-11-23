@@ -3,7 +3,7 @@ package com.ocft.gateway.utils;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.ocft.gateway.ctx.SpringContextHolder;
+import com.ocft.gateway.spring.SpringContextHolder;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -17,22 +17,22 @@ import org.slf4j.LoggerFactory;
 /**
  * http 工具类
  */
-public class OkHttpUtil{
+public class HttpUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(OkHttpUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
     /**
      * 根据map获取get请求参数
      * @param queries
      * @return
      */
-    public static StringBuffer getQueryString(String url,Map<String,String> queries){
+    public static StringBuffer getQueryString(String url,Map<String,Object> queries){
         StringBuffer sb = new StringBuffer(url);
         if (queries != null && queries.keySet().size() > 0) {
             boolean firstFlag = true;
             Iterator iterator = queries.entrySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry<String, String>) iterator.next();
+                Map.Entry entry = (Map.Entry<String, Object>) iterator.next();
                 if (firstFlag) {
                     sb.append("?" + entry.getKey() + "=" + entry.getValue());
                     firstFlag = false;
@@ -74,7 +74,7 @@ public class OkHttpUtil{
      * @param queries 请求的参数，在浏览器？后面的数据，没有可以传null
      * @return
      */
-    public static String get(String url, Map<String, String> queries) {
+    public static String get(String url, Map<String, Object> queries) {
         StringBuffer sb = getQueryString(url,queries);
         Request request = new Request.Builder()
                 .url(sb.toString())
