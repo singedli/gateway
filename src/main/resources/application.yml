@@ -28,3 +28,5 @@ mybatis-plus:
 
 mapper:
   not-empty: false
+
+

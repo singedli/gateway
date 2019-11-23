@@ -3,12 +3,13 @@ package com.ocft.gateway.common.exceptions;
 import com.ocft.gateway.enums.ResponseEnum;
 
 /**
- * @Auther: 梵高先生
- * @Date: 2019/11/22 15:28
- * @Description:
+ * @author lijiaxing
+ * @Title: GatewayException
+ * @ProjectName gateway
+ * @date 2019/11/24上午1:15
+ * @Description: 自定义异常
  */
 public class GatewayException extends RuntimeException {
-
     private String code;
 
     public GatewayException() {}

@@ -13,6 +13,8 @@
         <result column="http_method" property="httpMethod" />
         <result column="system" property="system" />
         <result column="version" property="version" />
+        <result column="pre_interceptors" property="preInterceptors," />
+        <result column="post_interceptors" property="postInterceptors," />
         <result column="is_deleted" property="isDeleted" />
         <result column="invoke_config" property="invokeConfig" />
         <result column="create_time" property="createTime" />

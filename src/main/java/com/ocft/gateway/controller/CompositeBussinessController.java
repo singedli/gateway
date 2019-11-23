@@ -1,6 +1,7 @@
 package com.ocft.gateway.controller;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
+import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.handler.IControllerHandler;
@@ -40,8 +41,10 @@ public class CompositeBussinessController extends BaseController {
         Map<String, Object> result = null;
         try{
             result = handler.handle(super.buildGatewayContext(request,response,body,gateWayInterface));
+        }catch (GatewayException e){
+            //返回对应的错误信息
         }catch (Exception e){
-            throw e;
+            //返回系统内部异常
         }
         return result;
     }
