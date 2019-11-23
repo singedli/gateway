@@ -17,6 +17,6 @@ public interface IControllerHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> handle(String body, HttpServletRequest request, HttpServletResponse response,GatewayInterface gatewayInterface)
+	Map<String, Object> handle(String body, HttpServletRequest request, HttpServletResponse response,GatewayInterface gatewayInterface)
 			throws Exception;
 }

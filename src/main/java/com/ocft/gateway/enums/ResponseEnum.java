@@ -9,9 +9,13 @@ import lombok.Getter;
  */
 @Getter
 public enum ResponseEnum {
-    SUCCESS("200","成功"),
-    FAIL("500","服务器异常");
+    SUCCESS("00000000","成功"),
+    FAIL("00000001","服务器异常"),
+    BACKON_NOT_EXIST("10000000","接口对应的后台系统不存在"),
 
+
+    HTTP_METHOD_NOT_EXIST_SUPPORTED("20000000","未知的HTTP请求方法");
+    
 
     private String code;
     private String message;
@@ -19,5 +23,10 @@ public enum ResponseEnum {
     ResponseEnum(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return message;
     }
 }

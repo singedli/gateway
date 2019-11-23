@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.exception.GwException;
 import com.ocft.gateway.utils.HttpUtil;
 import org.springframework.http.HttpMethod;
@@ -60,10 +61,9 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
     private String buildeUrl(GatewayInterface gatewayInterface){
         String system = gatewayInterface.getSystem();
         Backon backon = backonService.getOne(new QueryWrapper<Backon>().eq("system", system));
-        Assert.notNull(backon,"");
+        Assert.notNull(backon, ResponseEnum.BACKON_NOT_EXIST.getMessage());
         String domain = backon.getDomain();
         String suffix = backon.getSuffix();
-        gatewayInterface.getBackonUrl();
         return  domain + gatewayInterface.getBackonUrl() + suffix;
     }
 

@@ -7,10 +7,7 @@ import com.ocft.gateway.handler.IControllerHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,9 +34,10 @@ public class CompositeBussinessController extends BaseController {
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
                                                   HttpServletResponse response) throws Exception{
 
-        GatewayInterface gateWayInterface = super.getGateWayInterface(request);
-        String type = gateWayInterface.getType();
-
+        //GatewayInterface gateWayInterface = super.getGateWayInterface(request);
+        //String type = gateWayInterface.getType();
+        GatewayInterface gateWayInterface = new GatewayInterface();
+        String type = HandlerType.PASS.name();
         IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
         Map<String, Object> result = null;
         try{
@@ -48,5 +46,12 @@ public class CompositeBussinessController extends BaseController {
             throw e;
         }
         return result;
+    }
+
+    @RequestMapping(value = "/**", method = { RequestMethod.GET }, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestParam Map<String,Object> map, HttpServletResponse response) throws Exception{
+
+        return null;
     }
 }

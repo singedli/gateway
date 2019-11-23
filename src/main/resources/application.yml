@@ -10,6 +10,8 @@ spring :
       default-property-inclusion: non_null
       time-zone: GMT+8
       locale: zh
+#  aop:
+#    proxy-target-class: true
 
 
 mybatis-plus:

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @Title: SpringContextHolder
  * @ProjectName gateway
  * @date 2019/11/22上午9:15
- * @Description: spring 容器
+ * @Description: spring 容器持有者
  */
 @Service
 public class SpringContextHolder implements ApplicationContextAware, InitializingBean, DisposableBean {

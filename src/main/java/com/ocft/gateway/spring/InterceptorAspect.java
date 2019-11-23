@@ -5,6 +5,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Target;
+
 /**
  * @author lijiaxing
  * @Title: InterceptorAspect
@@ -17,22 +19,23 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class InterceptorAspect {
 
-    @Pointcut("execution(* com.ocft.gateway.controller..CompositeBussinessController.compositeHandler(..))")
-    public void interceptPointCut() {}
+    @Pointcut("execution(* com.ocft.gateway.handler..AbstractControllerHandler.handle(..))")
+    public void interceptPointCut() {
+    }
 
     @Before("interceptPointCut()")
-    public void preIntercept(JoinPoint joinPoint){
-        log.info("preIntercept executed!");
+    public void preIntercept(JoinPoint joinPoint) {
+        System.err.println("preIntercept executed!");
     }
 
     @After(value = "interceptPointCut()")
-    public void after(JoinPoint joinPoint){
-        log.info("postIntercept executed!");
+    public void after(JoinPoint joinPoint) {
+        System.err.println("postIntercept executed!");
     }
 
     @AfterThrowing(value = "interceptPointCut()")
-    public void throwss(JoinPoint joinPoint){
-        log.info("throw some Exception!");
+    public void throwss(JoinPoint joinPoint) {
+        System.err.println("throw some Exception!");
     }
 
 }
