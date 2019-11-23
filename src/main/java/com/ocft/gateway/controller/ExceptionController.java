@@ -1,7 +1,6 @@
 package com.ocft.gateway.controller;
 
 import com.ocft.gateway.enums.ResponseEnum;
-import com.ocft.gateway.exception.GwException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(value = GwException.class)
-    public ResponseEntity<?> hanlerException(HttpServletRequest request, GwException e){
-        return new ResponseEntity<>(ResponseEnum.FAIL, HttpStatus.OK);
-    }
+//    @ExceptionHandler(value = GatewayException.class)
+//    public ResponseEntity<?> hanlerException(HttpServletRequest request, GatewayException e){
+//        return new ResponseEntity<>(ResponseEnum.FAIL, HttpStatus.OK);
+//    }
 }

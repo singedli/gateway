@@ -1,5 +1,6 @@
 package com.ocft.gateway.handler;
 
+import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IBackonInterfaceService;
 import com.ocft.gateway.service.IBackonService;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -64,10 +64,10 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
 
 
     @Override
-    public Map<String, Object> handle(String body, HttpServletRequest request, HttpServletResponse response,GatewayInterface gatewayInterface) throws Exception {
+    public Map<String, Object> handle(GatewayContext gatewayContext) throws Exception {
         String requestHeader = this.buildReqHeader();
-        String requestBody = this.buildReqBody(body);
-        String responseString = sendToBacon(requestHeader, requestBody,gatewayInterface);
-        return retToClient(responseString, request);
+        String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
+        String responseString = sendToBacon(requestHeader, requestBody,gatewayContext.getGatewayInterface());
+        return retToClient(responseString, gatewayContext.getRequest());
     }
 }

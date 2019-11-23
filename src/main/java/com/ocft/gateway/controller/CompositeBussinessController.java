@@ -34,14 +34,12 @@ public class CompositeBussinessController extends BaseController {
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
                                                   HttpServletResponse response) throws Exception{
 
-        //GatewayInterface gateWayInterface = super.getGateWayInterface(request);
-        //String type = gateWayInterface.getType();
-        GatewayInterface gateWayInterface = new GatewayInterface();
-        String type = HandlerType.PASS.name();
+        GatewayInterface gateWayInterface = super.getGateWayInterface(request);
+        String type = gateWayInterface.getType();
         IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
         Map<String, Object> result = null;
         try{
-            result = handler.handle(body, request, response,gateWayInterface);
+            result = handler.handle(super.buildGatewayContext(request,response,body,gateWayInterface));
         }catch (Exception e){
             throw e;
         }
@@ -54,4 +52,6 @@ public class CompositeBussinessController extends BaseController {
 
         return null;
     }
+
+
 }

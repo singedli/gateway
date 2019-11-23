@@ -1,7 +1,10 @@
 package com.ocft.gateway.interceptor.post;
 
+import com.ocft.gateway.interceptor.GatewayInterceptor;
+import com.ocft.gateway.common.context.GatewayContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
 
 /**
  * @author lijiaxing
@@ -12,5 +15,10 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class EncryptInterceptor {
+public class EncryptInterceptor implements GatewayInterceptor {
+
+    @Override
+    public void doInterceptor(GatewayContext context) {
+        System.err.println("加密拦截器被调用！");
+    }
 }

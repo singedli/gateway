@@ -1,14 +1,14 @@
 package com.ocft.gateway.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.entity.GatewayInterface;
-import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author lijiaxing
@@ -36,11 +36,15 @@ public class BaseController {
     }
 
     private GatewayInterface getGateWayInterface(String uri){
-        return gatewayInterfaceService.getOne(new QueryWrapper<GatewayInterface>().eq("url", uri).eq("status", "1"));
+        return gatewayInterfaceService.getGateWayInterface(uri);
     }
 
     protected GatewayInterface getGateWayInterface(HttpServletRequest req){
         String uri = this.getURI(req);
         return this.getGateWayInterface(uri);
+    }
+
+    protected GatewayContext buildGatewayContext(HttpServletRequest request, HttpServletResponse response,String requestBody,GatewayInterface gateWayInterface){
+        return new GatewayContext().setRequest(request).setResponse(response).setRequestBody(requestBody).setGatewayInterface(gateWayInterface);
     }
 }

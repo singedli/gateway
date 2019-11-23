@@ -1,22 +1,17 @@
 package com.ocft.gateway.handler;
 
-import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.common.context.GatewayContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public interface IControllerHandler {
 
 	/**
-	 *	模板方法
-	 *
-	 * @param body 参数
-	 * @param request
-	 * @param response
+	 *  模板方法
+	 * @param gatewayContext
 	 * @return
 	 * @throws Exception
 	 */
-	Map<String, Object> handle(String body, HttpServletRequest request, HttpServletResponse response,GatewayInterface gatewayInterface)
+	Map<String, Object> handle(GatewayContext gatewayContext)
 			throws Exception;
 }

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
-import com.ocft.gateway.exception.GwException;
 import com.ocft.gateway.utils.HttpUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -46,7 +45,7 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
             backonRes = HttpUtil.postJsonParams(reqUrl, body);
         }else{
             //抛异常，暂不支持的请求类型
-            throw new GwException();
+            //throw new RuntimeException();
         }
         return backonRes;
     }

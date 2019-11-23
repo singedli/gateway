@@ -50,6 +50,14 @@ public class GatewayInterface implements Serializable {
     private String system;
 
     private String version;
+    /**
+     * 接口调用前的拦截器的配置，多个拦截器使用逗号隔开,默认为空
+     */
+    private String preInterceptors;
+    /**
+     * 接口调用后的拦截器的配置，多个拦截器使用逗号隔开,默认为空
+     */
+    private String postInterceptors;
 
     /**
      * 逻辑删除标志位，1表示已删除，0表示未删除
