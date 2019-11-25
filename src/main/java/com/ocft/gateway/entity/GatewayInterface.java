@@ -37,10 +37,10 @@ public class GatewayInterface implements Serializable {
      */
     private Boolean status;
 
-    /**
-     * 请求后台的方式get or post
-     */
-    private String httpMethod;
+//    /**
+//     * 请求后台的方式get or post
+//     */
+//    private String httpMethod;
 
     private String backonUrl;
 

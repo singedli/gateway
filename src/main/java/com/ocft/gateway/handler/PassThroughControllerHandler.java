@@ -2,6 +2,7 @@ package com.ocft.gateway.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
@@ -35,17 +36,19 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
     @Override
     public String sendToBacon(String header, String body, GatewayInterface gatewayInterface) {
 
-        String reqUrl = buildeUrl(gatewayInterface);
+        String reqUrl = buildUrl(gatewayInterface);
 
         String backonRes = null;
-        if(HttpMethod.GET.matches(gatewayInterface.getHttpMethod())){
+
+        String httpMethod = backonInterfaceService.getBackonInterfaceMethod(gatewayInterface.getBackonUrl());
+        if(HttpMethod.GET.matches(httpMethod)){
             Map<String,Object> queries = JSONObject.parseObject(body, Map.class);
             backonRes = HttpUtil.get(reqUrl,queries);
-        }else if(HttpMethod.POST.matches(gatewayInterface.getHttpMethod())){
+        }else if(HttpMethod.POST.matches(httpMethod)){
             backonRes = HttpUtil.postJsonParams(reqUrl, body);
         }else{
             //抛异常，暂不支持的请求类型
-            //throw new RuntimeException();
+            throw new GatewayException(ResponseEnum.HTTP_METHOD_NOT_EXIST_SUPPORTED);
         }
         return backonRes;
     }
@@ -57,7 +60,7 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
     }
 
 
-    private String buildeUrl(GatewayInterface gatewayInterface){
+    private String buildUrl(GatewayInterface gatewayInterface){
         String system = gatewayInterface.getSystem();
         Backon backon = backonService.getOne(new QueryWrapper<Backon>().eq("system", system));
         Assert.notNull(backon, ResponseEnum.BACKON_NOT_EXIST.getMessage());

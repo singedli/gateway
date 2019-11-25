@@ -1,6 +1,8 @@
 package com.ocft.gateway.handler;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IBackonInterfaceService;
 import com.ocft.gateway.service.IBackonService;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,5 +73,12 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
         String responseString = sendToBacon(requestHeader, requestBody,gatewayContext.getGatewayInterface());
         return retToClient(responseString, gatewayContext.getRequest());
+    }
+
+    public Map<String, Object> handle(List<GatewayContext> gatewayContexts) throws Exception{
+        for (GatewayContext gatewayContext : gatewayContexts) {
+            //String requestHeader = this.buildReqHeader();
+        }
+        return null;
     }
 }

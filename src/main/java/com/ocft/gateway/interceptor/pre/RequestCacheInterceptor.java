@@ -1,5 +1,7 @@
 package com.ocft.gateway.interceptor.pre;
 
+import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.interceptor.GatewayInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,5 +14,9 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class RequestCacheInterceptor {
+public class RequestCacheInterceptor implements GatewayInterceptor {
+    @Override
+    public void doInterceptor(GatewayContext context) {
+        System.out.println("请求缓存拦截器被执行！");
+    }
 }
