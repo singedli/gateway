@@ -9,6 +9,7 @@ import com.ocft.gateway.service.IBackonService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -71,7 +72,14 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
     public Map<String, Object> handle(GatewayContext gatewayContext) throws Exception {
         String requestHeader = this.buildReqHeader();
         String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
-        String responseString = sendToBacon(requestHeader, requestBody,gatewayContext.getGatewayInterface());
+        String responseString = null;
+        if(!StringUtils.isEmpty(gatewayContext.getCacheData())){
+            responseString = gatewayContext.getCacheData();
+        }else {
+            responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
+            gatewayContext.setCacheData(responseString);
+            gatewayContext.setCacheStatus(1);
+        }
         return retToClient(responseString, gatewayContext.getRequest());
     }
 
