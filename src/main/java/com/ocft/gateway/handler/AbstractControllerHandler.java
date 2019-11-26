@@ -77,23 +77,18 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
     public Map<String, Object> handle(GatewayContext gatewayContext) throws Exception {
         String requestHeader = this.buildReqHeader();
         String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
-        String responseString = null;
 
-        //缓存数据不为空则返回缓存内容
-        if(!StringUtils.isEmpty(gatewayContext.getCacheData())){
-            responseString = gatewayContext.getCacheData();
-        }else {
-            //responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
-            responseString = "CacheDataTest";//缓存测试
+        //String responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
+        String responseString = "CacheDataTest";//缓存测试
 
-            //取field，并且设置缓存
-            String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
-            try {
-                redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString);
-            }catch (Exception e){
-                throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
-            }
+        //取field，并且设置缓存
+        String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
+        try {
+            redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString);
+        }catch (Exception e){
+            throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
         }
+
         return retToClient(responseString, gatewayContext.getRequest());
     }
 
