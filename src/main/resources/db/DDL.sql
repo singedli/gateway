@@ -30,6 +30,7 @@ IF NOT EXISTS `backon_interface` (
 	`status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '状态信息:1表示有效，0表示失效',
 	`http_method` varchar(10) NOT NULL DEFAULT 'post' COMMENT 'get or post',
 	`version` varchar(10) DEFAULT '1.0.0',
+	`http_header` varchar(255) DEFAULT 'application/json; charset=utf-8' COMMENT 'http请求头',
 	`pre_interceptor` text COMMENT '接口调用前的拦截器的配置，多个拦截器使用逗号隔开,默认为空',
   `post_interceptor` text COMMENT '接口调用后的拦截器的配置，多个拦截器使用逗号隔开,默认为空',
 	`is_deleted` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '逻辑删除标志位，1表示已删除，0表示未删除',

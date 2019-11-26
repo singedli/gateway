@@ -121,6 +121,22 @@ public class HttpUtil {
     }
 
     /**
+     *
+     * @param url 请求url
+     * @param jsonParams 请求的json
+     * @param header 请求头
+     * @return
+     */
+    public static String postJsonParams(String url, String jsonParams,String header) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse(header), jsonParams);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        return execNewCall(request);
+    }
+
+    /**
      * Post请求发送xml数据....
      * 参数一：请求Url
      * 参数二：请求的xmlString

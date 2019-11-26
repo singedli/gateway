@@ -12,5 +12,5 @@ import com.ocft.gateway.entity.GatewayInterface;
  * @since 2019-11-22
  */
 public interface IGatewayInterfaceService extends IService<GatewayInterface> {
-    GatewayInterface getGateWayInterface(String uri);
+    GatewayInterface getGateWayInterface(String url);
 }

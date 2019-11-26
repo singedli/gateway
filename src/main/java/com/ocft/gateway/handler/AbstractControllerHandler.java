@@ -71,8 +71,8 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
     public Map<String, Object> handle(GatewayContext gatewayContext) throws Exception {
         String requestHeader = this.buildReqHeader();
         String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
-        String responseString = sendToBacon(requestHeader, requestBody,gatewayContext.getGatewayInterface());
-        return retToClient(responseString, gatewayContext.getRequest());
+        String responseString = this.sendToBacon(requestHeader, requestBody,gatewayContext.getGatewayInterface());
+        return this.retToClient(responseString, gatewayContext.getRequest());
     }
 
     public Map<String, Object> handle(List<GatewayContext> gatewayContexts) throws Exception{

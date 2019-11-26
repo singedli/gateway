@@ -46,6 +46,8 @@ public class BackonInterface implements Serializable {
 
     private String version;
 
+    private String httpHeader;
+
     /**
      * 逻辑删除标志位，1表示已删除，0表示未删除
      */

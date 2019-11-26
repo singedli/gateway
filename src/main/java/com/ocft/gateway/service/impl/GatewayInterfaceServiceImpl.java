@@ -15,7 +15,7 @@ public class GatewayInterfaceServiceImpl extends ServiceImpl<GatewayInterfaceMap
 
     @Override
     public GatewayInterface getGateWayInterface(String url) {
-        GatewayInterface gatewayInterface = this.getOne(new QueryWrapper<GatewayInterface>().eq("url", url).eq("status", "1"));
+        GatewayInterface gatewayInterface = this.getOne(new QueryWrapper<GatewayInterface>().eq("url", url).eq("status", "1").eq("is_deleted","0"));
         Assert.notNull(gatewayInterface,ResponseEnum.GATEWAY_INTERFACE_NOT_EXIST.getMessage());
         return gatewayInterface;
     }
