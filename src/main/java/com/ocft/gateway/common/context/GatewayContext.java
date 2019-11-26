@@ -8,7 +8,6 @@ import lombok.experimental.Accessors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @author lijiaxing
@@ -39,9 +38,5 @@ public class GatewayContext {
      * 缓存数据
      */
     private String cacheData;
-    /**
-     * 缓存状态 0、before查询缓存 1、after数据同步缓存
-     */
-    private Integer cacheStatus ;
 
 }
