@@ -32,21 +32,12 @@ public class CompositeBussinessController extends BaseController {
 
     @RequestMapping(value = "/**", method = { RequestMethod.POST }, produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body,
-                                                  HttpServletResponse response) throws Exception{
-
+    public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body, HttpServletResponse response) throws Exception{
         GatewayInterface gateWayInterface = super.getGateWayInterface(request);
         String type = gateWayInterface.getType();
         IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
-        Map<String, Object> result = null;
-        try{
-            result = handler.handle(super.buildGatewayContext(request,response,body,gateWayInterface));
-        }catch (GatewayException e){
-            //返回对应的错误信息
-        }catch (Exception e){
-            //返回系统内部异常
-        }
-        return result;
+        Map<String, Object> handle = handler.handle(super.buildGatewayContext(request, response, body, gateWayInterface));
+        return handle;
     }
 
     @RequestMapping(value = "/**", method = { RequestMethod.GET }, produces = "application/json; charset=utf-8")

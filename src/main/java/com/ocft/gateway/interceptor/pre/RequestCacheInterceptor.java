@@ -14,6 +14,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 /**
@@ -32,23 +34,24 @@ public class RequestCacheInterceptor implements GatewayInterceptor {
 
     @Override
     public void doInterceptor(GatewayContext context) {
-        System.out.println("请求缓存拦截器被执行！");
-        //把请求参数转换为“KEY_VALUE”的字符串
-        String[] requestParams = context.getRequestBody().split(",");
-        StringBuilder params = new StringBuilder();
-        for (String requestParam : requestParams) {
-            params.append(requestParam).append("_");
-        }
-
-        if(context.getCacheStatus() == 0) {
-            //before
-            String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), (String) params.subSequence(0, params.length() - 1));
-            if (result != null) {
-                context.setCacheData(result);
-            }
-        }else {
-            //after 已缓存的不需要执行这一步
-            redisUtil.hset(context.getGatewayInterface().getUrl(), (String) params.subSequence(0, params.length() - 1),context.getCacheData());
-        }
+        throw new GatewayException(ResponseEnum.BACKON_NOT_EXIST);
+//        System.out.println("请求缓存拦截器被执行！");
+//        //把请求参数转换为“KEY_VALUE”的字符串
+//        String[] requestParams = context.getRequestBody().split(",");
+//        StringBuilder params = new StringBuilder();
+//        for (String requestParam : requestParams) {
+//            params.append(requestParam).append("_");
+//        }
+//
+//        if(context.getCacheStatus() == 0) {
+//            //before
+//            String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), (String) params.subSequence(0, params.length() - 1));
+//            if (result != null) {
+//                context.setCacheData(result);
+//            }
+//        }else {
+//            //after 已缓存的不需要执行这一步
+//            redisUtil.hset(context.getGatewayInterface().getUrl(), (String) params.subSequence(0, params.length() - 1),context.getCacheData());
+//        }
     }
 }

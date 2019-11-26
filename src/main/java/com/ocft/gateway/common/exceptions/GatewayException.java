@@ -11,6 +11,7 @@ import com.ocft.gateway.enums.ResponseEnum;
  */
 public class GatewayException extends RuntimeException {
     private String code;
+    private ResponseEnum responseEnum;
 
     public GatewayException() {}
 
@@ -32,5 +33,22 @@ public class GatewayException extends RuntimeException {
 
     public GatewayException(ResponseEnum responseEnum) {
         this(responseEnum.getCode(),responseEnum.getMessage());
+        this.responseEnum = responseEnum;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public ResponseEnum getResponseEnum() {
+        return responseEnum;
+    }
+
+    public void setResponseEnum(ResponseEnum responseEnum) {
+        this.responseEnum = responseEnum;
     }
 }

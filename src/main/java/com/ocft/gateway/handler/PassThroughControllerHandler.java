@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -56,7 +57,10 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
 
     @Override
     public Map<String, Object> retToClient(String resout, HttpServletRequest request) {
-        return null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("status","200");
+        result.put("msg","success");
+        return result;
     }
 
 

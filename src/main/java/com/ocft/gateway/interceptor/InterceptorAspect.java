@@ -1,14 +1,26 @@
 package com.ocft.gateway.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.handler.AbstractControllerHandler;
+import com.ocft.gateway.handler.IControllerHandler;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.spring.SpringContextHolder;
+import com.sun.deploy.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author lijiaxing
@@ -26,24 +38,14 @@ public class InterceptorAspect {
     IGatewayInterfaceService gatewayInterfaceService;
 
     @Pointcut("execution(* com.ocft.gateway.handler..AbstractControllerHandler.handle(..))")
-    public void interceptPointCut() {
-    }
+    public void interceptPointCut() {}
 
-    @Before("interceptPointCut() && args(gatewayContext)")
-    public void before(JoinPoint joinPoint, GatewayContext gatewayContext) {
-        System.err.println("before");
+
+    @Around(value = "interceptPointCut() && args(gatewayContext)")
+    public void around(ProceedingJoinPoint joinPoint, GatewayContext gatewayContext) throws Throwable {
         this.doExecuteIntercept(gatewayContext.getGatewayInterface().getPreInterceptors(), gatewayContext);
-    }
-
-    @After(value = "interceptPointCut() && args(gatewayContext)")
-    public void after(JoinPoint joinPoint, GatewayContext gatewayContext) {
-        System.err.println("after");
+        joinPoint.proceed(new Object[] {gatewayContext});
         this.doExecuteIntercept(gatewayContext.getGatewayInterface().getPostInterceptors(), gatewayContext);
-    }
-
-    @AfterThrowing(value = "interceptPointCut()")
-    public void throwsExcetion(JoinPoint joinPoint) {
-        System.err.println("throw some Exception!");
     }
 
     private void doExecuteIntercept(String interceptors, GatewayContext gatewayContext) {
