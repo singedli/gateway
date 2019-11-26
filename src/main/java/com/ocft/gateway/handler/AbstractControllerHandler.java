@@ -1,18 +1,19 @@
 package com.ocft.gateway.handler;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.common.context.GatewayContext;
-import com.ocft.gateway.entity.BackonInterface;
+import com.ocft.gateway.common.converter.GatewayContextConverter;
+import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.service.IBackonInterfaceService;
 import com.ocft.gateway.service.IBackonService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
+import com.ocft.gateway.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,10 @@ import java.util.Map;
  */
 @Component
 public abstract class AbstractControllerHandler implements IControllerHandler {
+
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     protected IBackonService backonService;
@@ -73,12 +78,21 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         String requestHeader = this.buildReqHeader();
         String requestBody = this.buildReqBody(gatewayContext.getRequestBody());
         String responseString = null;
+
+        //缓存数据不为空则返回缓存内容
         if(!StringUtils.isEmpty(gatewayContext.getCacheData())){
             responseString = gatewayContext.getCacheData();
         }else {
-            responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
-            gatewayContext.setCacheData(responseString);
-            gatewayContext.setCacheStatus(1);
+            //responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
+            responseString = "CacheDataTest";//缓存测试
+
+            //取field，并且设置缓存
+            String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
+            try {
+                redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString);
+            }catch (Exception e){
+                throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
+            }
         }
         return retToClient(responseString, gatewayContext.getRequest());
     }
