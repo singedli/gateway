@@ -4,7 +4,7 @@ import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.enums.ResponseEnum;
-import com.ocft.gateway.interceptor.GatewayInterceptor;
+import com.ocft.gateway.interceptor.AbstractGatewayInterceptor;
 import com.ocft.gateway.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class RequestCacheInterceptor implements GatewayInterceptor {
+public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
 
     @Autowired
     private RedisUtil redisUtil;
@@ -35,7 +35,8 @@ public class RequestCacheInterceptor implements GatewayInterceptor {
         try {
             String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
             if (result != null) {
-                context.setCacheData(result);
+                returnResult(result);
+                //context.setCacheData(result);
             }
         }catch (Exception e){
             throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
