@@ -2,6 +2,7 @@ package com.ocft.gateway.controller;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
 import com.ocft.gateway.common.exceptions.GatewayException;
+import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.handler.IControllerHandler;
@@ -34,9 +35,10 @@ public class CompositeBussinessController extends BaseController {
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body, HttpServletResponse response) throws Exception{
         GatewayInterface gateWayInterface = super.getGateWayInterface(request);
+        GatewayCache gatewayCache = super.getGatewayCache(request);
         String type = gateWayInterface.getType();
         IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
-        Map<String, Object> handle = handler.handle(super.buildGatewayContext(request, response, body, gateWayInterface));
+        Map<String, Object> handle = handler.handle(super.buildGatewayContext(request, response, body, gateWayInterface,gatewayCache));
         return handle;
     }
 

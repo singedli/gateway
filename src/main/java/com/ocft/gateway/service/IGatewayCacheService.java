@@ -9,4 +9,5 @@ import com.ocft.gateway.entity.GatewayCache;
  * @Description:
  */
 public interface IGatewayCacheService extends IService<GatewayCache> {
+    GatewayCache getGatewayCache(String uri);
 }

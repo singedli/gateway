@@ -84,7 +84,8 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         //取field，并且设置缓存
         String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
         try {
-            redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString);
+            if (gatewayContext.getGatewayCache().getStatus() && redisUtil.hget(gatewayContext.getGatewayInterface().getUrl(), field) == null)
+                redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString, gatewayContext.getGatewayCache().getExpireTime()/60 );
         }catch (Exception e){
             throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
         }

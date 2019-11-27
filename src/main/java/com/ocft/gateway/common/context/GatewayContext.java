@@ -2,6 +2,7 @@ package com.ocft.gateway.common.context;
 
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.BackonInterface;
+import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -26,6 +27,10 @@ public class GatewayContext {
      * 网关API实体类
      */
     private GatewayInterface gatewayInterface;
+    /**
+     * 网关cache实体类
+     */
+    private GatewayCache gatewayCache;
     /**
      * 后台实体类
      */

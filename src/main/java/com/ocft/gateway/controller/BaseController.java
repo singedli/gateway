@@ -1,7 +1,9 @@
 package com.ocft.gateway.controller;
 
 import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class BaseController {
 
     @Autowired
     private IGatewayInterfaceService gatewayInterfaceService;
+
+    @Autowired
+    private IGatewayCacheService gatewayCacheService;
 
     /**
      *
@@ -46,5 +51,18 @@ public class BaseController {
 
     protected GatewayContext buildGatewayContext(HttpServletRequest request, HttpServletResponse response,String requestBody,GatewayInterface gateWayInterface){
         return new GatewayContext().setRequest(request).setResponse(response).setRequestBody(requestBody).setGatewayInterface(gateWayInterface);
+    }
+
+    private GatewayCache getGatewayCache(String uri){
+        return gatewayCacheService.getGatewayCache(uri);
+    }
+
+    protected GatewayCache getGatewayCache(HttpServletRequest request) {
+        String uri = this.getURI(request);
+        return this.getGatewayCache(uri);
+    }
+
+    protected GatewayContext buildGatewayContext(HttpServletRequest request, HttpServletResponse response,String requestBody,GatewayInterface gateWayInterface,GatewayCache gatewayCache){
+        return new GatewayContext().setRequest(request).setResponse(response).setRequestBody(requestBody).setGatewayInterface(gateWayInterface).setGatewayCache(gatewayCache);
     }
 }
