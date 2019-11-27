@@ -20,6 +20,4 @@ public class RequestAccessLimit implements Serializable {
     private long firstRequestTime;
     private long count;
     private Boolean needLogin;
-    private String username;
-    private String password;
 }

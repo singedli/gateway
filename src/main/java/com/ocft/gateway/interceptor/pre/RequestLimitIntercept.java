@@ -11,6 +11,8 @@ import com.ocft.gateway.utils.RedisUtil;
 import com.ocft.gateway.utils.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +28,14 @@ import java.util.List;
  * @Description: 接口防刷拦截器
  */
 
-//todo 1恶意调用策率包  2用户账号密码  计算器
+//todo 1恶意调用策率包  2用户账号密码
 
 
 @Slf4j
 @Component
 public class RequestLimitIntercept implements GatewayInterceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestLimitIntercept.class);
 
     @Autowired
     RedisUtil redisUtil;
@@ -82,7 +86,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
             } else {
-                throw new GatewayException("500", "请求限制");
+                throw new GatewayException("500", "服务异常，请求限制");
             }
         } else {
             //没有数据的话就添加数据  ip以及username都需要添加
@@ -90,8 +94,6 @@ public class RequestLimitIntercept implements GatewayInterceptor {
             accessLimit.setFirstRequestTime(currentTime);
             accessLimit.setNeedLogin(true);
             accessLimit.setCount(1);
-            accessLimit.setPassword(jsonObject.get("password") + "");
-            accessLimit.setUsername(username);
             String s = JSONObject.toJSONString(accessLimit);
             redisUtil.set(ipOrdeviceStr, s, 604800);
             redisUtil.set(username, "0", 604800);
