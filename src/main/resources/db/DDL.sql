@@ -67,3 +67,24 @@ IF NOT EXISTS `gateway_interface` (
 	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
+
+-- 网关缓存配置表
+CREATE TABLE
+IF NOT EXISTS `gateway_cache` (
+	`id` VARCHAR (64) NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`url` varchar(255) NOT NULL ,
+	`backon_url` text NOT NULL COMMENT '该接口需要调用的后台系统接口,并发和复杂类型用jsonArray的存储',
+	`request_body` text NOT NULL COMMENT '接口请求参数key配置，以配置的key作为缓存的field',
+	`response_body` text DEFAULT '' COMMENT '接口响应字段配置 ，缓存只存接口返回数据中配置的数据',
+	`status` tinyint(1) DEFAULT '1' COMMENT '缓存开关:1 表示启用,0 表示停用',
+	`result_num` int(225)  DEFAULT 20 COMMENT '缓存条数：默认为20条以内',
+  `expire_time` int(225) DEFAULT 30 COMMENT '缓存过期时间（单位分钟）：默认为30分钟',
+	`create_time` timestamp DEFAULT CURRENT_TIMESTAMP,
+	`update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`create_by` varchar(40) DEFAULT NULL,
+	`update_by` varchar(40) DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
+)ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+
