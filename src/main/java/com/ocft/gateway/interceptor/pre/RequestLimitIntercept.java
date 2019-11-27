@@ -47,6 +47,8 @@ public class RequestLimitIntercept implements GatewayInterceptor {
 
     @Override
     public void doInterceptor(GatewayContext context) {
+        boolean accessFlag = true;
+
         //当前时间
         long currentTime = new Date().getTime();
         //获取请求接口实体
@@ -76,17 +78,23 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 long totalCount = accessLimit.getCount() + 1;
                 accessLimit.setCount(totalCount);
                 //默认接口请求频率限制：48次/秒
+                //超过48次 redis中的数据做needLogin修改为false 过期时间为一周
                 if (totalCount / timeFrame > 48) {
-                    //超过48次 redis中的数据做needLogin修改为false 过期时间为一周
+                    logger.error("请求频率超过限制限制");
+                    accessFlag = false;
                     accessLimit.setNeedLogin(false);
-                    String strAccessLimit = JSONObject.toJSONString(accessLimit);
-                    redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
-                    //修改对应的key参数值
-                    setByKey(gatewayInterface,jsonObject,"1");
-                    throw new GatewayException("500", "服务异常，请求限制");
                 }
                 String keyLimitFlag = getByKey(gatewayInterface,jsonObject);
                 if (StringUtils.isNotBlank(keyLimitFlag) && keyLimitFlag.equals("1")) {
+                    throw new GatewayException("500", "服务异常，请求限制");
+                }
+
+                //最后更新redis中的数据
+                String strAccessLimit = JSONObject.toJSONString(accessLimit);
+                redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
+                if(!accessFlag){
+                    //修改对应的key参数值
+                    setByKey(gatewayInterface,jsonObject,"1");
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
             } else {
