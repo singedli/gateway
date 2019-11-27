@@ -45,7 +45,7 @@ public class GatewayContextConverter {
     public static String convertRedisHashField(GatewayContext gatewayContext){
         String requestBody = JSONObject.toJSONString(JSONObject.parseObject(gatewayContext.getRequestBody()));
         //获取网关接口缓存配置的Requestbody
-        String keys = gatewayContext.getGatewayCache().getRequestbody();
+        String keys = gatewayContext.getGatewayCache().getRequestBody();
         //将键值对分割
         String[] requestParams = requestBody.substring(1,requestBody.length()-1).split(",");
         StringBuilder params = new StringBuilder();

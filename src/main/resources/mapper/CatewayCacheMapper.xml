@@ -8,8 +8,8 @@
         <result column="name" property="name" />
         <result column="url" property="url" />
         <result column="backon_url" property="backonUrl" />
-        <result column="request_body" property="requestbody" />
-        <result column="response_body" property="responsebody" />
+        <result column="request_body" property="requestBody" />
+        <result column="response_body" property="responseBody" />
         <result column="status" property="status" />
         <result column="result_num" property="resultNum" />
         <result column="expire_time" property="expireTime" />

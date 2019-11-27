@@ -1,7 +1,10 @@
 package com.ocft.gateway.handler;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
+import com.ocft.gateway.common.evaluator.JsonSlimEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
@@ -80,6 +83,24 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
 
         //String responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
         String responseString = "CacheDataTest";//缓存测试
+
+        //缓存数据的条数为设置的数量
+        List<Object> results = JSONObject.parseArray(responseString);
+        if (results.size() > gatewayContext.getGatewayCache().getResultNum()){
+            results = results.subList(0,gatewayContext.getGatewayCache().getResultNum());
+        }
+
+        //只缓存设置的字段
+//        JsonSlimEvalutor.retain(JSON,gatewayContext.getGatewayCache().getResponsebody())
+//        for (Object result: results) {
+//            String resultString = JSONObject.toJSONString(result);
+//            String[] keyAndValues = resultString.substring(1, resultString.length() - 1).split(",");
+//            for (String keyAndValue : keyAndValues){
+//                if(gatewayContext.getGatewayCache().getResponsebody().contains(keyAndValue.split(":")[0])){
+//
+//                }
+//            }
+//        }
 
         //取field，并且设置缓存
         String field = GatewayContextConverter.convertRedisHashField(gatewayContext);

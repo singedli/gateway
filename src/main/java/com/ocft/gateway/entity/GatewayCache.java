@@ -30,12 +30,12 @@ public class GatewayCache {
     /**
      * 接口请求参数key配置，以配置的key作为缓存的field
      */
-    private String requestbody;
+    private String requestBody;
 
     /**
      * 接口响应字段配置 ，缓存只存接口返回数据中配置的数据
      */
-    private String responsebody;
+    private String responseBody;
 
     /**
      * 缓存开关:1 表示启用,0 表示停用
