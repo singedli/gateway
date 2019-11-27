@@ -16,10 +16,54 @@ import java.util.TreeSet;
  * @ProjectName gateway
  * @date 2019/11/23下午5:05
  * @Description: json 剪裁处理程序
+ *
+ *
  */
 public class JsonSlimEvalutor {
     private static final String INNER_SPLIT_FLAG = ",";
 
+    public static void main(String[] args) {
+        String json = "{\"name\":\"BeJson\",\"url\":\"http://www.bejson.com\",\"page\":88,\"isNonProfit\":true,\"address\":{\"street\":\"科技园路.\",\"city\":\"江苏苏州\",\"country\":\"中国\"},\"links\":[{\"name\":\"Google\",\"url\":\"http://www.google.com\"},{\"name\":\"Baidu\",\"url\":\"http://www.baidu.com\"},{\"name\":\"SoSo\",\"url\":\"http://www.SoSo.com\"}]}";
+        String path = "links.url,address.city,name";
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        remove(jsonObject,path);
+        System.out.println(jsonObject);
+
+    }
+
+    /**
+     *
+     * @param t 要剪裁的json对象，可以是JSONObject，也可以是JSONArray
+     * @param paths 要剪裁的key的路径
+     *
+     *      例如json字符串为：
+     *              {
+     *                  "name": "BeJson",
+     *                  "url": "http://www.bejson.com",
+     *                  "page": 88,
+     *                  "address": {
+     *                      "street": "科技园路.",
+     *                      "city": "江苏苏州",
+     *                      "country": "中国"
+     *                  },
+     *                  "links": [
+     *                      {
+     *                          "name": "Google",
+     *                          "url": "http://www.google.com"
+     *                      },
+     *                      {
+     *                          "name": "Baidu",
+     *                          "url": "http://www.baidu.com"
+     *                      }
+     *                  ]
+     *              }
+     *      1、删除单个属性：例如要将json中的url字段删除掉，则paths为"url"
+     *         删除多个属性：例如要将json中的url和page字段同事删除掉，则paths为"url,page"
+     *      2、删除json对象中的对象：例如要将json中的address对象的city字段删除掉，则paths为"address.city"
+     *      3、删除json对象中的数组：例如要将json中的links数组中每一个对象的name字段删除掉，则path为"links.name"
+     *
+     * @return
+     */
     public static <T extends JSON> T remove(T t, String paths){
         String[] split = paths.split(INNER_SPLIT_FLAG);
         for (String path : split) {
