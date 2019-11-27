@@ -3,7 +3,7 @@
 <mapper namespace="com.ocft.gateway.gateway.mapper.RequestTypeMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ocft.gateway.gateway.entity.RequestType">
+    <resultMap id="BaseResultMap" type="com.ocft.gateway.entity.RequestType">
     <result column="id" property="id" />
         <result column="type" property="type" />
         <result column="agent" property="agent" />

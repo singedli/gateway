@@ -3,6 +3,7 @@ package com.ocft.gateway.interceptor.pre;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.exceptions.GatewayException;
+import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.entity.RequestAccessLimit;
 import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.interceptor.GatewayInterceptor;
@@ -28,7 +29,7 @@ import java.util.List;
  * @Description: 接口防刷拦截器
  */
 
-//todo 1恶意调用策率包  2用户账号密码
+//todo 1恶意调用策率包2针对不同的请求会有不同的key做限制判断
 
 
 @Slf4j
@@ -46,11 +47,12 @@ public class RequestLimitIntercept implements GatewayInterceptor {
 
     @Override
     public void doInterceptor(GatewayContext context) {
+        //当前时间
         long currentTime = new Date().getTime();
-        //username获取
-        String requestBody = context.getRequestBody();
+        //获取请求接口实体
+        GatewayInterface gatewayInterface = context.getGatewayInterface();
+        String  requestBody = context.getRequestBody();
         JSONObject jsonObject = JSONObject.parseObject(requestBody);
-        String username = jsonObject.get("username") + "";
         //获取ip 或者设备号
         String ipOrdeviceStr = "";
         String type = checkAgentIsBrowser(context.getRequest());
@@ -59,6 +61,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         } else if (StringUtils.isNoneBlank(type) && type.equals("1")) {
             ipOrdeviceStr = WebUtil.getMobileDevice(context.getRequest());
         } else {
+            logger.error("无法确定数据来源");
             throw new GatewayException("500", "服务异常，请求来源无法鉴定");
         }
         //判断redis中的ip数据和设备号数据
@@ -76,37 +79,82 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 if (totalCount / timeFrame > 48) {
                     //超过48次 redis中的数据做needLogin修改为false 过期时间为一周
                     accessLimit.setNeedLogin(false);
-                    String s = JSONObject.toJSONString(accessLimit);
-                    redisUtil.set(ipOrdeviceStr, s, 604800);
-                    redisUtil.set(username, "1", 604800);
+                    String strAccessLimit = JSONObject.toJSONString(accessLimit);
+                    redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
+                    //修改对应的key参数值
+                    setByKey(gatewayInterface,jsonObject,"1");
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
-                String byUsernama = getByUsernama(username);
-                if (StringUtils.isNotBlank(byUsernama) && byUsernama.equals("1")) {
+                String keyLimitFlag = getByKey(gatewayInterface,jsonObject);
+                if (StringUtils.isNotBlank(keyLimitFlag) && keyLimitFlag.equals("1")) {
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
             } else {
                 throw new GatewayException("500", "服务异常，请求限制");
             }
         } else {
-            //没有数据的话就添加数据  ip以及username都需要添加
+            //没有数据的话就添加数据
             RequestAccessLimit accessLimit = new RequestAccessLimit();
             accessLimit.setFirstRequestTime(currentTime);
             accessLimit.setNeedLogin(true);
             accessLimit.setCount(1);
-            String s = JSONObject.toJSONString(accessLimit);
-            redisUtil.set(ipOrdeviceStr, s, 604800);
-            redisUtil.set(username, "0", 604800);
+            String strAccessLimit = JSONObject.toJSONString(accessLimit);
+            redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
+            setByKey(gatewayInterface,jsonObject,"0");
         }
     }
 
     /**
-     * 判redis中的username数据
+     * 判redis中的指定的key数据
      */
-    private String getByUsernama(String username) {
-        String limitByUsername = redisUtil.get(username);
-        return limitByUsername;
+    private String getByKey(GatewayInterface gatewayInterface,JSONObject requestBody) {
+        String flag = "0";
+        String keyLimit = gatewayInterface.getKeyLimit();
+        if(StringUtils.isNotBlank(keyLimit)){
+            String[] keys = keyLimit.split(",");
+            for (int i = 0;i <keys.length;i ++ ){
+                //取得request中对应的请求数据
+                String value = requestBody.get(keys[i])+"";
+                if(StringUtils.isBlank(value)){
+                    continue;
+                }
+                //判断redis 对应value是否被限制
+                String limitBykey = redisUtil.get(value);
+                if(StringUtils.isBlank(limitBykey)){
+                    continue;
+                }
+                flag = limitBykey;
+                if(limitBykey.equals("1")){
+                    logger.error(keys[i]+"为"+value+"的被限制请求");
+                    break;
+                }
+            }
+        }
+        return flag;
     }
+
+    /**
+     * 修改redis中指定的key数据
+     * @param gatewayInterface
+     * @param requestBody
+     * @param flag 0为不限制 1为限制登陆
+     */
+    private void setByKey(GatewayInterface gatewayInterface,JSONObject requestBody,String flag) {
+        String keyLimit = gatewayInterface.getKeyLimit();
+        if(StringUtils.isNotBlank(keyLimit)){
+            String[] keys = keyLimit.split(",");
+            for (int i = 0;i <keys.length;i ++ ){
+                //取得request中对应的请求数据
+                String value = requestBody.get(keys[i])+"";
+                if(StringUtils.isBlank(value)){
+                    continue;
+                }
+                //有就设置对应的flag
+                redisUtil.set(value,flag,604800);
+            }
+        }
+    }
+
 
 
     /**
@@ -120,13 +168,14 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         List<RequestType> typeBrowsers = irequestTypeService.findTypeBrowser();//客户端
         List<RequestType> typeApps = irequestTypeService.findTypeApp();//app端
         String userAgent = request.getHeader("user-agent");
+        logger.info("user-agent :"+userAgent);
         for (RequestType type : typeBrowsers) {
             if (userAgent.contains(type.getAgent())) {
                 flag = "0";
                 break;
             }
         }
-        if (StringUtils.isNoneBlank(flag)) {
+        if (StringUtils.isNotBlank(flag)) {
             return flag;
         }
         for (RequestType type : typeApps) {
