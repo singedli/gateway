@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ocft.gateway.mapper.GatewayCacheMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ocft.gateway.entity.GatewayCache">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="url" property="url" />
+        <result column="backon_url" property="backonUrl" />
+        <result column="request_body" property="requestbody" />
+        <result column="response_body" property="responsebody" />
+        <result column="status" property="status" />
+        <result column="result_num" property="resultNum" />
+        <result column="expire_time" property="expireTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, url, backon_url,request_body, response_body,status,result_num, expire_time, create_time, update_time, create_by, update_by
+    </sql>
+
+</mapper>

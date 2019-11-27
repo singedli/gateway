@@ -44,6 +44,8 @@ public class GatewayContextConverter {
     //把请求body参数转换为“key1_vlaue1_key2_value2_...”的字符串
     public static String convertRedisHashField(GatewayContext gatewayContext){
         String requestBody = JSONObject.toJSONString(JSONObject.parseObject(gatewayContext.getRequestBody()));
+        //获取网关接口缓存配置的Requestbody
+        String keys = gatewayContext.getGatewayCache().getRequestbody();
         //将键值对分割
         String[] requestParams = requestBody.substring(1,requestBody.length()-1).split(",");
         StringBuilder params = new StringBuilder();
@@ -52,12 +54,18 @@ public class GatewayContextConverter {
             String substring = null;
             if(requestParam.endsWith("\"")){
                 substring = requestParam.substring(1, requestParam.length() - 1);
-                //拼接每组键值对为key_value的形式
-                params.append(substring.split("\":\"")[0]).append("_").append(substring.split("\":\"")[1]).append("_");
+                //判断是否为配置的key
+                if(keys.contains(substring.split("\":\"")[0])){
+                    //拼接每组键值对为key_value的形式
+                    params.append(substring.split("\":\"")[0]).append("_").append(substring.split("\":\"")[1]).append("_");
+                }
             }else {
                 substring = requestParam.substring(1, requestParam.length());
-                //拼接每组键值对为key_value的形式
-                params.append(substring.split("\":")[0]).append("_").append(substring.split("\":")[1]).append("_");
+                //判断是否为配置的key
+                if(keys.contains(substring.split("\":\"")[0])){
+                    //拼接每组键值对为key_value的形式
+                    params.append(substring.split("\":")[0]).append("_").append(substring.split("\":")[1]).append("_");
+                }
             }
         }
         String field = String.valueOf(params);
