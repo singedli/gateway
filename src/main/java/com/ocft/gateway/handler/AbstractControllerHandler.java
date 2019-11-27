@@ -84,23 +84,14 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         //String responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
         String responseString = "CacheDataTest";//缓存测试
 
-        //缓存数据的条数为设置的数量
-        List<Object> results = JSONObject.parseArray(responseString);
-        if (results.size() > gatewayContext.getGatewayCache().getResultNum()){
-            results = results.subList(0,gatewayContext.getGatewayCache().getResultNum());
-        }
 
         //只缓存设置的字段
-//        JsonSlimEvalutor.retain(JSON,gatewayContext.getGatewayCache().getResponsebody())
-//        for (Object result: results) {
-//            String resultString = JSONObject.toJSONString(result);
-//            String[] keyAndValues = resultString.substring(1, resultString.length() - 1).split(",");
-//            for (String keyAndValue : keyAndValues){
-//                if(gatewayContext.getGatewayCache().getResponsebody().contains(keyAndValue.split(":")[0])){
-//
-//                }
-//            }
-//        }
+        JSONArray results = JsonSlimEvalutor.retain(JSONObject.parseArray(responseString), gatewayContext.getGatewayCache().getResponseBody());
+        //缓存数据的条数为设置的数量
+        if (results.size() > gatewayContext.getGatewayCache().getResultNum()){
+            results = (JSONArray) results.subList(0,gatewayContext.getGatewayCache().getResultNum());
+        }
+        responseString = JSONObject.toJSONString(results);
 
         //取field，并且设置缓存
         String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
