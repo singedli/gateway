@@ -44,7 +44,6 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
             String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
             if (result != null) {
                 returnResult(result);
-                //context.setCacheData(result);
             }
         }catch (Exception e){
             throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);

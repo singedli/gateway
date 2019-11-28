@@ -2,6 +2,7 @@ package com.ocft.gateway.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.GatewayInterface;
@@ -37,16 +38,18 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
     }
 
     @Override
-    public String sendToBacon(String header, String body, GatewayInterface gatewayInterface) {
+    public String sendToBacon(GatewayContext gatewayContext) {
+        GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
+        String requestBody = gatewayContext.getRequestBody();
         String reqUrl = buildUrl(gatewayInterface);
 
         String backonRes = null;
         String httpMethod = backonInterfaceService.getBackonInterfaceMethod(gatewayInterface.getBackonUrl());
         if (HttpMethod.GET.matches(httpMethod)) {
-            Map<String, Object> queries = JSONObject.parseObject(body, Map.class);
+            Map<String, Object> queries = JSONObject.parseObject(requestBody, Map.class);
             backonRes = HttpUtil.get(reqUrl, queries);
         } else if (HttpMethod.POST.matches(httpMethod)) {
-            backonRes = HttpUtil.postJsonParams(reqUrl, body);
+            backonRes = HttpUtil.postJsonParams(reqUrl, requestBody);
         } else {
             throw new GatewayException(ResponseEnum.HTTP_METHOD_NOT_EXIST_SUPPORTED);
         }

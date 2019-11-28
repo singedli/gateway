@@ -12,5 +12,5 @@ import com.ocft.gateway.entity.Backon;
  * @since 2019-11-22
  */
 public interface IBackonService extends IService<Backon> {
-
+    Backon getBackon(String system);
 }

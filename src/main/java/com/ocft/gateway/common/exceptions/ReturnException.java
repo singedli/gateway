@@ -7,7 +7,7 @@ import lombok.Data;
  * @Title: ReturnException
  * @ProjectName gateway
  * @date 2019/11/26下午4:10
- * @Description: TODO
+ * @Description: 该异常会将当前线程中断，并将data
  */
 @Data
 public class ReturnException extends RuntimeException {

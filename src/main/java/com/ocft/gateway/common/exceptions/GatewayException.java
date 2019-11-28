@@ -15,10 +15,6 @@ public class GatewayException extends RuntimeException {
     private String code;
     private ResponseEnum responseEnum;
 
-//    public GatewayException(String code) {
-//        this.code = code;
-//    }
-
     public GatewayException(String code, String message) {
         //传到父类的message里
         super(message);

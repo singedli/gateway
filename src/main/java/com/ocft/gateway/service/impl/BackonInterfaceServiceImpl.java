@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class BackonInterfaceServiceImpl extends ServiceImpl<BackonInterfaceMappe
 
     @Override
     public BackonInterface getBackonInterface(String url) {
+        List<BackonInterface> backonInterfaces = this.list(new QueryWrapper<BackonInterface>().eq("url", url).eq("status", "1").eq("is_deleted", "0"));
         BackonInterface backonInterface = this.getOne(new QueryWrapper<BackonInterface>().eq("url", url).eq("status", "1").eq("is_deleted", "0"));
         Assert.notNull(backonInterface,ResponseEnum.BACKON_INTERFACE_NOT_EXIST.getMessage());
         return backonInterface;

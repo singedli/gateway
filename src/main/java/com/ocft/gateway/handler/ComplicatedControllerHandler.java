@@ -1,5 +1,6 @@
 package com.ocft.gateway.handler;
 
+import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.entity.GatewayInterface;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
     }
 
     @Override
-    public String sendToBacon(String header, String body,GatewayInterface gatewayInterface) {
+    public String sendToBacon(GatewayContext gatewayContext) {
         return null;
     }
 

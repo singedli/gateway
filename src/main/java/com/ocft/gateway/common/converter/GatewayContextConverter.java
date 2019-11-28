@@ -3,10 +3,12 @@ package com.ocft.gateway.common.converter;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.task.ConcurrentInvokeTask;
+import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.service.IBackonInterfaceService;
+import com.ocft.gateway.service.IBackonService;
 import com.ocft.gateway.spring.SpringContextHolder;
 import org.springframework.util.Assert;
 
@@ -27,14 +29,18 @@ public class GatewayContextConverter {
         List<ConcurrentInvokeTask> taskList = new ArrayList<>();
         GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
         String backonUrls = gatewayInterface.getBackonUrl();
+        IBackonInterfaceService backonInterfaceService = SpringContextHolder.getBean(IBackonInterfaceService.class);
+        IBackonService backonService = SpringContextHolder.getBean(IBackonService.class);
         for (String backonUrl : backonUrls.split(",")) {
-            IBackonInterfaceService backonInterfaceService = SpringContextHolder.getBean(IBackonInterfaceService.class);
             BackonInterface backonInterface = backonInterfaceService.getBackonInterface(backonUrl);
+            Backon backon = backonService.getBackon(backonInterface.getSystem());
+            backonUrl =backon.getDomain()+backonUrl+backon.getSuffix();
             ConcurrentInvokeTask concurrentInvokeTask = new ConcurrentInvokeTask()
-                    .setHeader(backonInterface.getHttpHeader())
+                    //.setHeaders(backonInterface.getHttpHeader())
                     .setHttpMethod(backonInterface.getHttpMethod())
                     .setLatch(latch)
-                    .setRequestBody(gatewayContext.getRequestBody());
+                    .setRequestBody(gatewayContext.getRequestBody())
+                    .setUrl(backonUrl);
             taskList.add(concurrentInvokeTask);
         }
         Assert.notEmpty(taskList,ResponseEnum.BACKON_INTERFACE_NOT_EXIST.getMessage());

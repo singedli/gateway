@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * <p>
@@ -46,8 +47,8 @@ public class BackonInterface implements Serializable {
 
     private String version;
 
+    //private Map<String,String> httpHeader;
     private String httpHeader;
-
     /**
      * 逻辑删除标志位，1表示已删除，0表示未删除
      */

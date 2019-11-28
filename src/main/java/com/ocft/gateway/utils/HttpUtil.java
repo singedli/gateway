@@ -4,12 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.ocft.gateway.spring.SpringContextHolder;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +78,22 @@ public class HttpUtil {
     }
 
     /**
+     *  带请求头的get请求
+     * @param url
+     * @param queries
+     * @param headers
+     * @return
+     */
+    public static String get(String url, Map<String, Object> queries,Map<String,String> headers) {
+        StringBuffer sb = getQueryString(url,queries);
+        Request request = new Request.Builder().headers(Headers.of())
+                .url(sb.toString())
+                .headers(Headers.of(headers))
+                .build();
+        return execNewCall(request);
+    }
+
+    /**
      * post
      *
      * @param url    请求的url
@@ -135,6 +146,19 @@ public class HttpUtil {
                 .build();
         return execNewCall(request);
     }
+
+    public static String postJsonParams(String url, String jsonParams,Map<String,String> headers) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
+        Request request = new Request.Builder()
+                .url(url)
+                .headers(Headers.of(headers))
+                .post(requestBody)
+                .build();
+        return execNewCall(request);
+    }
+
+
+
 
     /**
      * Post请求发送xml数据....
