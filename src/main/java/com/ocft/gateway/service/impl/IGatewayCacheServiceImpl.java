@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 public class IGatewayCacheServiceImpl extends ServiceImpl<GatewayCacheMapper, GatewayCache> implements IGatewayCacheService {
     @Override
     public GatewayCache getGatewayCache(String uri) {
-        GatewayCache gatewayCache = this.getOne(new QueryWrapper<GatewayCache>().eq("url", uri).eq("status", "1"));
+        GatewayCache gatewayCache = this.getOne(new QueryWrapper<GatewayCache>().eq("url", uri));
         Assert.notNull(gatewayCache,ResponseEnum.GATEWAY_CACHE_NOT_EXIST.getMessage());
         return gatewayCache;
     }

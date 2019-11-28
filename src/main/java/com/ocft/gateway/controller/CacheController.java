@@ -6,14 +6,13 @@ import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 梵高先生
@@ -32,14 +31,9 @@ public class CacheController {
 
     @GetMapping("/global/refresh")
     public Map<String, Object> globalRefresh(){
-        try {
-            List<GatewayCache> globalCaches =gatewayCacheService.list();
-            for (GatewayCache  globalCache :globalCaches) {
-                Map map = redisUtil.get(globalCache.getUrl(), Map.class);
-                redisUtil.hset(globalCache.getUrl(),map,globalCache.getExpireTime());
-            }
-        }catch (Exception e){
-            throw new GatewayException(ResponseEnum.GATEWAY_CACHE_REFRESH_FAIL);
+        List<GatewayCache> globalCaches =gatewayCacheService.list();
+        for (GatewayCache  globalCache :globalCaches) {
+            refreshCache(globalCache);
         }
         Map<String, Object> result = new HashMap<>();
         result.put("刷新全局缓存",ResponseEnum.SUCCESS);
@@ -48,15 +42,38 @@ public class CacheController {
 
     @GetMapping("/api/refresh")
     public Map<String, Object> apiRefresh(@RequestParam("api") String url){
-        try {
-            GatewayCache globalCache =gatewayCacheService.getGatewayCache(url);
-            Map map = redisUtil.get(globalCache.getUrl(), Map.class);
-            redisUtil.hset(globalCache.getUrl(),map,globalCache.getExpireTime());
-        }catch (Exception e){
-            throw new GatewayException(ResponseEnum.GATEWAY_CACHE_REFRESH_FAIL);
-        }
+        GatewayCache globalCache =gatewayCacheService.getGatewayCache(url);
+        refreshCache(globalCache);
         Map<String, Object> result = new HashMap<>();
         result.put("刷新缓存",ResponseEnum.SUCCESS);
         return result;
+    }
+
+    private void refreshCache(GatewayCache globalCache){
+        try {
+            //获取url对应的所有field
+            Set<Object> fields = redisUtil.getFields(globalCache.getUrl());
+            Iterator<Object> iterator = fields.iterator();
+            Map<Object,Object> redisHash = new HashMap<>();
+            while (iterator.hasNext()){
+                String next = iterator.next().toString();
+                System.out.println(next);
+                //TODO   转换为 request body 并且向接口发请求
+
+                String result = "apiResultTest";
+                redisHash.put(next,result);
+
+                //如果缓存存在则删除
+                if(redisUtil.existsHash(globalCache.getUrl(),next)){
+                    redisUtil.hdel(globalCache.getUrl(),next);
+                }
+            }
+
+            //更新缓存
+            redisUtil.hset(globalCache.getUrl(),redisHash,globalCache.getExpireTime()/60);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new GatewayException(ResponseEnum.GATEWAY_CACHE_REFRESH_FAIL);
+        }
     }
 }
