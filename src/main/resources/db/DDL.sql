@@ -88,3 +88,27 @@ IF NOT EXISTS `gateway_cache` (
 	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
+-- 网关接口配置表
+CREATE TABLE
+IF NOT EXISTS `gateway_cache` (
+	`id` VARCHAR (64) NOT NULL,
+	`url` varchar(255) NOT NULL  DEFAULT '' COMMENT '接口地址，对应gateway_interface中的url',
+	`key_limit` varchar(255) NOT NULL COMMENT '该接口需要验证的参数的key',
+	`max_count` int(1) NOT NULL COMMENT '单位时间(默认秒)内最大的访问次数',
+	`status` tinyint(1) DEFAULT '1' COMMENT '是否开启:1 表示启用,0 表示停用',
+	`create_time` timestamp DEFAULT CURRENT_TIMESTAMP,
+	`update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`create_by` varchar(40) DEFAULT NULL,
+	`update_by` varchar(40) DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
+)ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+
+--请求来源来源类型表
+CREATE TABLE
+IF NOT EXISTS `request_type` (
+  `id` int(36) NOT NULL AUTO_INCREMENT,
+  `type` varchar(36) NOT NULL COMMENT '请求来源，浏览器或者app',
+  `agent` varchar(50)  NOT NULL COMMENT 'request请求头中的参数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
