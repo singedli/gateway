@@ -1,18 +1,17 @@
 package com.ocft.gateway.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ocft.gateway.entity.GatewayInterface;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.mapper.RequestTypeMapper;
 import com.ocft.gateway.service.IRequestTypeService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author Bobby
@@ -23,6 +22,7 @@ public class RequestTypeServiceImpl extends ServiceImpl<RequestTypeMapper, Reque
 
     /**
      * 查询客户端的请求头
+     *
      * @return
      */
     @Override
@@ -33,7 +33,7 @@ public class RequestTypeServiceImpl extends ServiceImpl<RequestTypeMapper, Reque
 
 
     /**
-     *查询app端请求头
+     * 查询app端请求头
      */
     @Override
     public List<RequestType> findTypeApp() {

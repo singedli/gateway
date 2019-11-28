@@ -1,12 +1,16 @@
 package com.ocft.gateway.handler;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
+import com.ocft.gateway.common.evaluator.JsonSlimEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.service.IBackonInterfaceService;
 import com.ocft.gateway.service.IBackonService;
+import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +44,8 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
     @Autowired
     protected IGatewayInterfaceService gatewayInterfaceService;
 
+    @Autowired
+    private IGatewayCacheService gatewayCacheService;
     /**
      * 构造请求报文头
      *
@@ -81,13 +87,24 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         //String responseString = sendToBacon(requestHeader, requestBody, gatewayContext.getGatewayInterface());
         String responseString = "CacheDataTest";//缓存测试
 
-        //取field，并且设置缓存
-        String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
-        try {
-            if (gatewayContext.getGatewayCache().getStatus() && redisUtil.hget(gatewayContext.getGatewayInterface().getUrl(), field) == null)
-                redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString, gatewayContext.getGatewayCache().getExpireTime()/60 );
-        }catch (Exception e){
-            throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
+        //检查接口缓存状态是否为开启
+        if(gatewayCacheService.getGatewayCache("global").getStatus()||gatewayContext.getGatewayCache().getStatus()){
+            //只缓存设置的字段
+            JSONArray results = JsonSlimEvalutor.retain(JSONObject.parseArray(responseString), gatewayContext.getGatewayCache().getResponseBody());
+            //缓存数据的条数为设置的数量
+            if (results.size() > gatewayContext.getGatewayCache().getResultNum()){
+                results = (JSONArray) results.subList(0,gatewayContext.getGatewayCache().getResultNum());
+            }
+            responseString = JSONObject.toJSONString(results);
+
+            //取field，并且设置缓存
+            String field = GatewayContextConverter.convertRedisHashField(gatewayContext);
+            try {
+                if (redisUtil.hget(gatewayContext.getGatewayInterface().getUrl(), field) == null)
+                    redisUtil.hset(gatewayContext.getGatewayInterface().getUrl(), field , responseString, gatewayContext.getGatewayCache().getExpireTime()/60 );
+            }catch (Exception e){
+                throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
+            }
         }
 
         return retToClient(responseString, gatewayContext.getRequest());
