@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.entity.InterfaceConfig;
 import com.ocft.gateway.entity.RequestAccessLimit;
 import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.interceptor.GatewayInterceptor;
+import com.ocft.gateway.service.IInterfaceConfigService;
 import com.ocft.gateway.service.IRequestTypeService;
 import com.ocft.gateway.utils.RedisUtil;
 import com.ocft.gateway.utils.WebUtil;
@@ -44,17 +46,25 @@ public class RequestLimitIntercept implements GatewayInterceptor {
     @Autowired
     IRequestTypeService irequestTypeService;
 
+    @Autowired
+    IInterfaceConfigService iInterfaceConfigService;
+
 
     @Override
     public void doInterceptor(GatewayContext context) {
+        //是否允许登陆的标志
         boolean accessFlag = true;
 
         //当前时间
         long currentTime = new Date().getTime();
-        //获取请求接口实体
+        //获取请求参数
         GatewayInterface gatewayInterface = context.getGatewayInterface();
         String  requestBody = context.getRequestBody();
         JSONObject jsonObject = JSONObject.parseObject(requestBody);
+        //获取接口对应的限制策率数据
+        InterfaceConfig interfaceConfig = iInterfaceConfigService.getByUrl(gatewayInterface.getUrl());
+
+
         //获取ip 或者设备号
         String ipOrdeviceStr = "";
         String type = checkAgentIsBrowser(context.getRequest());
@@ -77,14 +87,13 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 long timeFrame = currentTime - accessLimit.getFirstRequestTime();
                 long totalCount = accessLimit.getCount() + 1;
                 accessLimit.setCount(totalCount);
-                //默认接口请求频率限制：48次/秒
-                //超过48次 redis中的数据做needLogin修改为false 过期时间为一周
-                if (totalCount / timeFrame > 48) {
+                //超过次数 redis中的数据做needLogin修改为false 过期时间为一周
+                if (totalCount / timeFrame > interfaceConfig.getMaxCount()) {
                     logger.error("请求频率超过限制限制");
                     accessFlag = false;
                     accessLimit.setNeedLogin(false);
                 }
-                String keyLimitFlag = getByKey(gatewayInterface,jsonObject);
+                String keyLimitFlag = getByKey(interfaceConfig,jsonObject);
                 if (StringUtils.isNotBlank(keyLimitFlag) && keyLimitFlag.equals("1")) {
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
@@ -94,7 +103,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
                 if(!accessFlag){
                     //修改对应的key参数值
-                    setByKey(gatewayInterface,jsonObject,"1");
+                    setByKey(interfaceConfig,jsonObject,"1");
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
             } else {
@@ -108,16 +117,16 @@ public class RequestLimitIntercept implements GatewayInterceptor {
             accessLimit.setCount(1);
             String strAccessLimit = JSONObject.toJSONString(accessLimit);
             redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
-            setByKey(gatewayInterface,jsonObject,"0");
+            setByKey(interfaceConfig,jsonObject,"0");
         }
     }
 
     /**
      * 判redis中的指定的key数据
      */
-    private String getByKey(GatewayInterface gatewayInterface,JSONObject requestBody) {
+    private String getByKey(InterfaceConfig interfaceConfig,JSONObject requestBody) {
         String flag = "0";
-        String keyLimit = gatewayInterface.getKeyLimit();
+        String keyLimit = interfaceConfig.getKeyLimit();
         if(StringUtils.isNotBlank(keyLimit)){
             String[] keys = keyLimit.split(",");
             for (int i = 0;i <keys.length;i ++ ){
@@ -147,8 +156,8 @@ public class RequestLimitIntercept implements GatewayInterceptor {
      * @param requestBody
      * @param flag 0为不限制 1为限制登陆
      */
-    private void setByKey(GatewayInterface gatewayInterface,JSONObject requestBody,String flag) {
-        String keyLimit = gatewayInterface.getKeyLimit();
+    private void setByKey(InterfaceConfig interfaceConfig,JSONObject requestBody,String flag) {
+        String keyLimit = interfaceConfig.getKeyLimit();
         if(StringUtils.isNotBlank(keyLimit)){
             String[] keys = keyLimit.split(",");
             for (int i = 0;i <keys.length;i ++ ){

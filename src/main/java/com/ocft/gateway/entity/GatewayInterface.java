@@ -73,11 +73,4 @@ public class GatewayInterface implements Serializable {
 
     private String updateBy;
 
-    /**
-     * 需要做限制的数据key用逗号分隔
-     */
-    @TableField("keyLimit")
-    private String keyLimit;
-
-
 }
