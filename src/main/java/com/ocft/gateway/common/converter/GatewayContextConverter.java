@@ -68,7 +68,7 @@ public class GatewayContextConverter {
             }else {
                 substring = requestParam.substring(1, requestParam.length());
                 //判断是否为配置的key
-                if(keys.contains(substring.split("\":\"")[0])){
+                if(keys.contains(substring.split("\":")[0])){
                     //拼接每组键值对为key_value的形式
                     params.append(substring.split("\":")[0]).append("_").append(substring.split("\":")[1]).append("_");
                 }
