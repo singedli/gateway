@@ -35,10 +35,10 @@ public class CompositeBussinessController extends BaseController {
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestBody String body, HttpServletResponse response) throws Exception{
         GatewayInterface gateWayInterface = super.getGateWayInterface(request);
-        //GatewayCache gatewayCache = super.getGatewayCache(request);
+        GatewayCache gatewayCache = super.getGatewayCache(request);
         String type = gateWayInterface.getType();
         IControllerHandler handler = handlerTypeCache.getHandler(HandlerType.valueOf(type));
-        return handler.handle(super.buildGatewayContext(request, response, body, gateWayInterface,null));
+        return handler.handle(super.buildGatewayContext(request, response, body, gateWayInterface,gatewayCache));
     }
 
     @RequestMapping(value = "/**", method = { RequestMethod.GET }, produces = "application/json; charset=utf-8")
