@@ -34,7 +34,7 @@ public class HandlerTypeCache implements CommandLineRunner {
         cache.put(HandlerType.PASS,SpringContextHolder.getBean(PassThroughControllerHandler.class));
         cache.put(HandlerType.CONCURRENT,SpringContextHolder.getBean(ConcurrentControllerHandler.class));
         cache.put(HandlerType.COMPLICATE,SpringContextHolder.getBean(ComplicatedControllerHandler.class));
-        log.info("loading controller handler finished！type is [{},{},{}]",HandlerType.PASS.name(),HandlerType.CONCURRENT.name(),HandlerType.COMPLICATE.name());
+        log.info("控制器处理器加载完成！已加载的类型为 [{},{},{}]",HandlerType.PASS.name(),HandlerType.CONCURRENT.name(),HandlerType.COMPLICATE.name());
     }
 
 

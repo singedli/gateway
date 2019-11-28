@@ -1,12 +1,6 @@
 package com.ocft.gateway.common.parser;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import java.util.*;
 
 /**
@@ -18,6 +12,7 @@ import java.util.*;
  */
 public class JsonSlimParser {
     private static final String INNER_SPLIT_FLAG = ",";
+
     /**
      * @param jsonObj given manage jsonObejct
      * @param keys    given keep keys
@@ -61,6 +56,39 @@ public class JsonSlimParser {
         }
         return pathMap;
     }
+
+    public static Map<String, Object> pathStr2Map(String pathStr, String value) {
+        Map<String, Object> pathMap = new HashMap<>();
+        String[] paths = pathStr.split(",");
+        for (String path : paths) {
+            String[] tmp = path.split("\\.");
+            if (tmp.length == 1) {
+                pathMap.put(tmp[0], value);
+                return pathMap;
+            }
+            Map<String, Object> tmpMap = pathMap;
+            for (int i = 0; i < tmp.length; i++) {
+               if (i < tmp.length) {
+                    if(i+1 == tmp.length){
+                        tmpMap.put(tmp[i], value);
+                    }else{
+                        tmpMap.put(tmp[i], new HashMap<String, Object>());
+                        tmpMap = (HashMap<String, Object>) tmpMap.get(tmp[i]);
+                    }
+                }
+            }
+        }
+        return pathMap;
+    }
+
+    /**
+     * address.street=street111, links.url=url111
+     *
+     * @param propertyString
+     * @return
+     */
+
+
 
     /**
      * 获取路径方法
