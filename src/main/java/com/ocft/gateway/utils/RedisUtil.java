@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -96,6 +98,22 @@ public class RedisUtil {
 
     public Long hdel(final String key, final String... field) {
         return redisTemplate.opsForHash().delete(key, field);
+    }
+
+    public Set<Object> getFields(final String key){
+        return redisTemplate.opsForHash().keys(key);
+    }
+
+    public Map<Object, Object> getHashMap(final String key){
+        return redisTemplate.opsForHash().entries(key);
+    }
+
+    public List<Object> getList(final String key){
+        return redisTemplate.opsForHash().values(key);
+    }
+
+    public Boolean existsHash(final String key, final String field){
+        return redisTemplate.opsForHash().hasKey(key,field);
     }
 
     public Boolean setNX(final String key,final String value) {
