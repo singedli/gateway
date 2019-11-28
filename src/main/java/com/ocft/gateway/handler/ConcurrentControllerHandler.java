@@ -6,6 +6,7 @@ import com.ocft.gateway.common.converter.GatewayContextConverter;
 import com.ocft.gateway.common.task.ConcurrentInvokeTask;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
+import com.ocft.gateway.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -63,10 +64,6 @@ public class ConcurrentControllerHandler extends AbstractControllerHandler {
 
     @Override
     public Map<String, Object> retToClient(String resout, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("code",ResponseEnum.SUCCESS.getCode());
-        map.put("msg",ResponseEnum.SUCCESS.getMessage());
-        map.put("data",JSONObject.parseObject(resout));
-        return map;
+        return ResultUtil.createResult(JSONObject.parseObject(resout));
     }
 }

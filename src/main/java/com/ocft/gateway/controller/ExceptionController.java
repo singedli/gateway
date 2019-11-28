@@ -3,6 +3,7 @@ package com.ocft.gateway.controller;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.common.exceptions.ReturnException;
 import com.ocft.gateway.enums.ResponseEnum;
+import com.ocft.gateway.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,27 +26,17 @@ public class ExceptionController {
     @ExceptionHandler(value = GatewayException.class)
     public ResponseEntity<?> handleException(GatewayException e){
         log.error(e.getMessage(),e);
-        Map<String,Object> result = new HashMap<>();
-        result.put("code",e.getCode());
-        result.put("msg",e.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(ResultUtil.bizExceptionResult(e), HttpStatus.OK);
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<?> handleRuntimeException(Exception e){
         log.error(e.getMessage(),e);
-        Map<String,Object> result = new HashMap<>();
-        result.put("code",ResponseEnum.FAIL.getCode());
-        result.put("msg",ResponseEnum.FAIL.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(ResultUtil.exceptionResult(), HttpStatus.OK);
     }
 
     @ExceptionHandler(value = ReturnException.class)
     public ResponseEntity<?> handleReturnException(ReturnException e){
-        Map<String,Object> result = new HashMap<>();
-        result.put("code",ResponseEnum.SUCCESS.getCode());
-        result.put("msg",ResponseEnum.SUCCESS.getMessage());
-        result.put("data",e.getData());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(ResultUtil.createResult(e.getData()), HttpStatus.OK);
     }
 }
