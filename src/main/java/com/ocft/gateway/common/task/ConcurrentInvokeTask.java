@@ -36,7 +36,7 @@ public class ConcurrentInvokeTask implements Runnable {
         String result = null;
         try {
             if (HttpMethod.POST.matches(httpMethod)) {
-                result = HttpUtil.postJsonParams(url, requestBody, headers);
+                result = HttpUtil.postJsonParams(url, requestBody);
             } else if (HttpMethod.GET.matches(httpMethod)) {
                 result = HttpUtil.get(url, getParams, headers);
             } else {

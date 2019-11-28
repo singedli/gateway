@@ -151,7 +151,6 @@ public class HttpUtil {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
                 .url(url)
-                .headers(Headers.of(headers))
                 .post(requestBody)
                 .build();
         return execNewCall(request);

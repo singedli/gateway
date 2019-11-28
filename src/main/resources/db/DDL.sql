@@ -39,7 +39,7 @@ IF NOT EXISTS `backon_interface` (
 	`create_by` varchar(40) DEFAULT NULL,
 	`update_by` varchar(40) DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `pk_backon_system` (`system`) USING BTREE
+-- 	UNIQUE KEY `pk_backon_system` (`system`) USING BTREE
 )ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 
 

@@ -41,12 +41,16 @@ public class InterceptorAspect {
     public void interceptPointCut() {}
 
 
-    @Around(value = "interceptPointCut() && args(gatewayContext)")
-    public void around(ProceedingJoinPoint joinPoint, GatewayContext gatewayContext) throws Throwable {
+    @Before(value = "interceptPointCut() && args(gatewayContext)")
+    public void before(JoinPoint joinPoint, GatewayContext gatewayContext) throws Throwable {
         this.doExecuteIntercept(gatewayContext.getGatewayInterface().getPreInterceptors(), gatewayContext);
-        joinPoint.proceed(new Object[] {gatewayContext});
+    }
+
+    @After(value = "interceptPointCut() && args(gatewayContext)")
+    public void after(JoinPoint joinPoint, GatewayContext gatewayContext) throws Throwable {
         this.doExecuteIntercept(gatewayContext.getGatewayInterface().getPostInterceptors(), gatewayContext);
     }
+
 
     private void doExecuteIntercept(String interceptors, GatewayContext gatewayContext) {
         if (StringUtils.hasText(interceptors)) {
