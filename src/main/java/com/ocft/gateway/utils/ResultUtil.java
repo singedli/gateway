@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class ResultUtil {
 
-    public static Map<String,Object> createResult(Object data{
+    public static Map<String,Object> createResult(Object data){
         Map<String, Object> map = new HashMap<>();
         map.put("code",ResponseEnum.SUCCESS.getCode());
         map.put("msg",ResponseEnum.SUCCESS.getMessage());
