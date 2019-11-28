@@ -16,6 +16,7 @@ public enum ResponseEnum {
     BACKON_INTERFACE_NOT_EXIST("10000002","后台接口不存在"),
     REDIS_EXCEPTION("10000003","redis异常"),
     GATEWAY_CACHE_NOT_EXIST("10000004","gateway网关缓存配置不存在"),
+    GATEWAY_CACHE_REFRESH_FAIL("10000005","gateway网关缓存刷新失败"),
     HTTP_METHOD_NOT_EXIST_SUPPORTED("20000000","未知的HTTP请求方法");
 
     private String code;
