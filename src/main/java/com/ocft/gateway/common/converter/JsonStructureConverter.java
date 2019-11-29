@@ -1,16 +1,11 @@
 package com.ocft.gateway.common.converter;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ocft.gateway.common.evaluator.JsonSlimEvalutor;
-import com.ocft.gateway.common.parser.JsonSlimParser;
+import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,10 +19,11 @@ import java.util.Set;
 @Slf4j
 public class JsonStructureConverter {
 
-    public static void main(String[] args) {
-        String jsonA = "{\"name\":\"BeJson\",\"url\":\"http://www.bejson.com\",\"page\":88,\"isNonProfit\":true,\"address\":{\"street\":\"科技园路.\",\"city\":\"江苏苏州\",\"country\":\"中国\"},\"links\":[{\"name\":\"Google\",\"url\":\"http://www.google.com\"},{\"name\":\"Baidu\",\"url\":\"http://www.baidu.com\"},{\"name\":\"SoSo\",\"url\":\"http://www.SoSo.com\"}]}";
-        String jsonB = "{\"name\":\"BeJson\",\"isNonProfit\":true,\"address\":{\"street\":\"科技园路.\",\"city\":\"江苏苏州\",\"country\":\"中国\",\"url\":\"\",\"page\":0},\"links\":[{\"name\":\"Google\",\"url\":\"http://www.google.com\"},{\"name\":\"Baidu\",\"url\":\"http://www.baidu.com\"},{\"name\":\"SoSo\",\"url\":\"http://www.SoSo.com\"}]}";
-        String path = "url=address.url,page=address.page";
+    public static JSONObject convertStructure(String jsonA, String jsonB,String path){
+        if(!StringUtils.hasText(jsonA) || !StringUtils.hasText(jsonB) || !StringUtils.hasText(path)) {
+            log.error("参数不合法! jsonA:{},jsonB:{},path:{}",jsonA,jsonB,path);
+            return null;
+        }
         Properties properties = new Properties();
         path = path.replaceAll(",", "\n");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(path.getBytes());
@@ -41,82 +37,20 @@ public class JsonStructureConverter {
         Set<String> set = properties.stringPropertyNames();
         for (String key : set) {
             String value = properties.getProperty(key);
-            copyValue(jsonObjectA, jsonObjectB,key,value);
+            convertStructure(jsonObjectA, jsonObjectB,key,value);
         }
-        System.out.println(JSONObject.toJSONString(jsonObjectB,SerializerFeature.PrettyFormat));
-
+        return jsonObjectB;
     }
 
-    private static void copyValue(JSONObject jsonA, JSONObject jsonB, String pathA, String pathB) {
-        Object value = getValue(jsonA, pathA);
-        putValue(jsonB,pathB,value);
-        Object value1 = getValue(jsonB, pathB);
-        System.out.println(value1);
-    }
-
-    private static Object getValue(Object jsonObject, String path) {
-        if (jsonObject == null || !StringUtils.hasText(path))
-            return null;
-
-        if (jsonObject instanceof JSONObject) {
-            JSONObject tempJson = (JSONObject) jsonObject;
-            if (path.contains(".")) {
-                String arg = path.substring(0, path.indexOf('.'));
-                return getValue(tempJson.get(arg), path.substring(path.indexOf('.') + 1));
-            }
-            return tempJson.get(path);
-        } else {
-            JSONArray tempArray = (JSONArray) jsonObject;
-            for (int i = 0; i < tempArray.size(); i++) {
-                if (tempArray.get(i) instanceof JSONArray) {
-                    JSONArray tempJson = (JSONArray) tempArray.get(i);
-                    return getValue(tempJson, path);
-                } else {
-                    JSONObject tempJson = (JSONObject) tempArray.get(i);
-                    if (path.contains(".")) {
-                        String arg = path.substring(0, path.indexOf('.'));
-                        if (tempJson.get(arg) == null)
-                            continue;
-                        return getValue(tempJson.get(arg), path.substring(path.indexOf('.') + 1));
-                    } else {
-                        return tempJson.get(path);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private static void putValue(Object jsonObject, String path, Object value) {
-        if (jsonObject == null || !StringUtils.hasText(path) || value == null)
-            return;
-
-        if (jsonObject instanceof JSONObject) {
-            JSONObject tempJson = (JSONObject) jsonObject;
-            if (path.contains(".")) {
-                String arg = path.substring(0, path.indexOf('.'));
-                putValue(tempJson.get(arg), path.substring(path.indexOf('.') + 1), value);
-                return;
-            }
-            tempJson.put(path, value);
-        } else if (jsonObject instanceof JSONArray) {
-            JSONArray tempArray = (JSONArray) jsonObject;
-            for (int i = 0; i < tempArray.size(); i++) {
-                if (tempArray.get(i) instanceof JSONArray) {
-                    JSONArray tempJson = (JSONArray) tempArray.get(i);
-                    putValue(tempJson, path, value);
-                } else {
-                    JSONObject tempJson = (JSONObject) tempArray.get(i);
-                    if (path.contains(".")) {
-                        String arg = path.substring(0, path.indexOf('.'));
-                        if (tempJson.get(arg) == null)
-                            continue;
-                        putValue(tempJson.get(arg), path.substring(path.indexOf(".") + 1), value);
-                    } else {
-                        tempJson.put(path, value);
-                    }
-                }
-            }
-        }
+    /**
+     *
+     * @param jsonA 源json对象
+     * @param jsonB 目标json对象
+     * @param pathA 要转换的key在源json对象中的路径
+     * @param pathB 要转换的key在目标json对象中的路径
+     */
+    public static void convertStructure(JSONObject jsonA, JSONObject jsonB, String pathA, String pathB) {
+        Object value = JsonOperateEvalutor.getJsonPropertyValue(jsonA, pathA);
+        JsonOperateEvalutor.putJsonPropertyValue(jsonB,pathB,value);
     }
 }

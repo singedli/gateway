@@ -5,12 +5,12 @@ import java.util.*;
 
 /**
  * @author lijiaxing
- * @Title: JsonSlimParser
+ * @Title: JsonOperateParser
  * @ProjectName gateway
  * @date 2019/11/23下午5:05
  * @Description: json剪裁解析器
  */
-public class JsonSlimParser {
+public class JsonOperateParser {
     private static final String INNER_SPLIT_FLAG = ",";
 
     /**
@@ -80,15 +80,6 @@ public class JsonSlimParser {
         }
         return pathMap;
     }
-
-    /**
-     * address.street=street111, links.url=url111
-     *
-     * @param propertyString
-     * @return
-     */
-
-
 
     /**
      * 获取路径方法

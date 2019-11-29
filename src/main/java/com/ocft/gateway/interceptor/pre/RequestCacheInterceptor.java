@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
-import com.ocft.gateway.common.evaluator.JsonSlimEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.interceptor.AbstractGatewayInterceptor;
@@ -57,7 +56,7 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
             String responseString = context.getCacheData();
             System.out.println(responseString);
             //只缓存设置的字段
-            //JSONArray results = JsonSlimEvalutor.retain(JSONObject.parseArray(responseString), context.getGatewayCache().getResponseBody());
+            //JSONArray results = JsonOperateEvalutor.retain(JSONObject.parseArray(responseString), context.getGatewayCache().getResponseBody());
             JSONArray results = JSONObject.parseArray(responseString);
             //缓存数据的条数为设置的数量
             if (results.size() > context.getGatewayCache().getResultNum()) {

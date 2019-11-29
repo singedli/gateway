@@ -1,9 +1,7 @@
 package com.ocft.gateway.common.converter;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -61,48 +59,11 @@ public class JsonPropertiesConverter {
         Set<String> set = properties.stringPropertyNames();
         for (String oldKey : set) {
             String newKey = properties.getProperty(oldKey);
-            convertJsonProperty(outterObject, oldKey, newKey);
+            JsonOperateEvalutor.convertJsonPropertyKey(outterObject, oldKey, newKey);
         }
         log.info("转换后的json为{}", outterObject);
     }
 
-    private static void convertJsonProperty(Object outterObject, String oldKey, String newKey) {
-        if (outterObject == null || !StringUtils.hasText(oldKey) || !StringUtils.hasText(newKey))
-            return;
 
-        if (outterObject instanceof JSONObject) {
-            JSONObject tempJson = (JSONObject) outterObject;
-            if (oldKey.contains(".")) {
-                String arg = oldKey.substring(0, oldKey.indexOf('.'));
-                convertJsonProperty(tempJson.get(arg), oldKey.substring(oldKey.indexOf('.') + 1), newKey);
-                return;
-            }
-            replaceKey(tempJson, oldKey, newKey);
-        } else if (outterObject instanceof JSONArray) {
-            JSONArray tempArray = (JSONArray) outterObject;
-            for (int i = 0; i < tempArray.size(); i++) {
-                if (tempArray.get(i) instanceof JSONArray) {
-                    JSONArray tempJson = (JSONArray) tempArray.get(i);
-                    convertJsonProperty(tempJson, oldKey, newKey);
-                } else {
-                    JSONObject tempJson = (JSONObject) tempArray.get(i);
-                    if (oldKey.contains(".")) {
-                        String arg = oldKey.substring(0, oldKey.indexOf('.'));
-                        if (tempJson.get(arg) == null)
-                            continue;
-                        convertJsonProperty(tempJson.get(arg), oldKey.substring(oldKey.indexOf('.') + 1), newKey);
-                    } else {
-                        replaceKey(tempJson, oldKey, newKey);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void replaceKey(JSONObject jsonObject, String oldKey, String newKey) {
-        Object value = jsonObject.get(oldKey);
-        jsonObject.remove(oldKey);
-        jsonObject.put(newKey, value);
-    }
 
 }
