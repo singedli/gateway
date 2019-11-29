@@ -3,6 +3,7 @@ package com.ocft.gateway.interceptor.pre;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
+import com.ocft.gateway.common.converter.JsonCacheDataConverter;
 import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.enums.ResponseEnum;
@@ -60,33 +61,24 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
 
             //只缓存设置的字段
             JSONObject results = JSONObject.parseObject(responseString);
-            JSONObject cacheData = null;
             if(context.getGatewayCache().getBackonUrl().split(",").length > 1){
                 Set<String> keySet = results.keySet();
+                JSONObject cacheData = new JSONObject();
                 for (String key:keySet) {
                     JSONObject datas = results.getJSONObject(key);
                     JsonOperateEvalutor.retain(datas, context.getGatewayCache().getResponseBody());
 
                     //缓存数据的条数为设置的数量
-//                    List<Object> values = new ArrayList<>(datas.values());
-//                    if(values.size()> context.getGatewayCache().getResultNum()){
-//                        List<Object> subList = values.subList(0, context.getGatewayCache().getResultNum());
-//                        System.out.println(subList);
-//                    }
-                    cacheData.put(key,datas);
+                    cacheData.put(key, JsonCacheDataConverter.getCacheData(datas,context.getGatewayCache().getResultNum()));
                 }
+                responseString = JSONObject.toJSONString(cacheData);
+                System.out.println(responseString);
             }else {
                 JsonOperateEvalutor.retain(results, context.getGatewayCache().getResponseBody());
 
                 //缓存数据的条数为设置的数量
-//                List<Object> values = new ArrayList<>(results.values());
-//                if(values.size()> context.getGatewayCache().getResultNum())
-//                    values = values.subList(0, context.getGatewayCache().getResultNum());
-//                System.out.println(values);
-                cacheData = results;
+                responseString = JSONObject.toJSONString(JsonCacheDataConverter.getCacheData(results,context.getGatewayCache().getResultNum()));
             }
-
-            responseString = JSONObject.toJSONString(cacheData);
 
             try {
                 redisUtil.hset(context.getGatewayInterface().getUrl(), field, responseString, context.getGatewayCache().getExpireTime() / 60);
