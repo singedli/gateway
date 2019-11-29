@@ -40,7 +40,7 @@ public class ConcurrentInvokeTask implements Runnable {
             if (HttpMethod.POST.matches(httpMethod)) {
                 result = HttpUtil.postJsonParams(url, requestBody);
             } else if (HttpMethod.GET.matches(httpMethod)) {
-                result = HttpUtil.get(url, getParams, headers);
+                result = HttpUtil.get(url, getParams);
             } else {
                 throw new GatewayException(ResponseEnum.HTTP_METHOD_NOT_EXIST_SUPPORTED);
             }

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.ocft.gateway.spring.SpringContextHolder;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * http 工具类
  */
+@Slf4j
 public class HttpUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
@@ -123,6 +125,7 @@ public class HttpUtil {
      * 参数三：请求回调
      */
     public static String postJsonParams(String url, String jsonParams) {
+        log.info(">>>>>> http post请求,请求url为:\n {},\n请求参数为:\n{} \n<<<<<<",url,jsonParams);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
                 .url(url)
