@@ -1,9 +1,9 @@
 package com.ocft.gateway.interceptor.pre;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
+import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.interceptor.AbstractGatewayInterceptor;
@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 /**
  * @author lijiaxing
@@ -55,14 +57,36 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
         }else if ( StringUtils.isNotEmpty(context.getCacheData()) ) {
             String responseString = context.getCacheData();
             System.out.println(responseString);
+
             //只缓存设置的字段
-            //JSONArray results = JsonOperateEvalutor.retain(JSONObject.parseArray(responseString), context.getGatewayCache().getResponseBody());
-            JSONArray results = JSONObject.parseArray(responseString);
-            //缓存数据的条数为设置的数量
-            if (results.size() > context.getGatewayCache().getResultNum()) {
-                results = (JSONArray) results.subList(0, context.getGatewayCache().getResultNum());
+            JSONObject results = JSONObject.parseObject(responseString);
+            JSONObject cacheData = null;
+            if(context.getGatewayCache().getBackonUrl().split(",").length > 1){
+                Set<String> keySet = results.keySet();
+                for (String key:keySet) {
+                    JSONObject datas = results.getJSONObject(key);
+                    JsonOperateEvalutor.retain(datas, context.getGatewayCache().getResponseBody());
+
+                    //缓存数据的条数为设置的数量
+//                    List<Object> values = new ArrayList<>(datas.values());
+//                    if(values.size()> context.getGatewayCache().getResultNum()){
+//                        List<Object> subList = values.subList(0, context.getGatewayCache().getResultNum());
+//                        System.out.println(subList);
+//                    }
+                    cacheData.put(key,datas);
+                }
+            }else {
+                JsonOperateEvalutor.retain(results, context.getGatewayCache().getResponseBody());
+
+                //缓存数据的条数为设置的数量
+//                List<Object> values = new ArrayList<>(results.values());
+//                if(values.size()> context.getGatewayCache().getResultNum())
+//                    values = values.subList(0, context.getGatewayCache().getResultNum());
+//                System.out.println(values);
+                cacheData = results;
             }
-            responseString = JSONObject.toJSONString(results);
+
+            responseString = JSONObject.toJSONString(cacheData);
 
             try {
                 redisUtil.hset(context.getGatewayInterface().getUrl(), field, responseString, context.getGatewayCache().getExpireTime() / 60);
