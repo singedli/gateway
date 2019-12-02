@@ -1,4 +1,4 @@
-package com.ocft.gateway.controller;
+package com.ocft.gateway.web;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
 import com.ocft.gateway.common.context.GatewayContext;
@@ -29,7 +29,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/cache")
-public class CacheController {
+public class RefreshCacheController {
 
     @Autowired
     private IGatewayInterfaceService gatewayInterfaceService;
