@@ -2,18 +2,17 @@ package com.ocft.gateway.controller;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
 import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.common.converter.JsonCacheDataConverter;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.handler.AbstractControllerHandler;
-import com.ocft.gateway.handler.IControllerHandler;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,8 +81,9 @@ public class CacheController {
                 gatewayContext.setGatewayInterface(gateWayInterface);
                 gatewayContext.setRequest(request);
                 gatewayContext.setResponse(response);
-                //TODO   转换为 request body 并且向接口发请求
-                gatewayContext.setRequestBody(next);
+
+                String requestBody = JsonCacheDataConverter.getRequestBody(next, globalCache);
+                gatewayContext.setRequestBody(requestBody);
 
                 String result = handler.sendToBacon(gatewayContext);
                         

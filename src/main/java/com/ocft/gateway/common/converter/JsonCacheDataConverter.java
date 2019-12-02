@@ -2,6 +2,7 @@ package com.ocft.gateway.common.converter;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ocft.gateway.entity.GatewayCache;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,5 +41,18 @@ public class JsonCacheDataConverter {
             }
         }
         return jsonObject;
+    }
+
+    public static String getRequestBody(String field,GatewayCache globalCache){
+        String body = globalCache.getRequestBody();
+        String[] keys = body.split(",");
+        StringBuilder json = new StringBuilder("{");
+        for (String key: keys) {
+            String value = field.split(key)[1].split("_")[1];
+            json.append("\"").append(key).append("\"").append(":").append("\"").append(value).append("\"").append(",");
+        }
+        StringBuilder requestBody = new StringBuilder(json.subSequence(0,json.length()-1));
+        requestBody.append("}");
+        return JSONObject.toJSONString(requestBody);
     }
 }
