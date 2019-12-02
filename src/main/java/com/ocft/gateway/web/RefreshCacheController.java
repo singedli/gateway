@@ -28,7 +28,7 @@ import java.util.*;
  * @Description:
  */
 @RestController
-@RequestMapping("/cache")
+@RequestMapping("/cache/refresh")
 public class RefreshCacheController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class RefreshCacheController {
     @Autowired
     private HandlerTypeCache handlerTypeCache;
 
-    @GetMapping("/global/refresh")
+    @GetMapping("/global")
     public Map<String, Object> globalRefresh(HttpServletRequest request,HttpServletResponse response){
         List<GatewayCache> globalCaches =gatewayCacheService.list();
         for (GatewayCache  globalCache :globalCaches) {
@@ -54,7 +54,7 @@ public class RefreshCacheController {
         return result;
     }
 
-    @GetMapping("/api/refresh")
+    @GetMapping("/api")
     public Map<String, Object> apiRefresh(@RequestParam("api") String url, HttpServletRequest request,HttpServletResponse response){
         GatewayCache globalCache =gatewayCacheService.getGatewayCache(url);
         refreshCache(globalCache,request,response);
