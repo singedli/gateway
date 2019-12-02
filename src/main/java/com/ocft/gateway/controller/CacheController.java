@@ -1,9 +1,16 @@
 package com.ocft.gateway.controller;
 
+import com.ocft.gateway.cache.HandlerTypeCache;
+import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayCache;
+import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.enums.HandlerType;
 import com.ocft.gateway.enums.ResponseEnum;
+import com.ocft.gateway.handler.AbstractControllerHandler;
+import com.ocft.gateway.handler.IControllerHandler;
 import com.ocft.gateway.service.IGatewayCacheService;
+import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -12,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -24,16 +33,22 @@ import java.util.*;
 public class CacheController {
 
     @Autowired
+    private IGatewayInterfaceService gatewayInterfaceService;
+
+    @Autowired
     private IGatewayCacheService gatewayCacheService;
 
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private HandlerTypeCache handlerTypeCache;
+
     @GetMapping("/global/refresh")
-    public Map<String, Object> globalRefresh(){
+    public Map<String, Object> globalRefresh(HttpServletRequest request,HttpServletResponse response){
         List<GatewayCache> globalCaches =gatewayCacheService.list();
         for (GatewayCache  globalCache :globalCaches) {
-            refreshCache(globalCache);
+            refreshCache(globalCache,request,response);
         }
         Map<String, Object> result = new HashMap<>();
         result.put("刷新全局缓存",ResponseEnum.SUCCESS);
@@ -41,16 +56,19 @@ public class CacheController {
     }
 
     @GetMapping("/api/refresh")
-    public Map<String, Object> apiRefresh(@RequestParam("api") String url){
+    public Map<String, Object> apiRefresh(@RequestParam("api") String url, HttpServletRequest request,HttpServletResponse response){
         GatewayCache globalCache =gatewayCacheService.getGatewayCache(url);
-        refreshCache(globalCache);
+        refreshCache(globalCache,request,response);
         Map<String, Object> result = new HashMap<>();
         result.put("刷新缓存",ResponseEnum.SUCCESS);
         return result;
     }
 
-    private void refreshCache(GatewayCache globalCache){
+    private void refreshCache(GatewayCache globalCache,HttpServletRequest request,HttpServletResponse response){
         try {
+            GatewayInterface gateWayInterface = gatewayInterfaceService.getGateWayInterface(globalCache.getUrl());
+            AbstractControllerHandler handler = (AbstractControllerHandler) handlerTypeCache.getHandler(HandlerType.valueOf(gateWayInterface.getType()));
+
             //获取url对应的所有field
             Set<Object> fields = redisUtil.getFields(globalCache.getUrl());
             Iterator<Object> iterator = fields.iterator();
@@ -58,9 +76,18 @@ public class CacheController {
             while (iterator.hasNext()){
                 String next = iterator.next().toString();
                 System.out.println(next);
-                //TODO   转换为 request body 并且向接口发请求
 
-                String result = "apiResultTest";
+                GatewayContext gatewayContext = new GatewayContext();
+                gatewayContext.setGatewayCache(globalCache);
+                gatewayContext.setGatewayInterface(gateWayInterface);
+                gatewayContext.setRequest(request);
+                gatewayContext.setResponse(response);
+                //TODO   转换为 request body 并且向接口发请求
+                gatewayContext.setRequestBody(next);
+
+                String result = handler.sendToBacon(gatewayContext);
+                        
+                //String result = "apiResultTest";
                 redisHash.put(next,result);
 
                 //如果缓存存在则删除

@@ -1,26 +1,14 @@
 package com.ocft.gateway.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
-import com.ocft.gateway.handler.AbstractControllerHandler;
-import com.ocft.gateway.handler.IControllerHandler;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.spring.SpringContextHolder;
-import com.sun.deploy.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author lijiaxing
