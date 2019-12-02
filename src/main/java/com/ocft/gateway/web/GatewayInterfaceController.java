@@ -28,31 +28,31 @@ public class GatewayInterfaceController {
             IPage<GatewayInterface> page = gatewayInterfaceService.page(new Page<>(crrPage, size));
             return  ResultVOUtil.success(page);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存查询异常");
+            return  ResultVOUtil.error(500,"网关接口查询异常");
         }
     }
 
     @GetMapping("/detail")
-    public ResultVO getGatewayInterface(@RequestParam("id")Integer id){
+    public ResultVO getGatewayInterface(@RequestParam("id")String id){
         try{
             GatewayInterface gatewayInterface = gatewayInterfaceService.getById(id);
             return  ResultVOUtil.success(gatewayInterface);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存明细查询异常");
+            return  ResultVOUtil.error(500,"网关接口明细查询异常");
         }
     }
 
     @GetMapping("/delete")
-    public ResultVO deleteGatewayInterface(@RequestParam("id")Integer id){
+    public ResultVO deleteGatewayInterface(@RequestParam("id")String id){
         try{
             boolean b = gatewayInterfaceService.removeById(id);
             if (b){
                 return  ResultVOUtil.success();
             }else {
-                return  ResultVOUtil.error(500,"缓存删除失败");
+                return  ResultVOUtil.error(500,"网关接口删除失败");
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存删除失败");
+            return  ResultVOUtil.error(500,"网关接口删除失败");
         }
     }
 
@@ -63,10 +63,10 @@ public class GatewayInterfaceController {
             if (save){
                 return  ResultVOUtil.success();
             }else {
-                return  ResultVOUtil.error(500,"缓存配置新增失败");
+                return  ResultVOUtil.error(500,"网关接口配置新增失败");
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存配置新增失败");
+            return  ResultVOUtil.error(500,"网关接口配置新增失败");
         }
     }
 
@@ -77,10 +77,10 @@ public class GatewayInterfaceController {
             if (b){
                 return  ResultVOUtil.success();
             }else {
-                return  ResultVOUtil.error(500,"缓存配置更新失败");
+                return  ResultVOUtil.error(500,"网关接口配置更新失败");
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存配置更新失败");
+            return  ResultVOUtil.error(500,"网关接口配置更新失败");
         }
     }
 }
