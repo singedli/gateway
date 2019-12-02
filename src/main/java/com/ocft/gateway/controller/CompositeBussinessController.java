@@ -1,7 +1,6 @@
 package com.ocft.gateway.controller;
 
 import com.ocft.gateway.cache.HandlerTypeCache;
-import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.HandlerType;
@@ -44,9 +43,6 @@ public class CompositeBussinessController extends BaseController {
     @RequestMapping(value = "/**", method = { RequestMethod.GET }, produces = "application/json; charset=utf-8")
     @ResponseBody
     public Map<String, Object> compositeHandler(HttpServletRequest request, @RequestParam Map<String,Object> map, HttpServletResponse response) throws Exception{
-
         return null;
     }
-
-
 }
