@@ -20,6 +20,8 @@ public class RequestType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String id;
+
     /**
      * 请求来源，浏览器或者app
      */

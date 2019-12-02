@@ -21,6 +21,8 @@ public class InterfaceConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String id;
+
     /**
      * 接口地址，对应gateway_interface中的url
      */

@@ -17,6 +17,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class RequestAccessLimit implements Serializable {
     private static final long serialVersionUID = 566840398906961311L;
+    private String id;
     private long firstRequestTime;
     private long count;
     private Boolean needLogin;

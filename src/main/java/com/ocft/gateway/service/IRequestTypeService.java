@@ -18,4 +18,8 @@ public interface IRequestTypeService extends IService<RequestType> {
     List<RequestType> findTypeBrowser();
 
     List<RequestType> findTypeApp();
+
+    List<RequestType> findAllRequestType();
+
+    RequestType findById(String id);
 }
