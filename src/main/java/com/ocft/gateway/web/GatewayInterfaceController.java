@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IGatewayInterfaceService;
-import com.ocft.gateway.utils.ResultVOUtil;
-import com.ocft.gateway.web.vo.ResultVO;
+import com.ocft.gateway.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @Auther: 梵高先生
@@ -25,78 +25,78 @@ public class GatewayInterfaceController {
     private IGatewayInterfaceService gatewayInterfaceService;
 
     @GetMapping("/all")
-    public ResultVO getAllGatewayInterface(@RequestParam("page") Integer crrPage,@RequestParam("size") Integer size){
+    public Map<String,Object> getAllGatewayInterface(@RequestParam("page") Integer crrPage, @RequestParam("size") Integer size){
         try {
             IPage<GatewayInterface> page = gatewayInterfaceService.page(new Page<>(crrPage, size));
-            return  ResultVOUtil.success(page);
+            return  ResultUtil.createResult(page);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/detail")
-    public ResultVO getGatewayInterface(@RequestParam("id")String id){
+    public Map<String,Object> getGatewayInterface(@RequestParam("id")String id){
         try{
             GatewayInterface gatewayInterface = gatewayInterfaceService.getById(id);
-            return  ResultVOUtil.success(gatewayInterface);
+            return  ResultUtil.createResult(gatewayInterface);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口明细查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete")
-    public ResultVO deleteGatewayInterface(@RequestParam("id")String id){
+    public Map<String,Object> deleteGatewayInterface(@RequestParam("id")String id){
         try{
             boolean b = gatewayInterfaceService.removeById(id);
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"网关接口删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete/ids")
-    public ResultVO deleteGatewayInterfaceByIds(@RequestParam("ids")String ids){
+    public Map<String,Object> deleteGatewayInterfaceByIds(@RequestParam("ids")String ids){
         try{
             boolean b = gatewayInterfaceService.removeByIds(Arrays.asList(ids.split(",")));
             if (b){
-                return  ResultVOUtil.success();
+                return   ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"网关接口批量删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口批量删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/create")
-    public ResultVO createGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
+    public Map<String,Object> createGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
         try{
             boolean save = gatewayInterfaceService.save(gatewayInterface);
             if (save){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"网关接口配置新增失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口配置新增失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/update")
-    public ResultVO updateGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
+    public Map<String,Object> updateGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
         try{
             boolean b = gatewayInterfaceService.updateById(gatewayInterface);
             if (b){
-                return  ResultVOUtil.success();
+                return   ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"网关接口配置更新失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"网关接口配置更新失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 }

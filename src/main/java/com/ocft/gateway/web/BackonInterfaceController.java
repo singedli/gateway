@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.service.IBackonInterfaceService;
-import com.ocft.gateway.utils.ResultVOUtil;
-import com.ocft.gateway.web.vo.ResultVO;
+import com.ocft.gateway.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @Auther: 梵高先生
@@ -24,78 +24,78 @@ public class BackonInterfaceController {
     private IBackonInterfaceService backonInterfaceService;
 
     @GetMapping("/all")
-    public ResultVO getAllBackonInterface(@RequestParam("page") Integer crrPage,@RequestParam("size") Integer size){
+    public Map<String,Object> getAllBackonInterface(@RequestParam("page") Integer crrPage, @RequestParam("size") Integer size){
         try {
             IPage<BackonInterface> page = backonInterfaceService.page(new Page<>(crrPage, size));
-            return  ResultVOUtil.success(page);
+            return  ResultUtil.createResult(page);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/detail")
-    public ResultVO getBackonInterface(@RequestParam("id")String id){
+    public Map<String,Object> getBackonInterface(@RequestParam("id")String id){
         try{
             BackonInterface backonInterface = backonInterfaceService.getById(id);
-            return  ResultVOUtil.success(backonInterface);
+            return  ResultUtil.createResult(backonInterface);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口明细查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete")
-    public ResultVO deleteBackonInterface(@RequestParam("id")String id){
+    public Map<String,Object> deleteBackonInterface(@RequestParam("id")String id){
         try{
             boolean b = backonInterfaceService.removeById(id);
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"后台服务接口删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete/ids")
-    public ResultVO deleteBackonInterfaceByIds(@RequestParam("ids")String ids){
+    public Map<String,Object> deleteBackonInterfaceByIds(@RequestParam("ids")String ids){
         try{
             boolean b = backonInterfaceService.removeByIds(Arrays.asList(ids.split(",")));
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"后台服务接口批量删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口批量删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/create")
-    public ResultVO createBackonInterface(@RequestBody BackonInterface backonInterface){
+    public Map<String,Object> createBackonInterface(@RequestBody BackonInterface backonInterface){
         try{
             boolean save = backonInterfaceService.save(backonInterface);
             if (save){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"后台服务接口配置新增失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口配置新增失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/update")
-    public ResultVO updateBackonInterface(@RequestBody BackonInterface backonInterface){
+    public Map<String,Object> updateBackonInterface(@RequestBody BackonInterface backonInterface){
         try{
             boolean b = backonInterfaceService.updateById(backonInterface);
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"后台服务接口配置更新失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"后台服务接口配置更新失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 }
