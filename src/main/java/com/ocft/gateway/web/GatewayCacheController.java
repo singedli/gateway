@@ -25,11 +25,11 @@ public class GatewayCacheController {
     @Autowired
     private IGatewayCacheService gatewayCacheService;
 
-    @PostMapping(value = "/all",produces = "application/json; charset=utf-8")
+    @PostMapping(value = "/all")
     public Map<String,Object> getAllGatewayCache(@RequestBody Map<String,Object> body){
         try {
-            Integer current = (Integer) body.get("current");
-            Integer size = (Integer) body.get("size");
+            Integer current = (Integer) body.get("pageNo");
+            Integer size = (Integer) body.get("pageSize");
 
             QueryWrapper<GatewayCache> queryWrapper = new QueryWrapper<>();
             if (!StringUtils.isEmpty(body.get("name"))){
