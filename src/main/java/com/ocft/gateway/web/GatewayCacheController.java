@@ -22,19 +22,22 @@ public class GatewayCacheController {
     @Autowired
     private IGatewayCacheService gatewayCacheService;
 
-    @GetMapping("/all")
-    public Map<String,Object> getAllGatewayCache(@RequestParam("page") Integer crrPage, @RequestParam("size") Integer size){
+    @PostMapping(value = "/all",produces = "application/json; charset=utf-8")
+    public Map<String,Object> getAllGatewayCache(@RequestBody Map<String,Object> body){
         try {
-            IPage<GatewayCache> page = gatewayCacheService.page(new Page<>(crrPage, size));
-            return  ResultUtil.createResult(page);
+            Integer current = (Integer) body.get("current");
+            Integer size = (Integer) body.get("size");
+            IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.page(new Page<>(current,size));
+            return  ResultUtil.createResult(gatewayCacheIPage);
         }catch (Exception e){
             return  ResultUtil.exceptionResult();
         }
     }
 
-    @GetMapping("/detail")
-    public Map<String,Object> getGatewayCache(@RequestParam("id")String id){
+    @PostMapping(value = "/detail", produces = "application/json; charset=utf-8")
+    public Map<String,Object> getGatewayCache(@RequestBody Map<String,Object> body){
         try{
+            String id = body.get("id").toString();
             GatewayCache gatewayCache = gatewayCacheService.getById(id);
             return  ResultUtil.createResult(gatewayCache);
         }catch (Exception e){
@@ -42,9 +45,10 @@ public class GatewayCacheController {
         }
     }
 
-    @GetMapping("/delete")
-    public Map<String,Object> deleteGatewayCache(@RequestParam("id")String id){
+    @PostMapping(value = "/delete",produces = "application/json; charset=utf-8")
+    public Map<String,Object> deleteGatewayCache(@RequestBody Map<String,Object> body){
         try{
+            String id = body.get("id").toString();
             boolean b = gatewayCacheService.removeById(id);
             if (b){
                 return  ResultUtil.createResult(null);
@@ -56,9 +60,10 @@ public class GatewayCacheController {
         }
     }
 
-    @GetMapping("/delete/ids")
-    public Map<String,Object> deleteGatewayCacheByIds(@RequestParam("ids")String ids){
+    @PostMapping(value = "/delete/ids", produces = "application/json; charset=utf-8")
+    public Map<String,Object> deleteGatewayCacheByIds(@RequestBody Map<String,Object> body){
         try{
+            String ids = body.get("ids").toString();
             boolean b = gatewayCacheService.removeByIds(Arrays.asList(ids.split(",")));
             if (b){
                 return  ResultUtil.createResult(null);
@@ -70,7 +75,7 @@ public class GatewayCacheController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create",produces = "application/json; charset=utf-8")
     public Map<String,Object> createGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean save = gatewayCacheService.save(gatewayCache);
@@ -84,7 +89,7 @@ public class GatewayCacheController {
         }
     }
 
-    @PostMapping("/update")
+    @PostMapping(value = "/update",produces = "application/json; charset=utf-8")
     public Map<String,Object> updateGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean b = gatewayCacheService.updateById(gatewayCache);
