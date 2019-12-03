@@ -34,8 +34,9 @@ public class InterfaceConfigServiceImpl extends ServiceImpl<InterfaceConfigMappe
      */
     @Override
     public IPage<InterfaceConfig> getPage(Integer pageNum, Integer pageSize) {
+        QueryWrapper<InterfaceConfig> eq = new QueryWrapper<InterfaceConfig>().eq("status", "1");
         IPage<InterfaceConfig> page = new Page<>(pageNum, pageSize);
-        IPage<InterfaceConfig> page1 = this.page(page);
+        IPage<InterfaceConfig> page1 = this.page(page,eq);
         return page1;
     }
 }

@@ -1,9 +1,9 @@
 package com.ocft.gateway.web;
 
+import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.service.IRequestTypeService;
-import com.ocft.gateway.utils.ResultVOUtil;
-import com.ocft.gateway.web.vo.ResultVO;
+import com.ocft.gateway.utils.ResultUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Bobby
@@ -29,88 +29,88 @@ public class RequestTypeController {
     IRequestTypeService iRequestTypeService;
 
     //查询所有
-    @RequestMapping("/findAll")
-    public ResultVO findAllRequestType() {
+    @PostMapping("/findAll")
+    public Map<String, Object> findAllRequestType() {
         try {
-            return ResultVOUtil.success(iRequestTypeService.findAllRequestType());
+            return ResultUtil.createResult(iRequestTypeService.findAllRequestType());
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "查询请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询请求类型出错"));
         }
     }
 
     //查询app类型
-    @RequestMapping("/findApp")
-    public ResultVO findAppRequestType() {
+    @PostMapping("/findApp")
+    public Map<String, Object> findAppRequestType() {
         try {
-            return ResultVOUtil.success(iRequestTypeService.findTypeApp());
+            return ResultUtil.createResult(iRequestTypeService.findTypeApp());
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "查询客户端请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询客户端请求类型出错"));
         }
 
     }
 
     //查询浏览器类型
-    @RequestMapping("/findBrowser")
-    public ResultVO findBrowserRequestType() {
+    @PostMapping("/findBrowser")
+    public Map<String, Object> findBrowserRequestType() {
         try {
-            return ResultVOUtil.success(iRequestTypeService.findTypeBrowser());
+            return ResultUtil.createResult(iRequestTypeService.findTypeBrowser());
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "查询浏览器请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询浏览器请求类型出错"));
         }
     }
 
     //单个查询
-    @RequestMapping("/findOne")
-    public ResultVO findById(@RequestParam("id") String id) {
+    @PostMapping("/findOne")
+    public Map<String, Object> findById(@RequestParam("id") String id) {
         try {
             RequestType byId = iRequestTypeService.findById(id);
-            return ResultVOUtil.success(byId);
+            return ResultUtil.createResult(byId);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "查询请求类型出错:" + id);
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询请求类型详情出错"));
         }
     }
 
     //根据id修改
     @PostMapping("/updateById")
-    public ResultVO updateById(@RequestBody RequestType requestType) {
+    public Map<String, Object> updateById(@RequestBody RequestType requestType) {
         try {
             iRequestTypeService.updateById(requestType);
-            return ResultVOUtil.success();
+            return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "修改请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "修改请求类型出错"));
         }
     }
 
     //添加
     @PostMapping("/add")
-    public ResultVO addOne(@RequestBody RequestType requestType) {
+    public Map<String, Object> addOne(@RequestBody RequestType requestType) {
         try {
             iRequestTypeService.save(requestType);
-            return ResultVOUtil.success();
+            return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "新增请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "新增请求类型出错"));
         }
     }
 
     //根据id删除
     @PostMapping("/deleteByIds")
-    public ResultVO deleteByIds(@RequestParam("ids") String ids) {
+    public Map<String, Object> deleteByIds(@RequestParam("ids") String ids) {
         if (StringUtils.isBlank(ids)) {
-            return ResultVOUtil.success();
+            return ResultUtil.createResult(null);
         }
         try {
             String[] idArr = ids.split(",");
             iRequestTypeService.removeByIds(Arrays.asList(idArr));
-            return ResultVOUtil.success();
+            return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultVOUtil.error(500, "删除请求类型出错");
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "删除请求类型出错"));
         }
     }
 }

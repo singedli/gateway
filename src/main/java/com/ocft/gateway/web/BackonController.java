@@ -1,8 +1,8 @@
 package com.ocft.gateway.web;
 
 import com.ocft.gateway.common.exceptions.GatewayException;
-import com.ocft.gateway.entity.InterfaceConfig;
-import com.ocft.gateway.service.IInterfaceConfigService;
+import com.ocft.gateway.entity.Backon;
+import com.ocft.gateway.service.IBackonService;
 import com.ocft.gateway.utils.ResultUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,68 +15,81 @@ import java.util.Map;
 
 /**
  * @author: Bobby
- * @create: 2019-12-02 16:30
- * @description: 请求接口防刷配置表
+ * @create: 2019-12-03 11:37
+ * @description:
  **/
 @RestController
-@RequestMapping("/interfaceConfig")
-public class InterfaceConfigController {
+@RequestMapping("/backon")
+public class BackonController {
 
-    private static final Logger logger = LoggerFactory.getLogger(InterfaceConfigController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BackonController.class);
 
 
     @Autowired
-    IInterfaceConfigService iInterfaceConfigService;
+    IBackonService iBackonService;
 
+    /**
+     * 分页
+     */
 
-    //分页查询所有
     @PostMapping("/getPage")
     public Map<String, Object> findAllRequestType(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
         try {
-            return ResultUtil.createResult(iInterfaceConfigService.getPage(pageNum, pageSize));
+            return ResultUtil.createResult(iBackonService.getPage(pageNum, pageSize));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultUtil.bizExceptionResult(new GatewayException("500", "分页查询防刷参数出错"));
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "分页查询出错"));
         }
     }
 
-    //根据id查询
+
+    /**
+     * 查询详情
+     */
     @PostMapping("/findById")
     public Map<String, Object> findAllRequestType(@RequestParam("id") String id) {
         try {
-            return ResultUtil.createResult(iInterfaceConfigService.getById(id));
+            return ResultUtil.createResult(iBackonService.getById(id));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询防刷详情出错"));
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询详情出错"));
         }
     }
 
 
-    //修改
-    @PostMapping("/updateById")
-    public Map<String, Object> findAllRequestType(@RequestBody InterfaceConfig interfaceConfig) {
-        try {
-            iInterfaceConfigService.updateById(interfaceConfig);
-            return ResultUtil.createResult(null);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResultUtil.bizExceptionResult(new GatewayException("500", "修改防刷详情出错"));
-        }
-    }
+    /**
+     * 新增
+     */
 
-    //新增
     @PostMapping("/addOne")
-    public Map<String, Object> addOne(@RequestBody InterfaceConfig interfaceConfig) {
+    public Map<String, Object> addOne(@RequestBody Backon backon) {
         try {
-            iInterfaceConfigService.save(interfaceConfig);
+            iBackonService.save(backon);
             return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultUtil.bizExceptionResult(new GatewayException("500", "新增接口配置出错"));
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "新增出错"));
         }
     }
 
-    //批量删除
+    /**
+     * 修改
+     */
+
+    @PostMapping("/updateById")
+    public Map<String, Object> findAllRequestType(@RequestBody Backon backon) {
+        try {
+            iBackonService.updateById(backon);
+            return ResultUtil.createResult(null);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "修改出错"));
+        }
+    }
+
+    /**
+     * 删除
+     */
     @PostMapping("/deleteByIds")
     public Map<String, Object> deleteByIds(@RequestParam("ids") String ids) {
         if (StringUtils.isBlank(ids)) {
@@ -84,12 +97,11 @@ public class InterfaceConfigController {
         }
         try {
             String[] idArr = ids.split(",");
-            iInterfaceConfigService.removeByIds(Arrays.asList(idArr));
+            iBackonService.removeByIds(Arrays.asList(idArr));
             return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResultUtil.bizExceptionResult(new GatewayException("500", "删除接口配置出错"));
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "删除出错"));
         }
     }
-
 }
