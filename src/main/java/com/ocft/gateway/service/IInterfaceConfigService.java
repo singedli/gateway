@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ocft.gateway.entity.InterfaceConfig;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -17,4 +19,7 @@ public interface IInterfaceConfigService extends IService<InterfaceConfig> {
     InterfaceConfig getByUrl(String url);
 
     IPage<InterfaceConfig> getPage(Integer pageNum, Integer pageSize);
+
+
+    IPage<InterfaceConfig> findByCondition(InterfaceConfig interfaceConfig, Integer pageNum, Integer pageSize);
 }
