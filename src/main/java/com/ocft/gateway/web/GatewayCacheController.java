@@ -3,12 +3,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.service.IGatewayCacheService;
-import com.ocft.gateway.utils.ResultVOUtil;
-import com.ocft.gateway.web.vo.ResultVO;
+import com.ocft.gateway.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @Auther: 梵高先生
@@ -23,78 +23,78 @@ public class GatewayCacheController {
     private IGatewayCacheService gatewayCacheService;
 
     @GetMapping("/all")
-    public ResultVO getAllGatewayCache(@RequestParam("page") Integer crrPage,@RequestParam("size") Integer size){
+    public Map<String,Object> getAllGatewayCache(@RequestParam("page") Integer crrPage, @RequestParam("size") Integer size){
         try {
             IPage<GatewayCache> page = gatewayCacheService.page(new Page<>(crrPage, size));
-            return  ResultVOUtil.success(page);
+            return  ResultUtil.createResult(page);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/detail")
-    public ResultVO getGatewayCache(@RequestParam("id")String id){
+    public Map<String,Object> getGatewayCache(@RequestParam("id")String id){
         try{
             GatewayCache gatewayCache = gatewayCacheService.getById(id);
-            return  ResultVOUtil.success(gatewayCache);
+            return  ResultUtil.createResult(gatewayCache);
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存明细查询异常");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete")
-    public ResultVO deleteGatewayCache(@RequestParam("id")String id){
+    public Map<String,Object> deleteGatewayCache(@RequestParam("id")String id){
         try{
             boolean b = gatewayCacheService.removeById(id);
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"缓存删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @GetMapping("/delete/ids")
-    public ResultVO deleteGatewayCacheByIds(@RequestParam("ids")String ids){
+    public Map<String,Object> deleteGatewayCacheByIds(@RequestParam("ids")String ids){
         try{
             boolean b = gatewayCacheService.removeByIds(Arrays.asList(ids.split(",")));
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"缓存批量删除失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存批量删除失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/create")
-    public ResultVO createGatewayCache(@RequestBody GatewayCache gatewayCache){
+    public Map<String,Object> createGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean save = gatewayCacheService.save(gatewayCache);
             if (save){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"缓存配置新增失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存配置新增失败");
+            return ResultUtil.exceptionResult();
         }
     }
 
     @PostMapping("/update")
-    public ResultVO updateGatewayCache(@RequestBody GatewayCache gatewayCache){
+    public Map<String,Object> updateGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean b = gatewayCacheService.updateById(gatewayCache);
             if (b){
-                return  ResultVOUtil.success();
+                return  ResultUtil.createResult(null);
             }else {
-                return  ResultVOUtil.error(500,"缓存配置更新失败");
+                return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
-            return  ResultVOUtil.error(500,"缓存配置更新失败");
+            return  ResultUtil.exceptionResult();
         }
     }
 }
