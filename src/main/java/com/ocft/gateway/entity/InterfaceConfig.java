@@ -41,7 +41,7 @@ public class InterfaceConfig implements Serializable {
     /**
      * 是否开启:1 表示启用,0 表示停用
      */
-    private Boolean status;
+    private Integer status;
 
     private LocalDateTime createTime;
 

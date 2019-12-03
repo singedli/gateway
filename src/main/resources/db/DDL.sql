@@ -95,7 +95,7 @@ IF NOT EXISTS `gateway_cache` (
 	`url` varchar(255) NOT NULL  DEFAULT '' COMMENT '接口地址，对应gateway_interface中的url',
 	`key_limit` varchar(255) NOT NULL COMMENT '该接口需要验证的参数的key',
 	`max_count` int(1) NOT NULL COMMENT '单位时间(默认秒)内最大的访问次数',
-	`status` tinyint(1) DEFAULT '1' COMMENT '是否开启:1 表示启用,0 表示停用',
+	`status` int(1) DEFAULT '1' COMMENT '是否开启:1 表示启用,0 表示停用',
 	`create_time` timestamp DEFAULT CURRENT_TIMESTAMP,
 	`update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`create_by` varchar(40) DEFAULT NULL,
