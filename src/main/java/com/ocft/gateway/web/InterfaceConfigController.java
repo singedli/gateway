@@ -8,10 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -33,7 +30,7 @@ public class InterfaceConfigController {
 
 
     //分页查询所有
-    @RequestMapping("/getPage")
+    @PostMapping("/getPage")
     public Map<String, Object> findAllRequestType(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
         try {
             return ResultUtil.createResult(iInterfaceConfigService.getPage(pageNum, pageSize));
@@ -44,7 +41,7 @@ public class InterfaceConfigController {
     }
 
     //根据id查询
-    @RequestMapping("/findById")
+    @PostMapping("/findById")
     public Map<String, Object> findAllRequestType(@RequestParam("id") String id) {
         try {
             return ResultUtil.createResult(iInterfaceConfigService.getById(id));
@@ -56,7 +53,7 @@ public class InterfaceConfigController {
 
 
     //修改
-    @RequestMapping("/updateById")
+    @PostMapping("/updateById")
     public Map<String, Object> findAllRequestType(@RequestBody InterfaceConfig interfaceConfig) {
         try {
             iInterfaceConfigService.updateById(interfaceConfig);
@@ -68,7 +65,7 @@ public class InterfaceConfigController {
     }
 
     //新增
-    @RequestMapping("/addOne")
+    @PostMapping("/addOne")
     public Map<String, Object> addOne(@RequestBody InterfaceConfig interfaceConfig) {
         try {
             iInterfaceConfigService.save(interfaceConfig);
@@ -80,7 +77,7 @@ public class InterfaceConfigController {
     }
 
     //批量删除
-    @RequestMapping("/deleteByIds")
+    @PostMapping("/deleteByIds")
     public Map<String, Object> deleteByIds(@RequestParam("ids") String ids) {
         if (StringUtils.isBlank(ids)) {
             return ResultUtil.createResult(null);

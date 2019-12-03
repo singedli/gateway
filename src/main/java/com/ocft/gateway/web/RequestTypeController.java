@@ -4,8 +4,6 @@ import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.service.IRequestTypeService;
 import com.ocft.gateway.utils.ResultUtil;
-import com.ocft.gateway.utils.ResultVOUtil;
-import com.ocft.gateway.web.vo.ResultVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +29,7 @@ public class RequestTypeController {
     IRequestTypeService iRequestTypeService;
 
     //查询所有
-    @RequestMapping("/findAll")
+    @PostMapping("/findAll")
     public Map<String, Object> findAllRequestType() {
         try {
             return ResultUtil.createResult(iRequestTypeService.findAllRequestType());
@@ -43,7 +40,7 @@ public class RequestTypeController {
     }
 
     //查询app类型
-    @RequestMapping("/findApp")
+    @PostMapping("/findApp")
     public Map<String, Object> findAppRequestType() {
         try {
             return ResultUtil.createResult(iRequestTypeService.findTypeApp());
@@ -55,7 +52,7 @@ public class RequestTypeController {
     }
 
     //查询浏览器类型
-    @RequestMapping("/findBrowser")
+    @PostMapping("/findBrowser")
     public Map<String, Object> findBrowserRequestType() {
         try {
             return ResultUtil.createResult(iRequestTypeService.findTypeBrowser());
@@ -66,7 +63,7 @@ public class RequestTypeController {
     }
 
     //单个查询
-    @RequestMapping("/findOne")
+    @PostMapping("/findOne")
     public Map<String, Object> findById(@RequestParam("id") String id) {
         try {
             RequestType byId = iRequestTypeService.findById(id);
