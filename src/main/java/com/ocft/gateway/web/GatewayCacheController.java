@@ -32,43 +32,43 @@ public class GatewayCacheController {
             Integer size = (Integer) body.get("size");
 
             QueryWrapper<GatewayCache> queryWrapper = new QueryWrapper<>();
-            if (StringUtils.isEmpty(body.get("name"))){
+            if (!StringUtils.isEmpty(body.get("name"))){
                 queryWrapper.eq("name",body.get("name"));
             }
 
-            if (StringUtils.isEmpty(body.get("url"))){
+            if (!StringUtils.isEmpty(body.get("url"))){
                 queryWrapper.eq("url",body.get("url"));
             }
 
-            if (StringUtils.isEmpty(body.get("backonUrl"))){
+            if (!StringUtils.isEmpty(body.get("backonUrl"))){
                 queryWrapper.eq("backonUrl",body.get("backonUrl"));
             }
 
-            if (StringUtils.isEmpty(body.get("status"))){
+            if (!StringUtils.isEmpty(body.get("status"))){
                 queryWrapper.eq("status",body.get("status"));
             }
 
-            if (StringUtils.isEmpty(body.get("resultNum"))){
+            if (!StringUtils.isEmpty(body.get("resultNum"))){
                 queryWrapper.eq("resultNum",body.get("resultNum"));
             }
 
-            if (StringUtils.isEmpty(body.get("expireTime"))){
+            if (!StringUtils.isEmpty(body.get("expireTime"))){
                 queryWrapper.eq("expireTime",body.get("expireTime"));
             }
 
-            if (StringUtils.isEmpty(body.get("requestBody"))){
+            if (!StringUtils.isEmpty(body.get("requestBody"))){
                 queryWrapper.eq("requestBody",body.get("requestBody"));
             }
 
-            if (StringUtils.isEmpty(body.get("responseBody"))){
+            if (!StringUtils.isEmpty(body.get("responseBody"))){
                 queryWrapper.eq("responseBody",body.get("responseBody"));
             }
 
-            if (StringUtils.isEmpty(body.get("createTime"))){
+            if (!StringUtils.isEmpty(body.get("createTime"))){
                 queryWrapper.le("createTime",body.get("createTime"));
             }
 
-            if (StringUtils.isEmpty(body.get("updateTime"))){
+            if (!StringUtils.isEmpty(body.get("updateTime"))){
                 queryWrapper.le("updateTime",body.get("updateTime"));
             }
             IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.page(new Page<>(current,size),queryWrapper);
