@@ -3,6 +3,7 @@ package com.ocft.gateway.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -53,6 +54,7 @@ public class GatewayCache {
      * 缓存过期时间（单位分钟）：默认为30分钟
      */
     private Integer expireTime;
+
 
     private Date createTime;
 
