@@ -2,6 +2,7 @@ package com.ocft.gateway.interceptor.pre;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
+import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.entity.InterfaceConfig;
@@ -59,7 +60,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         long currentTime = new Date().getTime();
         //获取请求参数
         GatewayInterface gatewayInterface = context.getGatewayInterface();
-        String  requestBody = context.getRequestBody();
+        String requestBody = context.getRequestBody();
         JSONObject jsonObject = JSONObject.parseObject(requestBody);
         //获取接口对应的限制策率数据
         InterfaceConfig interfaceConfig = iInterfaceConfigService.getByUrl(gatewayInterface.getUrl());
@@ -93,7 +94,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                     accessFlag = false;
                     accessLimit.setNeedLogin(false);
                 }
-                String keyLimitFlag = getByKey(interfaceConfig,jsonObject);
+                String keyLimitFlag = getByKey(interfaceConfig, jsonObject);
                 if (StringUtils.isNotBlank(keyLimitFlag) && keyLimitFlag.equals("1")) {
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
@@ -101,9 +102,9 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 //最后更新redis中的数据
                 String strAccessLimit = JSONObject.toJSONString(accessLimit);
                 redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
-                if(!accessFlag){
+                if (!accessFlag) {
                     //修改对应的key参数值
-                    setByKey(interfaceConfig,jsonObject,"1");
+                    setByKey(interfaceConfig, jsonObject, "1");
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
             } else {
@@ -117,32 +118,33 @@ public class RequestLimitIntercept implements GatewayInterceptor {
             accessLimit.setCount(1);
             String strAccessLimit = JSONObject.toJSONString(accessLimit);
             redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
-            setByKey(interfaceConfig,jsonObject,"0");
+            setByKey(interfaceConfig, jsonObject, "0");
         }
     }
 
     /**
      * 判redis中的指定的key数据
      */
-    private String getByKey(InterfaceConfig interfaceConfig,JSONObject requestBody) {
+    private String getByKey(InterfaceConfig interfaceConfig, JSONObject requestBody) {
         String flag = "0";
         String keyLimit = interfaceConfig.getKeyLimit();
-        if(StringUtils.isNotBlank(keyLimit)){
+        if (StringUtils.isNotBlank(keyLimit)) {
             String[] keys = keyLimit.split(",");
-            for (int i = 0;i <keys.length;i ++ ){
+            for (int i = 0; i < keys.length; i++) {
                 //取得request中对应的请求数据
-                String value = requestBody.get(keys[i])+"";
-                if(StringUtils.isBlank(value)){
+                Object jsonPropertyValue = JsonOperateEvalutor.getJsonPropertyValue(requestBody, keys[i]);
+                String value = jsonPropertyValue + "";
+                if (StringUtils.isBlank(value)) {
                     continue;
                 }
                 //判断redis 对应value是否被限制
                 String limitBykey = redisUtil.get(value);
-                if(StringUtils.isBlank(limitBykey)){
+                if (StringUtils.isBlank(limitBykey)) {
                     continue;
                 }
                 flag = limitBykey;
-                if(limitBykey.equals("1")){
-                    logger.error(keys[i]+"为"+value+"的被限制请求");
+                if (limitBykey.equals("1")) {
+                    logger.error(keys[i] + "为" + value + "的被限制请求");
                     break;
                 }
             }
@@ -152,26 +154,27 @@ public class RequestLimitIntercept implements GatewayInterceptor {
 
     /**
      * 修改redis中指定的key数据
+     *
      * @param gatewayInterface
      * @param requestBody
-     * @param flag 0为不限制 1为限制登陆
+     * @param flag             0为不限制 1为限制登陆
      */
-    private void setByKey(InterfaceConfig interfaceConfig,JSONObject requestBody,String flag) {
+    private void setByKey(InterfaceConfig interfaceConfig, JSONObject requestBody, String flag) {
         String keyLimit = interfaceConfig.getKeyLimit();
-        if(StringUtils.isNotBlank(keyLimit)){
+        if (StringUtils.isNotBlank(keyLimit)) {
             String[] keys = keyLimit.split(",");
-            for (int i = 0;i <keys.length;i ++ ){
+            for (int i = 0; i < keys.length; i++) {
                 //取得request中对应的请求数据
-                String value = requestBody.get(keys[i])+"";
-                if(StringUtils.isBlank(value)){
+                Object jsonPropertyValue = JsonOperateEvalutor.getJsonPropertyValue(requestBody, keys[i]);
+                String value = jsonPropertyValue + "";
+                if (StringUtils.isBlank(value)) {
                     continue;
                 }
                 //有就设置对应的flag
-                redisUtil.set(value,flag,604800);
+                redisUtil.set(value, flag, 604800);
             }
         }
     }
-
 
 
     /**
@@ -185,7 +188,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         List<RequestType> typeBrowsers = irequestTypeService.findTypeBrowser();//客户端
         List<RequestType> typeApps = irequestTypeService.findTypeApp();//app端
         String userAgent = request.getHeader("user-agent");
-        logger.info("user-agent :"+userAgent);
+        logger.info("user-agent :" + userAgent);
         for (RequestType type : typeBrowsers) {
             if (userAgent.contains(type.getAgent())) {
                 flag = "0";
