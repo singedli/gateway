@@ -1,10 +1,13 @@
 package com.ocft.gateway.web;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.kotlin.KtQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -27,7 +30,48 @@ public class GatewayCacheController {
         try {
             Integer current = (Integer) body.get("current");
             Integer size = (Integer) body.get("size");
-            IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.page(new Page<>(current,size));
+
+            QueryWrapper<GatewayCache> queryWrapper = new QueryWrapper<>();
+            if (StringUtils.isEmpty(body.get("name"))){
+                queryWrapper.eq("name",body.get("name"));
+            }
+
+            if (StringUtils.isEmpty(body.get("url"))){
+                queryWrapper.eq("url",body.get("url"));
+            }
+
+            if (StringUtils.isEmpty(body.get("backonUrl"))){
+                queryWrapper.eq("backonUrl",body.get("backonUrl"));
+            }
+
+            if (StringUtils.isEmpty(body.get("status"))){
+                queryWrapper.eq("status",body.get("status"));
+            }
+
+            if (StringUtils.isEmpty(body.get("resultNum"))){
+                queryWrapper.eq("resultNum",body.get("resultNum"));
+            }
+
+            if (StringUtils.isEmpty(body.get("expireTime"))){
+                queryWrapper.eq("expireTime",body.get("expireTime"));
+            }
+
+            if (StringUtils.isEmpty(body.get("requestBody"))){
+                queryWrapper.eq("requestBody",body.get("requestBody"));
+            }
+
+            if (StringUtils.isEmpty(body.get("responseBody"))){
+                queryWrapper.eq("responseBody",body.get("responseBody"));
+            }
+
+            if (StringUtils.isEmpty(body.get("createTime"))){
+                queryWrapper.le("createTime",body.get("createTime"));
+            }
+
+            if (StringUtils.isEmpty(body.get("updateTime"))){
+                queryWrapper.le("updateTime",body.get("updateTime"));
+            }
+            IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.page(new Page<>(current,size),queryWrapper);
             return  ResultUtil.createResult(gatewayCacheIPage);
         }catch (Exception e){
             return  ResultUtil.exceptionResult();
