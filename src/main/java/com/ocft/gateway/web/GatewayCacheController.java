@@ -8,6 +8,8 @@ import com.ocft.gateway.web.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * @Auther: 梵高先生
  * @Date: 2019/12/2 14:43
@@ -51,6 +53,20 @@ public class GatewayCacheController {
             }
         }catch (Exception e){
             return  ResultVOUtil.error(500,"缓存删除失败");
+        }
+    }
+
+    @GetMapping("/delete/ids")
+    public ResultVO deleteGatewayCacheByIds(@RequestParam("ids")String ids){
+        try{
+            boolean b = gatewayCacheService.removeByIds(Arrays.asList(ids.split(",")));
+            if (b){
+                return  ResultVOUtil.success();
+            }else {
+                return  ResultVOUtil.error(500,"缓存批量删除失败");
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error(500,"缓存批量删除失败");
         }
     }
 

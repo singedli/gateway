@@ -3,12 +3,13 @@ package com.ocft.gateway.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.BackonInterface;
-import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IBackonInterfaceService;
 import com.ocft.gateway.utils.ResultVOUtil;
 import com.ocft.gateway.web.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 /**
  * @Auther: 梵高先生
@@ -53,6 +54,20 @@ public class BackonInterfaceController {
             }
         }catch (Exception e){
             return  ResultVOUtil.error(500,"后台服务接口删除失败");
+        }
+    }
+
+    @GetMapping("/delete/ids")
+    public ResultVO deleteBackonInterfaceByIds(@RequestParam("ids")String ids){
+        try{
+            boolean b = backonInterfaceService.removeByIds(Arrays.asList(ids.split(",")));
+            if (b){
+                return  ResultVOUtil.success();
+            }else {
+                return  ResultVOUtil.error(500,"后台服务接口批量删除失败");
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error(500,"后台服务接口批量删除失败");
         }
     }
 

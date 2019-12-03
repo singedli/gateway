@@ -10,6 +10,8 @@ import com.ocft.gateway.web.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * @Auther: 梵高先生
  * @Date: 2019/12/2 15:09
@@ -53,6 +55,20 @@ public class GatewayInterfaceController {
             }
         }catch (Exception e){
             return  ResultVOUtil.error(500,"网关接口删除失败");
+        }
+    }
+
+    @GetMapping("/delete/ids")
+    public ResultVO deleteGatewayInterfaceByIds(@RequestParam("ids")String ids){
+        try{
+            boolean b = gatewayInterfaceService.removeByIds(Arrays.asList(ids.split(",")));
+            if (b){
+                return  ResultVOUtil.success();
+            }else {
+                return  ResultVOUtil.error(500,"网关接口批量删除失败");
+            }
+        }catch (Exception e){
+            return  ResultVOUtil.error(500,"网关接口批量删除失败");
         }
     }
 
