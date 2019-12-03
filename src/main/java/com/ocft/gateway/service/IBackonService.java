@@ -1,5 +1,6 @@
 package com.ocft.gateway.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ocft.gateway.entity.Backon;
 
@@ -13,4 +14,6 @@ import com.ocft.gateway.entity.Backon;
  */
 public interface IBackonService extends IService<Backon> {
     Backon getBackon(String system);
+
+    IPage<Backon> getPage(Integer pageNum, Integer pageSize);
 }
