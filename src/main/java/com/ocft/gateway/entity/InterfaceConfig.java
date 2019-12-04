@@ -34,9 +34,14 @@ public class InterfaceConfig implements Serializable {
     private String keyLimit;
 
     /**
-     * 单位时间(默认秒)内最大的访问次数
+     * 单位时间内最大的访问次数
      */
-    private Integer maxCount;
+    private Double maxCount;
+
+    /**
+     * 单位时间
+     */
+    private String timeUnit;
 
     /**
      * 是否开启:1 表示启用,0 表示停用

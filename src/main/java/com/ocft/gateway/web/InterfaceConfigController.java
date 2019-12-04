@@ -33,9 +33,11 @@ public class InterfaceConfigController {
 
     //分页查询所有
     @PostMapping("/getPage")
-    public Map<String, Object> findAllRequestType(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
+    public Map<String, Object> findAllRequestType(@RequestBody Map<String,Object> body) {
         try {
-            return ResultUtil.createResult(iInterfaceConfigService.getPage(pageNum, pageSize));
+            Integer pageNo = (Integer) body.get("current");
+            Integer pageSize = (Integer) body.get("size");
+            return ResultUtil.createResult(iInterfaceConfigService.getPage(pageNo, pageSize));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResultUtil.bizExceptionResult(new GatewayException("500", "分页查询防刷参数出错"));
