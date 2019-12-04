@@ -77,14 +77,11 @@ public class GatewayInterfaceController {
     public Map<String,Object> createGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
         try{
             boolean save = gatewayInterfaceService.save(gatewayInterface);
-            if (save){
-                return  ResultUtil.createResult(null);
-            }else {
-                return  ResultUtil.exceptionResult();
-            }
         }catch (Exception e){
+            log.error("新增网关接口配置发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
+        return ResultUtil.successResult();
     }
 
     @PostMapping("/update")
