@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.request.QueryGatewayCacheRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @Date: 2019/12/2 14:43
  * @Description:
  */
+@Slf4j
 @RestController
 @RequestMapping("/cache/config")
 public class GatewayCacheController {
@@ -26,54 +29,12 @@ public class GatewayCacheController {
     private IGatewayCacheService gatewayCacheService;
 
     @PostMapping(value = "/all")
-    public Map<String,Object> getAllGatewayCache(@RequestBody Map<String,Object> body){
+    public Map<String,Object> getGatewayCacheList(@RequestBody QueryGatewayCacheRequest request){
         try {
-            Integer current = (Integer) body.get("pageNo");
-            Integer size = (Integer) body.get("pageSize");
-
-            QueryWrapper<GatewayCache> queryWrapper = new QueryWrapper<>();
-            if (!StringUtils.isEmpty(body.get("name"))){
-                queryWrapper.eq("name",body.get("name"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("url"))){
-                queryWrapper.eq("url",body.get("url"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("backonUrl"))){
-                queryWrapper.eq("backonUrl",body.get("backonUrl"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("status"))){
-                queryWrapper.eq("status",body.get("status"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("resultNum"))){
-                queryWrapper.eq("resultNum",body.get("resultNum"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("expireTime"))){
-                queryWrapper.eq("expireTime",body.get("expireTime"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("requestBody"))){
-                queryWrapper.eq("requestBody",body.get("requestBody"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("responseBody"))){
-                queryWrapper.eq("responseBody",body.get("responseBody"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("createTime"))){
-                queryWrapper.le("createTime",body.get("createTime"));
-            }
-
-            if (!StringUtils.isEmpty(body.get("updateTime"))){
-                queryWrapper.le("updateTime",body.get("updateTime"));
-            }
-            IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.page(new Page<>(current,size),queryWrapper);
+            IPage<GatewayCache> gatewayCacheIPage = gatewayCacheService.getGatewayCacheList(request);
             return  ResultUtil.createResult(gatewayCacheIPage);
         }catch (Exception e){
+            log.error("查询网关缓存列表发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }
