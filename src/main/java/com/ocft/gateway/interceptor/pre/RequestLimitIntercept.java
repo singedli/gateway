@@ -217,10 +217,10 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         Double maxCount = interfaceConfig.getMaxCount();
         String timeUnit = interfaceConfig.getTimeUnit();
         Double halfup;
-        if (timeUnit.equals("时")) {
+        if (timeUnit.equals("H")) {
             halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00 / 60.00), 2);
 
-        } else if (timeUnit.equals("分")) {
+        } else if (timeUnit.equals("M")) {
             halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00), 2);
         } else {
             halfup = MathUtil.halfup(totalCountD / timeFrameD, 2);//默认为秒
