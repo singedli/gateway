@@ -7,7 +7,10 @@ import com.ocft.gateway.entity.InterfaceConfig;
 import com.ocft.gateway.mapper.InterfaceConfigMapper;
 import com.ocft.gateway.service.IInterfaceConfigService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ocft.gateway.web.dto.request.QueryInterfaceRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +25,9 @@ import java.util.List;
  */
 @Service
 public class InterfaceConfigServiceImpl extends ServiceImpl<InterfaceConfigMapper, InterfaceConfig> implements IInterfaceConfigService {
+
+    @Autowired
+    InterfaceConfigMapper interfaceConfigMapper;
 
     @Override
     public InterfaceConfig getByUrl(String url) {
@@ -43,32 +49,25 @@ public class InterfaceConfigServiceImpl extends ServiceImpl<InterfaceConfigMappe
         return page1;
     }
 
+
+
     /**
-     * 根据条件查询
-     *
+     *修改
      * @param interfaceConfig
-     * @return
      */
+
     @Override
-    public IPage<InterfaceConfig> findByCondition(InterfaceConfig interfaceConfig, Integer pageNum, Integer pageSize) {
-        IPage<InterfaceConfig> page = new Page<>(pageNum, pageSize);
-        QueryWrapper<InterfaceConfig> eq = new QueryWrapper<InterfaceConfig>().eq("1", "1");
-        if (StringUtils.isNotBlank(interfaceConfig.getKeyLimit())) {
-            eq.eq("key_limit", interfaceConfig.getKeyLimit());
-        }
-        if (null != interfaceConfig.getMaxCount()) {
-            eq.eq("max_count", interfaceConfig.getMaxCount());
-        }
-        if (StringUtils.isNotBlank(interfaceConfig.getUrl())) {
-            eq.eq("url", interfaceConfig.getUrl());
-        }
-        if (StringUtils.isNotBlank(interfaceConfig.getUrl())) {
-            eq.eq("url", interfaceConfig.getUrl());
-        }
-        if (null != interfaceConfig.getStatus()) {
-            eq.eq("status", interfaceConfig.getStatus());
-        }
-        return this.page(page, eq);
+    public void modifyById(InterfaceConfig interfaceConfig) {
+        InterfaceConfig newInterfaceConfig = new InterfaceConfig();
+        BeanUtils.copyProperties(interfaceConfig, newInterfaceConfig);
+        this.updateById(newInterfaceConfig);
+    }
+
+    @Override
+    public IPage<InterfaceConfig> queryInterfaceConfigs(QueryInterfaceRequest request) {
+        Page<InterfaceConfig> page = new Page<>(request.getCurrent(), request.getSize());
+        List<InterfaceConfig> gatewayInterfaces = interfaceConfigMapper.queryInterfaceConfigs(page, request);
+        return page.setRecords(gatewayInterfaces);
     }
 
 }

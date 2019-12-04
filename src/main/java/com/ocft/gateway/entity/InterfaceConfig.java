@@ -44,9 +44,9 @@ public class InterfaceConfig implements Serializable {
     private String timeUnit;
 
     /**
-     * 是否开启:1 表示启用,0 表示停用
+     * 状态信息:1 表示启用,0 表示停用
      */
-    private Integer status;
+    private Boolean status;
 
     private LocalDateTime createTime;
 
