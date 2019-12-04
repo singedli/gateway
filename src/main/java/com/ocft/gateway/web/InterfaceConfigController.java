@@ -1,5 +1,6 @@
 package com.ocft.gateway.web;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.InterfaceConfig;
 import com.ocft.gateway.service.IInterfaceConfigService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +51,19 @@ public class InterfaceConfigController {
             logger.error(e.getMessage());
             return ResultUtil.bizExceptionResult(new GatewayException("500", "查询防刷详情出错"));
         }
+    }
+
+    //根据指定的数据源查询
+    @PostMapping("/findByCondition")
+    public Map<String, Object> findByCondition(@RequestBody InterfaceConfig interfaceConfig,@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
+        try {
+            IPage<InterfaceConfig> page= iInterfaceConfigService.findByCondition(interfaceConfig,pageNum,pageSize);
+            return ResultUtil.createResult(page);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResultUtil.bizExceptionResult(new GatewayException("500", "查询防刷详情出错"));
+        }
+
     }
 
 
