@@ -1,7 +1,9 @@
 package com.ocft.gateway.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.web.dto.request.QueryGatewayInterfaceRequest;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.ocft.gateway.entity.GatewayInterface;
  */
 public interface IGatewayInterfaceService extends IService<GatewayInterface> {
     GatewayInterface getGateWayInterface(String url);
+    Page<GatewayInterface> queryGateWayInterfaces(QueryGatewayInterfaceRequest request);
 }

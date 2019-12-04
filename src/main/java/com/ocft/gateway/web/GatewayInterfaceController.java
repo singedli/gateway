@@ -6,6 +6,8 @@ import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.request.QueryGatewayInterfaceRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,19 +19,21 @@ import java.util.Map;
  * @Date: 2019/12/2 15:09
  * @Description:
  */
+@Slf4j
 @RestController
-@RequestMapping("/gateway/interface")
+@RequestMapping("/config/interface")
 public class GatewayInterfaceController {
 
     @Autowired
     private IGatewayInterfaceService gatewayInterfaceService;
 
-    @GetMapping("/all")
-    public Map<String,Object> getAllGatewayInterface(@RequestParam("page") Integer crrPage, @RequestParam("size") Integer size){
+    @PostMapping("/all")
+    public Map<String,Object> getAllGatewayInterface(@RequestBody QueryGatewayInterfaceRequest request){
         try {
-            IPage<GatewayInterface> page = gatewayInterfaceService.page(new Page<>(crrPage, size));
-            return  ResultUtil.createResult(page);
+            Page<GatewayInterface> gatewayInterfacePage = gatewayInterfaceService.queryGateWayInterfaces(request);
+            return  ResultUtil.createResult(gatewayInterfacePage);
         }catch (Exception e){
+            log.error("查询网关接口列表发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }

@@ -12,5 +12,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2019-11-28
  */
 public interface InterfaceConfigMapper extends BaseMapper<InterfaceConfig> {
-
 }
