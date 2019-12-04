@@ -90,14 +90,11 @@ public class GatewayInterfaceController {
     @PostMapping("/update")
     public Map<String,Object> updateGatewayInterface(@RequestBody GatewayInterface gatewayInterface){
         try{
-            boolean b = gatewayInterfaceService.updateById(gatewayInterface);
-            if (b){
-                return   ResultUtil.createResult(null);
-            }else {
-                return  ResultUtil.exceptionResult();
-            }
+            gatewayInterfaceService.updateById(gatewayInterface);
         }catch (Exception e){
+            log.error("更新网关接口配置发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
+        return ResultUtil.successResult();
     }
 }
