@@ -10,6 +10,7 @@ import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.mapper.GatewayCacheMapper;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.web.dto.request.QueryGatewayCacheRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -37,8 +38,29 @@ public class IGatewayCacheServiceImpl extends ServiceImpl<GatewayCacheMapper, Ga
 
     @Override
     public IPage<GatewayCache> getGatewayCacheList(QueryGatewayCacheRequest request) {
-        IPage<GatewayCache> page = new Page<>(request.getCurrent(), request.getSize());
-        List<GatewayCache> gatewayCacheList = gatewayCacheMapper.getGatewayCacheList(request);
-        return page.setRecords(gatewayCacheList);
+//        IPage<GatewayCache> page = new Page<>(request.getCurrent(), request.getSize());
+//        List<GatewayCache> gatewayCacheList = gatewayCacheMapper.getGatewayCacheList(request);
+//        return page.setRecords(gatewayCacheList);
+        QueryWrapper<GatewayCache> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty(request.getName())){
+            queryWrapper.eq("name",request.getName());
+        }
+        if(StringUtils.isNotEmpty(request.getUrl())){
+            queryWrapper.eq("url",request.getUrl());
+        }
+        if(StringUtils.isNotEmpty(request.getBackonUrl())){
+            queryWrapper.eq("backon_url",request.getBackonUrl());
+        }
+        if(StringUtils.isNotEmpty(request.getStatus())){
+            queryWrapper.eq("status",request.getStatus());
+        }
+        if(StringUtils.isNotEmpty(request.getResultNum())){
+            queryWrapper.eq("result_num",request.getResultNum());
+        }
+        if(StringUtils.isNotEmpty(request.getExpireTime())){
+            queryWrapper.eq("expire_time",request.getExpireTime());
+        }
+        IPage<GatewayCache> page = this.page(new Page<>(request.getCurrent(), request.getSize()),queryWrapper);
+        return page;
     }
 }
