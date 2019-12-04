@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class QueryGatewayCacheRequest extends PageDto {
 
+    private String id;
     private String name;
     private String url;
     private String backonUrl;

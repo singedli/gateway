@@ -39,33 +39,34 @@ public class GatewayCacheController {
         }
     }
 
-    @PostMapping(value = "/detail", produces = "application/json; charset=utf-8")
-    public Map<String,Object> getGatewayCache(@RequestBody Map<String,Object> body){
+    @PostMapping(value = "/detail")
+    public Map<String,Object> getGatewayCache(@RequestBody QueryGatewayCacheRequest request){
         try{
-            String id = body.get("id").toString();
-            GatewayCache gatewayCache = gatewayCacheService.getById(id);
+            GatewayCache gatewayCache = gatewayCacheService.getById(request.getId());
             return  ResultUtil.createResult(gatewayCache);
         }catch (Exception e){
+            log.error("查询网关缓存明细发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }
 
-    @PostMapping(value = "/delete",produces = "application/json; charset=utf-8")
-    public Map<String,Object> deleteGatewayCache(@RequestBody Map<String,Object> body){
+    @PostMapping(value = "/delete")
+    public Map<String,Object> deleteGatewayCache(@RequestBody QueryGatewayCacheRequest request){
         try{
-            String id = body.get("id").toString();
-            boolean b = gatewayCacheService.removeById(id);
+            boolean b = gatewayCacheService.removeById(request.getId());
             if (b){
                 return  ResultUtil.createResult(null);
             }else {
+                log.error("删除网关缓存发生异常");
                 return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
+            log.error("删除网关缓存发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }
 
-    @PostMapping(value = "/delete/ids", produces = "application/json; charset=utf-8")
+    @PostMapping(value = "/delete/ids")
     public Map<String,Object> deleteGatewayCacheByIds(@RequestBody Map<String,Object> body){
         try{
             String ids = body.get("ids").toString();
@@ -73,37 +74,43 @@ public class GatewayCacheController {
             if (b){
                 return  ResultUtil.createResult(null);
             }else {
+                log.error("删除网关缓存发生异常");
                 return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
+            log.error("删除网关缓存发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }
 
-    @PostMapping(value = "/create",produces = "application/json; charset=utf-8")
+    @PostMapping(value = "/create")
     public Map<String,Object> createGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean save = gatewayCacheService.save(gatewayCache);
             if (save){
                 return  ResultUtil.createResult(null);
             }else {
+                log.error("新增网关缓存发生异常");
                 return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
+            log.error("新增网关缓存发生异常:{}",e);
             return ResultUtil.exceptionResult();
         }
     }
 
-    @PostMapping(value = "/update",produces = "application/json; charset=utf-8")
+    @PostMapping(value = "/update")
     public Map<String,Object> updateGatewayCache(@RequestBody GatewayCache gatewayCache){
         try{
             boolean b = gatewayCacheService.updateById(gatewayCache);
             if (b){
                 return  ResultUtil.createResult(null);
             }else {
+                log.error("修改网关缓存发生异常");
                 return  ResultUtil.exceptionResult();
             }
         }catch (Exception e){
+            log.error("修改网关缓存发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }
