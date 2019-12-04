@@ -11,6 +11,7 @@ import com.ocft.gateway.entity.RequestType;
 import com.ocft.gateway.interceptor.GatewayInterceptor;
 import com.ocft.gateway.service.IInterfaceConfigService;
 import com.ocft.gateway.service.IRequestTypeService;
+import com.ocft.gateway.utils.MathUtil;
 import com.ocft.gateway.utils.RedisUtil;
 import com.ocft.gateway.utils.WebUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -88,17 +89,18 @@ public class RequestLimitIntercept implements GatewayInterceptor {
                 long timeFrame = currentTime - accessLimit.getFirstRequestTime();
                 long totalCount = accessLimit.getCount() + 1;
                 accessLimit.setCount(totalCount);
-                //超过次数 redis中的数据做needLogin修改为false 过期时间为一周
-                if (totalCount / timeFrame > interfaceConfig.getMaxCount()) {
+
+                boolean checkResult = checkMaxCout(totalCount, timeFrame, interfaceConfig);
+                if (!checkResult) {
                     logger.error("请求频率超过限制限制");
-                    accessFlag = false;
-                    accessLimit.setNeedLogin(false);
+                    accessFlag = checkResult;
+                    accessLimit.setNeedLogin(checkResult);
                 }
                 String keyLimitFlag = getByKey(interfaceConfig, jsonObject);
                 if (StringUtils.isNotBlank(keyLimitFlag) && keyLimitFlag.equals("1")) {
                     throw new GatewayException("500", "服务异常，请求限制");
                 }
-
+                //超过次数 redis中的数据做needLogin修改为false 过期时间为一周
                 //最后更新redis中的数据
                 String strAccessLimit = JSONObject.toJSONString(accessLimit);
                 redisUtil.set(ipOrdeviceStr, strAccessLimit, 604800);
@@ -121,6 +123,7 @@ public class RequestLimitIntercept implements GatewayInterceptor {
             setByKey(interfaceConfig, jsonObject, "0");
         }
     }
+
 
     /**
      * 判redis中的指定的key数据
@@ -205,5 +208,26 @@ public class RequestLimitIntercept implements GatewayInterceptor {
             }
         }
         return flag;
+    }
+
+    //校验单位时间是否超过最大次数
+    private boolean checkMaxCout(long totalCount, long timeFrame, InterfaceConfig interfaceConfig) {
+        Double totalCountD = Double.valueOf(totalCount);
+        Double timeFrameD = Double.valueOf(timeFrame);
+        Double maxCount = interfaceConfig.getMaxCount();
+        String timeUnit = interfaceConfig.getTimeUnit();
+        Double halfup;
+        if (timeUnit.equals("H")) {
+            halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00 / 60.00), 2);
+
+        } else if (timeUnit.equals("M")) {
+            halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00), 2);
+        } else {
+            halfup = MathUtil.halfup(totalCountD / timeFrameD, 2);//默认为秒
+        }
+        if (halfup > maxCount) {
+            return false;
+        }
+        return true;
     }
 }
