@@ -6,6 +6,7 @@ import com.ocft.gateway.entity.GatewayCache;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.request.DeleteGatewayInterfaceRequest;
 import com.ocft.gateway.web.dto.request.QueryGatewayInterfaceRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +49,14 @@ public class GatewayInterfaceController {
         }
     }
 
-    @GetMapping("/delete")
-    public Map<String,Object> deleteGatewayInterface(@RequestParam("id")String id){
+    @PostMapping("/delete")
+    public Map<String,Object> deleteGatewayInterface(@RequestBody DeleteGatewayInterfaceRequest req){
         try{
-            boolean b = gatewayInterfaceService.removeById(id);
-            if (b){
-                return  ResultUtil.createResult(null);
-            }else {
-                return  ResultUtil.exceptionResult();
-            }
+            boolean b = gatewayInterfaceService.removeById(req.getId());
         }catch (Exception e){
             return  ResultUtil.exceptionResult();
         }
+        return ResultUtil.successResult();
     }
 
     @GetMapping("/delete/ids")

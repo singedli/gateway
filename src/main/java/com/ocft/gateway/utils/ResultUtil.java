@@ -36,4 +36,11 @@ public class ResultUtil {
         map.put("msg",ResponseEnum.FAIL.getMessage());
         return map;
     }
+
+    public static Map<String,Object> successResult(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("code",ResponseEnum.SUCCESS.getCode());
+        map.put("msg",ResponseEnum.SUCCESS.getMessage());
+        return map;
+    }
 }

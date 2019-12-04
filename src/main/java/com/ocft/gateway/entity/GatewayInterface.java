@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -65,6 +66,7 @@ public class GatewayInterface implements Serializable {
     /**
      * 逻辑删除标志位，1表示已删除，0表示未删除
      */
+    @TableLogic
     private Integer isDeleted;
 
     private String invokeConfig;

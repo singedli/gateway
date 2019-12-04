@@ -48,6 +48,7 @@
         FROM
             gateway_interface i
         <where>
+            1=1
             <if test="req.name!=null and req.name!=''">
                 and i.name = #{req.name,jdbcType=VARCHAR}
             </if>
@@ -63,7 +64,10 @@
             <if test="req.status!=null and req.status!=''">
                 and i.status = #{req.status,jdbcType=VARCHAR}
             </if>
+            and i.is_deleted = 0
+
         </where>
+
 
     </select>
 
