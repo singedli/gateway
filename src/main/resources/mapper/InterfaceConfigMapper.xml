@@ -4,7 +4,7 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ocft.gateway.entity.InterfaceConfig">
-    <result column="id" property="id" />
+        <result column="id" property="id" />
         <result column="url" property="url" />
         <result column="key_limit" property="keyLimit" />
         <result column="max_count" property="maxCount" />
@@ -21,5 +21,39 @@
         id,
         url, key_limit, max_count,time_unit, status, create_time, update_time, create_by, update_by
     </sql>
+
+    <select id="queryInterfaceConfigs" parameterType="com.ocft.gateway.web.dto.request.QueryInterfaceRequest" resultType="com.ocft.gateway.entity.InterfaceConfig">
+      SELECT
+        i.id,
+        i.url,
+        i.status,
+        i.key_limit,
+        i.max_count,
+        i.time_unit,
+        i.create_time,
+        i.create_by,
+        i.update_time,
+        i.update_by
+        from interface_config i
+        where 1 = 1
+        <if test="req.url!=null and req.url!=''">
+            and i.url = #{req.url,jdbcType=VARCHAR}
+        </if>
+        <if test="req.status!=null and req.status!=''">
+            and i.status = #{req.status,jdbcType=VARCHAR}
+        </if>
+        <if test="req.keyLimit!=null and req.keyLimit!=''">
+            and i.key_limit = #{req.keyLimit,jdbcType=VARCHAR}
+        </if>
+        <if test="req.maxCount!=null and req.maxCount!=''">
+            and i.max_count = #{req.maxCount,jdbcType=VARCHAR}
+        </if>
+        <if test="req.timeUnit!=null and req.timeUnit!=''">
+            and i.time_unit = #{req.url,jdbcType=VARCHAR}
+        </if>
+
+    </select>
+
+
 
 </mapper>

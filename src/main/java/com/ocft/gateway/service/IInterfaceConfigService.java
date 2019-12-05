@@ -3,8 +3,7 @@ package com.ocft.gateway.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ocft.gateway.entity.InterfaceConfig;
-
-import java.util.List;
+import com.ocft.gateway.web.dto.request.QueryInterfaceRequest;
 
 /**
  * <p>
@@ -21,5 +20,7 @@ public interface IInterfaceConfigService extends IService<InterfaceConfig> {
     IPage<InterfaceConfig> getPage(Integer pageNum, Integer pageSize);
 
 
-    IPage<InterfaceConfig> findByCondition(InterfaceConfig interfaceConfig, Integer pageNum, Integer pageSize);
+    void modifyById(InterfaceConfig interfaceConfig);
+
+    IPage<InterfaceConfig> queryInterfaceConfigs(QueryInterfaceRequest queryInterfaceRequest);
 }
