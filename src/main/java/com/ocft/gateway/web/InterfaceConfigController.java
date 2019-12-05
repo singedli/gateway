@@ -35,10 +35,9 @@ public class InterfaceConfigController {
     @PostMapping("/getPage")
     public Map<String, Object> findAllRequestType(@RequestBody QueryInterfaceRequest queryInterfaceRequest) {
         try {
-
             return ResultUtil.createResult(iInterfaceConfigService.queryInterfaceConfigs(queryInterfaceRequest));
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("分页查询限流配置发生异常:{}",e);
             return ResultUtil.bizExceptionResult(new GatewayException("500", "分页查询防刷参数出错"));
         }
     }

@@ -10,7 +10,7 @@ import lombok.Data;
  **/
 @Data
 public class QueryInterfaceRequest extends PageDto {
-    private Integer status;
+    private String status;
     private String keyLimit;
     private String url;
     private Long maxCount;
