@@ -47,13 +47,14 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
         if (redisUtil.existsHash(context.getGatewayInterface().getUrl(), field)) {
             //before
             //查询缓存不为空则返回缓存内容
+            String result;
             try {
-                String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
-                if (result != null) {
-                    returnResult(result);
-                }
+                 result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
             } catch (Exception e) {
                 throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
+            }
+            if (result != null) {
+                returnResult(result);
             }
         }else if ( StringUtils.isNotEmpty(context.getCacheData()) ) {
             String responseString = context.getCacheData();
