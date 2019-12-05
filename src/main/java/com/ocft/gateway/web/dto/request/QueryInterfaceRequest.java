@@ -13,6 +13,6 @@ public class QueryInterfaceRequest extends PageDto {
     private String status;
     private String keyLimit;
     private String url;
-    private Long maxCount;
+    private String maxCount;
     private String timeUnit;
 }
