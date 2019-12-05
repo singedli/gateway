@@ -12,11 +12,11 @@ import com.ocft.gateway.handler.AbstractControllerHandler;
 import com.ocft.gateway.service.IGatewayCacheService;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.utils.RedisUtil;
+import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.request.QueryGatewayCacheRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +27,7 @@ import java.util.*;
  * @Date: 2019/11/28 10:32
  * @Description:
  */
+@Slf4j
 @RestController
 @RequestMapping("/cache/refresh")
 public class RefreshCacheController {
@@ -43,24 +44,30 @@ public class RefreshCacheController {
     @Autowired
     private HandlerTypeCache handlerTypeCache;
 
-    @GetMapping("/global")
+    @PostMapping("/global")
     public Map<String, Object> globalRefresh(HttpServletRequest request,HttpServletResponse response){
-        List<GatewayCache> globalCaches =gatewayCacheService.list();
-        for (GatewayCache  globalCache :globalCaches) {
-            refreshCache(globalCache,request,response);
+        try {
+            List<GatewayCache> globalCaches =gatewayCacheService.list();
+            for (GatewayCache  globalCache :globalCaches) {
+                refreshCache(globalCache,request,response);
+            }
+            return ResultUtil.createResult(null);
+        }catch (Exception e){
+            log.error("刷新全局缓存发生异常:{}",e);
+            return  ResultUtil.exceptionResult();
         }
-        Map<String, Object> result = new HashMap<>();
-        result.put("刷新全局缓存",ResponseEnum.SUCCESS);
-        return result;
     }
 
-    @GetMapping("/api")
-    public Map<String, Object> apiRefresh(@RequestParam("api") String url, HttpServletRequest request,HttpServletResponse response){
-        GatewayCache globalCache =gatewayCacheService.getGatewayCache(url);
-        refreshCache(globalCache,request,response);
-        Map<String, Object> result = new HashMap<>();
-        result.put("刷新缓存",ResponseEnum.SUCCESS);
-        return result;
+    @PostMapping("/api")
+    public Map<String, Object> apiRefresh(@RequestBody QueryGatewayCacheRequest body, HttpServletRequest request, HttpServletResponse response){
+        try {
+            GatewayCache globalCache =gatewayCacheService.getGatewayCache(body.getStatus());
+            refreshCache(globalCache,request,response);
+            return ResultUtil.createResult(null);
+        }catch (Exception e){
+            log.error("刷新缓存发生异常:{}",e);
+            return  ResultUtil.exceptionResult();
+        }
     }
 
     private void refreshCache(GatewayCache globalCache,HttpServletRequest request,HttpServletResponse response){

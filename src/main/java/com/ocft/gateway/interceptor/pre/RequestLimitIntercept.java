@@ -216,17 +216,25 @@ public class RequestLimitIntercept implements GatewayInterceptor {
         Double timeFrameD = Double.valueOf(timeFrame);
         Double maxCount = interfaceConfig.getMaxCount();
         String timeUnit = interfaceConfig.getTimeUnit();
+        Double secondTime = MathUtil.halfup((timeFrameD / 1000.00), 4);
+        Double minTime = MathUtil.halfup((secondTime / 60.00), 4);
+        Double hourTime = MathUtil.halfup((minTime / 60.00), 4);
         Double halfup;
         if (timeUnit.equals("H")) {
-            halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00 / 60.00), 2);
+            halfup = MathUtil.halfup(totalCountD / hourTime, 4);
+            if (halfup > maxCount && (hourTime > 1 || totalCount > interfaceConfig.getMaxCount())) {
 
+            }
         } else if (timeUnit.equals("M")) {
-            halfup = MathUtil.halfup(totalCountD / (timeFrameD / 60.00), 2);
+            halfup = MathUtil.halfup(totalCountD / minTime, 4);
+            if (halfup > maxCount && (minTime > 1 || totalCount > interfaceConfig.getMaxCount())) {
+                return false;
+            }
         } else {
-            halfup = MathUtil.halfup(totalCountD / timeFrameD, 2);//默认为秒
-        }
-        if (halfup > maxCount) {
-            return false;
+            halfup = MathUtil.halfup(totalCountD / secondTime, 4);//默认为秒
+            if (halfup > maxCount) {
+                return false;
+            }
         }
         return true;
     }

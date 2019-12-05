@@ -36,28 +36,33 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
 
     @Override
     public void doInterceptor(GatewayContext context) {
-        System.out.println("请求缓存拦截器被执行！");
+        log.info("请求缓存拦截器被执行！");
         //检查缓存开关，如果缓存为关闭状态则退出方法执行handle方法
         if (!gatewayCacheService.getGatewayCache("global").getStatus()
                 ||!context.getGatewayCache().getStatus()) return;
 
         //把请求body参数转换为“key1_vlaue1_key2_value2_...”的字符串
         String field = GatewayContextConverter.convertRedisHashField(context);
+        log.info("缓存的field为：{}",field);
 
         if (redisUtil.existsHash(context.getGatewayInterface().getUrl(), field)) {
+            log.info("缓存存在，开始取缓存数据。");
             //before
             //查询缓存不为空则返回缓存内容
+            String result;
             try {
-                String result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
-                if (result != null) {
-                    returnResult(result);
-                }
+                 result = (String) redisUtil.hget(context.getGatewayInterface().getUrl(), field);
             } catch (Exception e) {
+                log.error("redis 异常：{}",e);
                 throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
             }
+            if (result != null) {
+                log.info("redis 缓存内容：{}",result);
+                returnResult(result);
+            }
         }else if ( StringUtils.isNotEmpty(context.getCacheData()) ) {
+            log.info("缓存不存在，开始缓存数据。");
             String responseString = context.getCacheData();
-            System.out.println(responseString);
 
             //只缓存设置的字段
             JSONObject results = JSONObject.parseObject(responseString);
@@ -72,7 +77,7 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
                     cacheData.put(key, JsonCacheDataConverter.getCacheData(datas,context.getGatewayCache().getResultNum()));
                 }
                 responseString = JSONObject.toJSONString(cacheData);
-                System.out.println(responseString);
+
             }else {
                 JsonOperateEvalutor.retain(results, context.getGatewayCache().getResponseBody());
 
@@ -80,9 +85,12 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
                 responseString = JSONObject.toJSONString(JsonCacheDataConverter.getCacheData(results,context.getGatewayCache().getResultNum()));
             }
 
+            log.info("缓存数据为：{}",responseString);
+
             try {
                 redisUtil.hset(context.getGatewayInterface().getUrl(), field, responseString, context.getGatewayCache().getExpireTime() / 60);
             } catch (Exception e) {
+                log.error("redis 异常：{}",e);
                 throw new GatewayException(ResponseEnum.REDIS_EXCEPTION);
             }
         }
