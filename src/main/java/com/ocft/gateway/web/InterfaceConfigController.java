@@ -1,6 +1,5 @@
 package com.ocft.gateway.web;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.InterfaceConfig;
 import com.ocft.gateway.service.IInterfaceConfigService;
@@ -10,7 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -30,6 +32,8 @@ public class InterfaceConfigController {
     @Autowired
     IInterfaceConfigService iInterfaceConfigService;
 
+    /*@Autowired
+    RedisUtil redisUtil;*/
 
     //分页查询
     @PostMapping("/getPage")
@@ -96,4 +100,13 @@ public class InterfaceConfigController {
     }
 
 
+  /*  //**
+    @PostMapping("/removeKey")
+    public void removeKey(HttpServletRequest request){
+        String realIp = WebUtil.getRealIp(request);
+        Boolean exists = redisUtil.exists(realIp);
+        Boolean delete = redisUtil.delete(realIp);
+        System.out.println(delete);
+    }
+*/
 }
