@@ -68,7 +68,7 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
 
         String responseString = sendToBacon(gatewayContext);
 //        String responseString = "CacheDataTest";//缓存测试
-        gatewayContext.setCacheData(responseString);
+        gatewayContext.setRequestBody(responseString);
         return retToClient(responseString, gatewayContext.getRequest());
     }
 

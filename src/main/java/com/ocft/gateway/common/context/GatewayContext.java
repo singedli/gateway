@@ -40,8 +40,8 @@ public class GatewayContext {
      */
     private BackonInterface backonInterface;
     /**
-     * 缓存数据
+     * 响应数据
      */
-    private String cacheData;
+    private String responseBody;
 
 }

@@ -62,9 +62,9 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
                 log.info("redis 缓存内容：{}",result);
                 returnResult(result);
             }
-        }else if ( StringUtils.isNotEmpty(context.getCacheData()) ) {
+        }else if ( StringUtils.isNotEmpty(context.getResponseBody()) ) {
             log.info("缓存不存在，开始缓存数据。");
-            String responseString = context.getCacheData();
+            String responseString = context.getResponseBody();
 
             //只缓存设置的字段
             JSONObject results = JSONObject.parseObject(responseString);
