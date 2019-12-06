@@ -5,12 +5,12 @@ import com.ocft.gateway.interceptor.AbstractGatewayInterceptor;
 
 /**
  * @author lijiaxing
- * @Title: MessageContentInterceptor
+ * @Title: MessageFieldInterceptor
  * @ProjectName gateway
  * @date 2019/12/6上午11:09
- * @Description: 报文内容转换拦截器
+ * @Description: 报文内容字段转换拦截器
  */
-public class MessageContentInterceptor  extends AbstractGatewayInterceptor {
+public class MessageFieldInterceptor extends AbstractGatewayInterceptor {
     @Override
     public void doInterceptor(GatewayContext context) {
 
