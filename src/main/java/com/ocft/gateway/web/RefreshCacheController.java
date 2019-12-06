@@ -89,8 +89,8 @@ public class RefreshCacheController {
                 gatewayContext.setRequest(request);
                 gatewayContext.setResponse(response);
 
-                String requestBody = JsonCacheDataConverter.getRequestBody(next, globalCache);
-                gatewayContext.setRequestBody(requestBody);
+                //String requestBody = JsonCacheDataConverter.getRequestBody(next, globalCache);
+                gatewayContext.setRequestBody(next);
 
                 String result = handler.sendToBacon(gatewayContext);
                         

@@ -42,7 +42,9 @@ public class RequestCacheInterceptor extends AbstractGatewayInterceptor {
                 ||!context.getGatewayCache().getStatus()) return;
 
         //把请求body参数转换为“key1_vlaue1_key2_value2_...”的字符串
-        String field = GatewayContextConverter.convertRedisHashField(context);
+        //String field = GatewayContextConverter.convertRedisHashField(context);
+        JSONObject retain = JsonOperateEvalutor.retain(JSONObject.parseObject(context.getRequestBody()), context.getGatewayCache().getResponseBody());
+        String field = JSONObject.toJSONString(retain);
         log.info("缓存的field为：{}",field);
 
         if (redisUtil.existsHash(context.getGatewayInterface().getUrl(), field)) {
