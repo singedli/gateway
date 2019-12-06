@@ -3,20 +3,19 @@ package com.ocft.gateway.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @Auther: 梵高先生
- * @Date: 2019/11/27 13:50
+ * @Date: 2019/12/6 16:24
  * @Description:
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class GatewayCache implements Serializable{
+public class MessageConverter implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,29 +31,34 @@ public class GatewayCache implements Serializable{
     private String backonUrl;
 
     /**
-     * 接口请求参数key配置，以配置的key作为缓存的field
+     * 请求报文配置:A = a,B.C = b.c (=左边为网关请求的报文字段，右边为要转换成的报文字段)
      */
-    private String requestBody;
+    private String requestConfig;
 
     /**
-     * 接口响应字段配置 ，缓存只存接口返回数据中配置的数据
+     * 响应报文配置:A = a,B.C = b.c (=左边为网关响应的报文字段，右边为要转换成的报文字段)
      */
-    private String responseBody;
+    private String responseConfig;
 
     /**
-     * 缓存开关:1 表示启用,0 表示停用
+     * 请求报文格式配置
+     */
+    private String requestStruct;
+
+    /**
+     * 响应报文格式配置
+     */
+    private String responseStruct;
+
+    /**
+     * 1 表示启用,0 表示停用
      */
     private Boolean status;
 
     /**
-     * 缓存条数：默认为20条以内
+     * 逻辑删除标志位，1表示已删除，0表示未删除
      */
-    private Integer resultNum;
-
-    /**
-     * 缓存过期时间（单位分钟）：默认为30分钟
-     */
-    private Integer expireTime;
+    private Boolean isDeleted;
 
 
     private Date createTime;

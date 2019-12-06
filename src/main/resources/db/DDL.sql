@@ -113,3 +113,24 @@ IF NOT EXISTS `request_type` (
   `agent` varchar(50)  NOT NULL COMMENT 'request请求头中的参数',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+
+-- 网关报文转换的配置表
+CREATE TABLE
+IF NOT EXISTS `message_converter` (
+	`id` VARCHAR (64) NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`url` varchar(255) NOT NULL ,
+	`backon_url` text NOT NULL COMMENT '该接口需要调用的后台系统接口,并发和复杂类型用jsonArray的存储',
+	`request_config` text NOT NULL COMMENT '请求报文配置:A = a,B.C = b.c (=左边为网关请求的报文字段，右边为要转换成的报文字段)',
+	`response_config` text NOT NULL COMMENT '响应报文配置:A = a,B.C = b.c (=左边为网关响应的报文字段，右边为要转换成的报文字段)',
+	`request_struct` text NOT NULL COMMENT '请求报文格式配置',
+	`response_struct` text NOT NULL COMMENT '响应报文格式配置',
+	`status` tinyint(1) DEFAULT '1' COMMENT '1 表示启用,0 表示停用',
+	`is_deleted` tinyint(1)  DEFAULT '0' COMMENT '逻辑删除标志位，1表示已删除，0表示未删除',
+	`create_time` timestamp DEFAULT CURRENT_TIMESTAMP,
+	`update_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`create_by` varchar(40) DEFAULT NULL,
+	`update_by` varchar(40) DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `pk_tran_url` (`url`) USING BTREE
+)ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
