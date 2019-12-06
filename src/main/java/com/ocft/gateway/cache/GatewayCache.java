@@ -18,12 +18,12 @@ public interface GatewayCache<K, V> {
     void put(K key, V value);
 
     /**
-     *  将数据加入到缓存,数据存活时长为ttl,单位为秒
+     *  将数据加入到缓存,数据存活时长为ttl,单位为毫秒
      * @param key
      * @param value
      * @param ttl
      */
-    void put(K key, V value,Integer ttl);
+    void put(K key, V value,long ttl);
 
     /**
      *  从缓存中获取数据

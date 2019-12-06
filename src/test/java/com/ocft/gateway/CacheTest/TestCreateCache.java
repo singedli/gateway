@@ -11,7 +11,7 @@ import com.ocft.gateway.cache.GatewayLocalCache;
  */
 public class TestCreateCache {
     public static void main(String[] args) throws InterruptedException {
-        GatewayLocalCache cache = new GatewayLocalCache();
+        GatewayLocalCache cache = new GatewayLocalCache(1300L);
         cache.put("a","1");
         cache.put("b","2");
         cache.put("c","3");
@@ -40,5 +40,18 @@ public class TestCreateCache {
         System.out.println(cache.sizeof());
 
 
+//        SoftHashMap softHashMap = new SoftHashMap();
+//        softHashMap.put("a","1");
+//        softHashMap.put("b","2");
+//        softHashMap.put("c","3");
+//        softHashMap.put("d","4");
+//        softHashMap.put("e","5");
+//        Iterator<Map.Entry<String,String>> iterator =
+//                softHashMap.entrySet().iterator();
+//        while(iterator.hasNext()){
+//            iterator.remove();
+//        }
+//
+//        System.out.println(softHashMap);
     }
 }

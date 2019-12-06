@@ -1,11 +1,10 @@
 package com.ocft.gateway.cache;
 
-
 import org.apache.lucene.util.RamUsageEstimator;
+import org.aspectj.util.SoftHashMap;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -18,9 +17,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
 
     /**
-     * 缓存，使用弱引用，会在下一次GC时将缓存回收
+     * 缓存，使用软引用，会在内存不够时将缓存回收
      */
-    protected Map<K, CacheDataWrapper<K, V>> cache = new WeakHashMap();
+    public Map<K, CacheDataWrapper<K, V>> cache = new SoftHashMap<>();
     /**
      * 缓存锁
      */
@@ -34,10 +33,9 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
      */
     protected static final ReentrantReadWriteLock.WriteLock writeLock = cacheLock.writeLock();
     /**
-     * 缓存在堆中占用的最大内存
+     * 缓存在堆中占用的最大内存，默认为200MB
      */
-//    protected static final long maxCacheSize = RamUsageEstimator.ONE_MB * 50;
-    protected static final long maxCacheSize = 1000L;
+    protected long maxCacheSize = RamUsageEstimator.ONE_MB * 200;
     /**
      * 缓存当前所占用的内存大小
      */
@@ -54,7 +52,7 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
     }
 
     @Override
-    public void put(K key, V value, Integer ttl) {
+    public void put(K key, V value, long ttl) {
         writeLock.lock();
         try {
             doPut(key, value, ttl);
@@ -63,13 +61,18 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
         }
     }
 
-    private void doPut(K key, V value, Integer ttl) {
+    private void doPut(K key, V value, long ttl) {
         long current = System.currentTimeMillis();
         CacheDataWrapper dataWrapper = new CacheDataWrapper(value, ttl, current, 0);
         increaseCurrentCacheSize(dataWrapper);
         this.cache.put(key, dataWrapper);
     }
 
+    /**
+     *
+     * @param obj
+     * @return
+     */
     private long increaseCurrentCacheSize(Object obj) {
         long size = RamUsageEstimator.sizeOf(obj);
         while (this.sizeof() + size >= this.maxCacheSize) {
@@ -79,19 +82,9 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
         /**
          *  75%
          */
-//        if ((this.sizeof() + size) / this.maxCacheSize > 0.75) {
-//            //异步执行扫描任务，将已过期的数据从缓存中剔除
-//        }
-//        while (this.currentCacheSize + size >= this.maxCacheSize) {
-//            //使用具体的策略清除缓存数据
-//            reduce(size);
-//        }
-//        /**
-//         *  75%
-//         */
-//        if ((this.currentCacheSize + size) / this.maxCacheSize > 0.75) {
-//            //异步执行扫描任务，将已过期的数据从缓存中剔除
-//        }
+        if ((this.sizeof() + size) / this.maxCacheSize > 0.75) {
+            //异步执行扫描任务，将已过期的数据从缓存中剔除
+        }
         return currentCacheSize += size;
     }
 
@@ -99,19 +92,19 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
     @Override
     public V get(K key) {
         readLock.lock();
+        CacheDataWrapper<K, V> dataWrapper = null;
         try {
-            CacheDataWrapper<K, V> dataWrapper = this.cache.get(key);
+            dataWrapper = this.cache.get(key);
             if (dataWrapper == null) {
                 return null;
             }
-
-            if (dataWrapper.isExpired()) {
-                this.remove(key);
-            }
-            return dataWrapper.get(Boolean.TRUE);
         } finally {
             readLock.unlock();
         }
+        if (dataWrapper.isExpired()) {
+            this.remove(key);
+        }
+        return dataWrapper.get(Boolean.TRUE);
     }
 
     @Override
