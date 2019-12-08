@@ -8,7 +8,7 @@ import com.ocft.gateway.entity.MessageConverter;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.mapper.MessageConverterMapper;
 import com.ocft.gateway.service.IMessageConverterService;
-import com.ocft.gateway.web.dto.request.QueryMessageConverterRequest;
+import com.ocft.gateway.web.dto.request.MessageConverterRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -28,7 +28,7 @@ public class IMessageConverterServiceImpl extends ServiceImpl<MessageConverterMa
     }
 
     @Override
-    public IPage<MessageConverter> getMessageConverterList(QueryMessageConverterRequest request) {
+    public IPage<MessageConverter> getMessageConverterList(MessageConverterRequest request) {
         QueryWrapper<MessageConverter> queryWrapper = new QueryWrapper<>();
         if(StringUtils.isNotEmpty(request.getName())){
             queryWrapper.eq("name",request.getName());
