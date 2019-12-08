@@ -29,11 +29,21 @@ public class MessageConverterInterceptor extends AbstractGatewayInterceptor {
     public void doInterceptor(GatewayContext context) {
         MessageConverter messageConverter = messageConverterService.getMessageConverter(context.getGatewayInterface().getUrl());
         if(StringUtils.isEmpty(context.getResponseBody())){
+            log.info("请求报文转换拦截器被执行！");
+
             JSONObject requestBody = JsonStructureConverter.convertStructure(context.getRequestBody(), messageConverter.getRequestStruct(), messageConverter.getRequestConfig());
-            context.setRequestBody(JSONObject.toJSONString(requestBody));
+            String json = JSONObject.toJSONString(requestBody);
+            log.info("请求报文转换为：{}",json);
+
+            context.setRequestBody(json);
         }else {
+            log.info("响应报文转换拦截器被执行！");
+
             JSONObject responseBody = JsonStructureConverter.convertStructure(context.getResponseBody(), messageConverter.getResponseStruct(), messageConverter.getResponseConfig());
-            returnResult(JSONObject.toJSONString(responseBody));
+            String json = JSONObject.toJSONString(responseBody);
+            log.info("响应报文转换为：{}",json);
+
+            returnResult(json);
         }
     }
 }
