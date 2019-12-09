@@ -23,7 +23,7 @@ public class InvokeThirdDTO {
     //请求参数
     private String requestData;
 
-    //请求参数
+    //请求参数 (Map<String,String>)格式参数，可通过requestData转
     private String formParams;
 
     //请求头信息
@@ -35,17 +35,17 @@ public class InvokeThirdDTO {
     //返回数据是否加密
     private String respdecrypt;
 
-    //第三方响应数据
+    //第三方响应数据 对应的key
     private String data;
 
-    //第三方系统响应信息
+    //第三方系统响应信息 对应的key
     private String msg;
 
-    //第三方系统响应码
+    //第三方系统响应码对应的key
     private String code;
 
 
-    //第三方系统响应成功码
+    //第三方系统响应成功 返回的码值 如200
     private String success;
 
     private MultipartFile file;
