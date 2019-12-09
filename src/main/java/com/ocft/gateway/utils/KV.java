@@ -32,5 +32,5 @@ public class KV<K, V> extends HashMap<K, V> {
     @Override
     public String toString(){
         return JSONObject.toJSONString(this);
-    };
+    }
 }

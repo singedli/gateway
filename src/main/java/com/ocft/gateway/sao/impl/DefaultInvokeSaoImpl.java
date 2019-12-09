@@ -2,7 +2,7 @@ package com.ocft.gateway.sao.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.exceptions.GatewayException;
-import com.ocft.gateway.sao.AbstraccBaseSao;
+import com.ocft.gateway.sao.AbstractBaseSao;
 import com.ocft.gateway.utils.HttpUtil;
 import com.ocft.gateway.utils.KV;
 import com.ocft.gateway.web.dto.InvokeThirdDTO;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @description: 默认sao实现
  **/
 @Service("defaultInvokeSao")
-public class DefaultInvokeSaoImpl extends AbstraccBaseSao {
+public class DefaultInvokeSaoImpl extends AbstractBaseSao {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultInvokeSaoImpl.class);
 

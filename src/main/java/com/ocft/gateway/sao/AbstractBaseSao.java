@@ -15,10 +15,10 @@ import org.slf4j.LoggerFactory;
  * @description: 抽象调用接口类
  **/
 
-public abstract class AbstraccBaseSao {
+public abstract class AbstractBaseSao {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstraccBaseSao.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractBaseSao.class);
 
 
     public HttpResponseModel<Object> invokeHandler(InvokeThirdDTO req) {
