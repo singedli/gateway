@@ -1,8 +1,10 @@
 package com.ocft.gateway.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.web.dto.request.BackonInterfaceRequest;
 
 import java.util.Map;
 
@@ -18,4 +20,6 @@ public interface IBackonInterfaceService extends IService<BackonInterface> {
     BackonInterface getBackonInterface(String url);
     String getBackonInterfaceMethod(String url);
     Map<String,String> getBackonInterfaceMethod(GatewayInterface gatewayInterface);
+
+    IPage<BackonInterface> getBackonInterfaceList(BackonInterfaceRequest request);
 }
