@@ -20,6 +20,14 @@ import java.util.Set;
 @Slf4j
 public class JsonStructureConverter {
 
+    public static void main(String[] args) {
+        String jsonA = "{\"name\":\"BeJson\",\"url\":\"http://www.bejson.com\",\"page\":88,\"address\":{\"street\":\"科技园路.\",\"city\":\"江苏苏州\",\"country\":\"中国\"},\"links\":[{\"name\":\"Google\",\"url\":\"http://www.google.com\"},{\"name\":\"Baidu\",\"url\":\"http://www.baidu.com\"}]}";
+        String jsonB = "{\"url123\":\"http://www.bejson.com\",\"page123\":88,\"address\":{\"city123\":\"江苏苏州\"},\"links\":[{\"name123\":\"Google\"},{\"name123\":\"Baidu\"}]}";
+        String path = "url=url123,page=page123,address.city=city123,links.name=name123";
+        JSONObject jsonObject = convertStructure(jsonA, jsonB, path);
+        System.out.println(JSONObject.toJSONString(jsonObject));
+    }
+
     public static JSONObject convertStructure(String jsonA, String jsonB,String path){
         if(!StringUtils.hasText(jsonA) || !StringUtils.hasText(jsonB) || !StringUtils.hasText(path)) {
             log.error("参数不合法! jsonA:{},jsonB:{},path:{}",jsonA,jsonB,path);

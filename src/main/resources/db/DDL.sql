@@ -90,7 +90,7 @@ IF NOT EXISTS `gateway_cache` (
 
 -- 网关接口配置表
 CREATE TABLE
-IF NOT EXISTS `gateway_cache` (
+IF NOT EXISTS `interface_config` (
 	`id` VARCHAR (64) NOT NULL,
 	`url` varchar(255) NOT NULL  DEFAULT '' COMMENT '接口地址，对应gateway_interface中的url',
 	`time_unit` varchar(5) NOT NULL COMMENT '单位时间',

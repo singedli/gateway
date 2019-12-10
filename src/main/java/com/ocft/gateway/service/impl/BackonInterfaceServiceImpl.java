@@ -1,12 +1,16 @@
 package com.ocft.gateway.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.mapper.BackonInterfaceMapper;
 import com.ocft.gateway.service.IBackonInterfaceService;
+import com.ocft.gateway.web.dto.request.BackonInterfaceRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -47,5 +51,28 @@ public class BackonInterfaceServiceImpl extends ServiceImpl<BackonInterfaceMappe
             urlMethodMap.put(backonUrl,this.getBackonInterfaceMethod(backonUrl));
         }
         return urlMethodMap;
+    }
+
+    @Override
+    public IPage<BackonInterface> getBackonInterfaceList(BackonInterfaceRequest request) {
+        QueryWrapper<BackonInterface> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty(request.getName())){
+            queryWrapper.eq("name",request.getName());
+        }
+        if(StringUtils.isNotEmpty(request.getUrl())){
+            queryWrapper.eq("url",request.getUrl());
+        }
+        if(StringUtils.isNotEmpty(request.getSystem())){
+            queryWrapper.eq("system",request.getSystem());
+        }
+        if(StringUtils.isNotEmpty(request.getStatus())){
+            queryWrapper.eq("status",request.getStatus());
+        }
+        if(StringUtils.isNotEmpty(request.getHttpMethod())){
+            queryWrapper.eq("http_method",request.getHttpMethod());
+        }
+
+        IPage<BackonInterface> page = this.page(new Page<>(request.getCurrent(), request.getSize()),queryWrapper);
+        return page;
     }
 }
