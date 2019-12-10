@@ -1,0 +1,56 @@
+{
+  "Name": "invokeTestStateMachine",
+  "Comment": "测试http调用状态机",
+  "StartState": "FirstState",
+  "Version": "0.0.2",
+  "States": {
+    "FirstState": {
+      "Type": "ServiceTask",
+      "ServiceName": "defaultInvokeSao",
+      "ServiceMethod": "invokeHandler",
+      "Next": "FirstConvertState",
+      "Input": [
+        {
+          "backOnUrl": "$.[FirstState][backOnUrl]",
+          "requestData": "$.[FirstState][requestData]",
+          "code": "00000000"
+        }
+      ],
+      "Output": {
+        "FirstStateResult": "$.#root"
+      }
+    },
+    "FirstConvertState": {
+      "Type": "ServiceTask",
+      "ServiceName": "paramsConverter",
+      "ServiceMethod": "convert",
+      "Input": [
+        {
+          "data": "$.[FirstStateResult].data"
+        }
+      ],
+      "Output": {
+        "convertStateResult": "$.#root"
+      },
+      "Next": "SecondState"
+    },
+    "SecondState": {
+      "Type": "ServiceTask",
+      "ServiceName": "defaultInvokeSao",
+      "ServiceMethod": "invokeHandler",
+      "Next": "Succeed",
+      "Input": [
+        {
+          "backOnUrl": "$.[SecondState][backOnUrl]",
+          "requestData": "$.[convertStateResult]"
+        }
+      ],
+      "Output": {
+        "invokeHandlerResult": "$.#root"
+      }
+    },
+    "Succeed": {
+      "Type": "Succeed"
+    }
+  }
+}

@@ -37,25 +37,18 @@ public abstract class AbstractBaseSao {
                 } catch (Exception e) {
                     error(e);
                 }
-
-
                 try {
                     result = postHandler(req);//post调用第三方接口
                 } catch (Exception e) {
                     error(e);
                 }
-
                 try {
                     responseModel = handlerResponse(req, result);
                 } catch (Exception e) {
 
                 }
-
-
                 break;
-
             case "GET":
-
                 try {
                     handlerRequest(req);//处理请求参数
                 } catch (Exception e) {
@@ -85,7 +78,7 @@ public abstract class AbstractBaseSao {
 
 
     void error(Exception e) {
-        logger.error("AbstraccBaseSao发生异常", e.getMessage());
+        logger.error("AbstraccBaseSao发生异常", e);
         throw new GatewayException("5000", "AbstraccBaseSao发生异常");
     }
 

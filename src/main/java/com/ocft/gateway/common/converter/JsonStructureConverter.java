@@ -3,6 +3,7 @@ package com.ocft.gateway.common.converter;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,6 +33,16 @@ public class JsonStructureConverter {
             log.error("参数不合法! jsonA:{},jsonB:{},path:{}",jsonA,jsonB,path);
             return null;
         }
+        JSONObject jsonObjectA = JSONObject.parseObject(jsonA);
+        JSONObject jsonObjectB = JSONObject.parseObject(jsonB);
+        return convertStructure(jsonObjectA,jsonObjectB,path);
+    }
+
+    public static JSONObject convertStructure(JSONObject jsonA, JSONObject jsonB,String path){
+        if(ObjectUtils.isEmpty(jsonA) ||ObjectUtils.isEmpty(jsonB) || !StringUtils.hasText(path)){
+            log.error("参数不合法! jsonA:{},jsonB:{},path:{}",jsonA,jsonB,path);
+            return null;
+        }
         Properties properties = new Properties();
         path = path.replaceAll(",", "\n");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(path.getBytes());
@@ -40,23 +51,23 @@ public class JsonStructureConverter {
         } catch (IOException e) {
             log.error("加载key路径发生异常,异常信息为{}", e);
         }
-        JSONObject jsonObjectA = JSONObject.parseObject(jsonA);
-        JSONObject jsonObjectB = JSONObject.parseObject(jsonB);
+
         Set<String> set = properties.stringPropertyNames();
         for (String key : set) {
             String value = properties.getProperty(key);
-            convertStructure(jsonObjectA, jsonObjectB,key,value);
+            convertStructure(jsonA, jsonB,key,value);
         }
-        return jsonObjectB;
+        return jsonB;
     }
 
-    /**
-     *
-     * @param jsonA 源json对象
-     * @param jsonB 目标json对象
-     * @param pathA 要转换的key在源json对象中的路径
-     * @param pathB 要转换的key在目标json对象中的路径
-     */
+
+        /**
+         *
+         * @param jsonA 源json对象
+         * @param jsonB 目标json对象
+         * @param pathA 要转换的key在源json对象中的路径
+         * @param pathB 要转换的key在目标json对象中的路径
+         */
     public static void convertStructure(JSONObject jsonA, JSONObject jsonB, String pathA, String pathB) {
         Object value = JsonOperateEvalutor.getJsonPropertyValue(jsonA, pathA);
         JsonOperateEvalutor.putJsonPropertyValue(jsonB,pathB,value);
