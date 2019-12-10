@@ -1,7 +1,7 @@
 package com.ocft.gateway.web;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ocft.gateway.sao.impl.DefaultInvokeSaoImpl;
+import com.ocft.gateway.out.impl.DefaultInvokeOutImpl;
 import com.ocft.gateway.web.dto.InvokeThirdDTO;
 import com.ocft.gateway.web.response.HttpResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +23,15 @@ public class SaoTestController {
 
 
     @Autowired
-    DefaultInvokeSaoImpl defaultInvokeSao;
-
+    DefaultInvokeOutImpl defaultInvokeOut;
 
     @RequestMapping("/concurrentTest")
     @ResponseBody
-    public HttpResponseModel<Object> test(@RequestBody Map<String,String> map) {
+    public HttpResponseModel<Object> test(@RequestBody Map<String, String> map) {
         InvokeThirdDTO dto = new InvokeThirdDTO();
         dto.setRequestData(JSONObject.toJSONString(map));
         dto.setBackOnUrl("https://portal-test.medsci.cn/top/weekTop");
-        HttpResponseModel<Object> responseModel = defaultInvokeSao.invokeHandler(dto);
+        HttpResponseModel<Object> responseModel = defaultInvokeOut.invokeHandler(dto);
         return responseModel;
     }
 
