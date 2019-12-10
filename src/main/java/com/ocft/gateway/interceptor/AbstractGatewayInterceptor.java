@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public abstract class AbstractGatewayInterceptor implements GatewayInterceptor {
+
     @Override
     public abstract void doInterceptor(GatewayContext context);
 
