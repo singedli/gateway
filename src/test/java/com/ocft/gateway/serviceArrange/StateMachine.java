@@ -4,8 +4,7 @@ package com.ocft.gateway.serviceArrange;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.evaluator.JsonOperateEvalutor;
-import com.ocft.gateway.sao.AbstraccBaseSao;
-import com.ocft.gateway.sao.impl.DefaultInvokeSaoImpl;
+import com.ocft.gateway.sao.AbstractBaseSao;
 import com.ocft.gateway.spring.SpringContextHolder;
 import com.ocft.gateway.web.dto.InvokeThirdDTO;
 import com.ocft.gateway.web.response.HttpResponseModel;
@@ -36,7 +35,7 @@ import java.util.Map;
 public class StateMachine {
 
     @Autowired
-    private AbstraccBaseSao sao;
+    private AbstractBaseSao sao;
 
     @Autowired
     private StateMachineEngine engine;
