@@ -41,7 +41,7 @@ public class Backon implements Serializable {
     /**
      * 状态信息:1表示有效，0表示失效
      */
-    private Integer status;
+    private Boolean status;
 
     /**
      * 描述信息
