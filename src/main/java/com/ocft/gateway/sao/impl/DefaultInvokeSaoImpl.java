@@ -79,6 +79,4 @@ public class DefaultInvokeSaoImpl extends AbstractBaseSao {
     protected JSONObject getHandler(InvokeThirdDTO req) {
         return null;
     }
-
-
 }

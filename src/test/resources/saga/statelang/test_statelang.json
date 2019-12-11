@@ -1,0 +1,57 @@
+{
+  "States": {
+    "L3RvcC93ZWVrVG9w_state": {
+      "Type": "ServiceTask",
+      "Input": [
+        {
+          "code": "00000000",
+          "backOnUrl": "$.[L3RvcC93ZWVrVG9w_state][backOnUrl]",
+          "requestData": "$.[L3RvcC93ZWVrVG9w_state][requestData]"
+        }
+      ],
+      "ServiceName": "defaultInvokeSao",
+      "Output": {
+        "L3RvcC93ZWVrVG9w_stateResult": "$.#root"
+      },
+      "Next": "L3Rlc3QvY29uY3VycmVudFRlc3Q_state",
+      "ServiceMethod": "invokeHandler"
+    },
+    "L3Rlc3QvY29uY3VycmVudFRlc3Q_state": {
+      "Type": "ServiceTask",
+      "Input": [
+        {
+          "data": "$.[L3RvcC93ZWVrVG9w_stateResult].data"
+        }
+      ],
+      "ServiceName": "paramsConverter",
+      "Output": {
+        "L3Rlc3QvY29uY3VycmVudFRlc3Q_stateResult": "$.#root"
+      },
+      "Next": "L3BvcnRhbC1tZWRzY2ltZWV0aW5nL3JlY29tbWVuZE1lZXRpbmc_state",
+      "ServiceMethod": "convert"
+    },
+    "L3BvcnRhbC1tZWRzY2ltZWV0aW5nL3JlY29tbWVuZE1lZXRpbmc_state": {
+      "Type": "ServiceTask",
+      "Input": [
+        {
+          "code": "00000000",
+          "backOnUrl": "$.[L3BvcnRhbC1tZWRzY2ltZWV0aW5nL3JlY29tbWVuZE1lZXRpbmc_state][backOnUrl]",
+          "requestData": "$.[L3Rlc3QvY29uY3VycmVudFRlc3Q_stateResult][requestData]"
+        }
+      ],
+      "ServiceName": "defaultInvokeSao",
+      "Next": "Succeed",
+      "Output": {
+        "L3BvcnRhbC1tZWRzY2ltZWV0aW5nL3JlY29tbWVuZE1lZXRpbmc_stateResult": "$.#root"
+      },
+      "ServiceMethod": "invokeHandler"
+    },
+    "Succeed": {
+      "Type": "Succeed"
+    }
+  },
+  "Comment": "并发测试接口的状态机",
+  "Version": "0.0.2",
+  "StartState": "L3RvcC93ZWVrVG9w_state",
+  "Name": "_test_concurrentTest_state"
+}

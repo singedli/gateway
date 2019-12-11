@@ -41,7 +41,6 @@ public class StateMachineConfig {
     @Bean
     public DefaultStateMachineConfig defaultStateMachineConfig(){
         DefaultStateMachineConfig config = new DefaultStateMachineConfig();
-
         config.setResources(stateLang);
         config.setEnableAsync(Boolean.TRUE);
         config.setThreadPoolExecutor(threadExecutor());
