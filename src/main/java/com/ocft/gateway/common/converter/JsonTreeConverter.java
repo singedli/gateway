@@ -43,10 +43,10 @@ public class JsonTreeConverter {
             Set<Map.Entry<String, Object>> entries = ((JSONObject) jsonObject).entrySet();
             for(Map.Entry<String, Object> entry:entries){
                 if(entry.getValue() instanceof JSONArray){
-                    resultJson.append("{\"label\":\""+entry.getKey()+"\",\"children\": [");
+                    resultJson.append("{\"name\":\""+entry.getKey()+"\",\"children\": [");
                     JSONArray jSONArray = (JSONArray) entry.getValue();
                     for (int i = 0;i<jSONArray.size();i++){
-                        resultJson.append("{\"label\":\""+i+"\"");
+                        resultJson.append("{\"name\":\""+i+"\"");
                         resultJson.append(",\"children\":[");
                         processInputJson(jSONArray.get(i),resultJson);
                         if(resultJson.toString().endsWith(",")){
@@ -59,7 +59,7 @@ public class JsonTreeConverter {
                     resultJson.append("]},");
                 }else if(entry.getValue() instanceof JSONObject){
                     //从数组中取出的元素是对象
-                    resultJson.append("{\"label\":\"" + entry.getKey() + "\",\"children\": [");
+                    resultJson.append("{\"name\":\"" + entry.getKey() + "\",\"children\": [");
                     processInputJson(entry.getValue(),resultJson);
                     countFlag++;
                     if(resultJson.toString().endsWith(",")){
@@ -68,7 +68,7 @@ public class JsonTreeConverter {
                     resultJson.append("]},");
                 }else {
                     //如果从数组中取出的元素还是数组，那么接着递归
-                    resultJson = resultJson.append("{\"label\":\"" + entry.getKey() + ":" + entry.getValue() + "\"}");
+                    resultJson = resultJson.append("{\"name\":\"" + entry.getKey() + ":" + entry.getValue() + "\"}");
                     if (countFlag < entries.size())
                         resultJson.append(",");
                     countFlag++;
@@ -87,7 +87,7 @@ public class JsonTreeConverter {
                 //json顶层就是数组的情况
                 JSONArray tempArray = (JSONArray) jsonObject;
                 for (int j = 0;j<tempArray.size();j++){
-                    resultJson.append("{\"label\":\""+j+"\"");
+                    resultJson.append("{\"name\":\""+j+"\"");
                     resultJson.append(",\"children\":[");
                     processInputJson(tempArray.get(j),resultJson);
                     if(resultJson.toString().endsWith(",")){
