@@ -1,4 +1,4 @@
-package com.ocft.gateway.sao;
+package com.ocft.gateway.out;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.exceptions.GatewayException;
@@ -15,11 +15,10 @@ import org.slf4j.LoggerFactory;
  * @description: 抽象调用接口类
  **/
 
-public abstract class AbstractBaseSao {
+public abstract class AbstractBaseOut {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractBaseSao.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(AbstractBaseOut.class);
 
     public HttpResponseModel<Object> invokeHandler(InvokeThirdDTO req) {
         //默认请求方式为post

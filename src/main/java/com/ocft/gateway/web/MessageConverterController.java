@@ -1,6 +1,8 @@
 package com.ocft.gateway.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ocft.gateway.common.converter.JsonTreeConverter;
 import com.ocft.gateway.entity.MessageConverter;
 import com.ocft.gateway.service.IMessageConverterService;
 import com.ocft.gateway.utils.ResultUtil;
@@ -110,6 +112,18 @@ public class MessageConverterController {
             }
         }catch (Exception e){
             log.error("修改报文转换配置发生异常:{}",e);
+            return  ResultUtil.exceptionResult();
+        }
+    }
+
+    @PostMapping(value = "/tree")
+    public Map<String,Object> messageConverterToTree(@RequestBody JSONObject request){
+        try{
+            String json = JSONObject.toJSONString(request);
+            String tree = JsonTreeConverter.viewJsonInTree(json);
+            return ResultUtil.createResult(tree);
+        }catch (Exception e){
+            log.error("JSON报文转换TREE发生异常:{}",e);
             return  ResultUtil.exceptionResult();
         }
     }

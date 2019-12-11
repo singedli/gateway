@@ -1,9 +1,11 @@
 package com.ocft.gateway.web;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.service.IBackonService;
 import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.request.BackonRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +35,10 @@ public class BackonController {
      */
 
     @PostMapping("/getPage")
-    public Map<String, Object> findAllRequestType(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
+    public Map<String, Object> queryBackons(@RequestBody BackonRequest request) {
         try {
-            return ResultUtil.createResult(iBackonService.getPage(pageNum, pageSize));
+            IPage<Backon> page = iBackonService.queryBackons(request);
+            return ResultUtil.createResult(page);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResultUtil.bizExceptionResult(new GatewayException("500", "分页查询出错"));
@@ -61,7 +64,7 @@ public class BackonController {
      * 新增
      */
 
-    @PostMapping("/addOne")
+    @PostMapping("/add")
     public Map<String, Object> addOne(@RequestBody Backon backon) {
         try {
             iBackonService.save(backon);
@@ -76,10 +79,10 @@ public class BackonController {
      * 修改
      */
 
-    @PostMapping("/updateById")
-    public Map<String, Object> findAllRequestType(@RequestBody Backon backon) {
+    @PostMapping("/modifyById")
+    public Map<String, Object> modifyById(@RequestBody Backon backon) {
         try {
-            iBackonService.updateById(backon);
+            iBackonService.modifyById(backon);
             return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -91,13 +94,14 @@ public class BackonController {
      * 删除
      */
     @PostMapping("/deleteByIds")
-    public Map<String, Object> deleteByIds(@RequestParam("ids") String ids) {
-        if (StringUtils.isBlank(ids)) {
+    public Map<String, Object> deleteByIds(@RequestBody Map<String, Object> body) {
+        if (StringUtils.isBlank((String) body.get("ids"))) {
             return ResultUtil.createResult(null);
         }
         try {
+            String ids = (String) body.get("ids");
             String[] idArr = ids.split(",");
-            iBackonService.removeByIds(Arrays.asList(idArr));
+            iBackonService.deleteByIds(Arrays.asList(idArr));
             return ResultUtil.createResult(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
