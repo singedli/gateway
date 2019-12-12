@@ -9,7 +9,7 @@
           "requestData": "$.[L3RvcC93ZWVrVG9w_state][requestData]"
         }
       ],
-      "ServiceName": "defaultInvokeSao",
+      "ServiceName": "defaultInvokeOut",
       "Output": {
         "L3RvcC93ZWVrVG9w_stateResult": "$.#root"
       },
@@ -39,7 +39,7 @@
           "requestData": "$.[L3Rlc3QvY29uY3VycmVudFRlc3Q_stateResult][requestData]"
         }
       ],
-      "ServiceName": "defaultInvokeSao",
+      "ServiceName": "defaultInvokeOut",
       "Next": "Succeed",
       "Output": {
         "L3BvcnRhbC1tZWRzY2ltZWV0aW5nL3JlY29tbWVuZE1lZXRpbmc_stateResult": "$.#root"

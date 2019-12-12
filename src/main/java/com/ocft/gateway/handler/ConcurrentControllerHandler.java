@@ -37,7 +37,7 @@ public class ConcurrentControllerHandler extends AbstractControllerHandler {
 
     @Override
     public String buildReqBody(String body) {
-        return null;
+        return body;
     }
 
     @Override

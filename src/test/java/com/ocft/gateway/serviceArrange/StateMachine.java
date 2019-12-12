@@ -107,64 +107,6 @@ public class StateMachine {
         // System.err.println(JSONObject.toJSONString(endParams));
     }
 
-    public static void main(String[] args) {
-        test5();
-    }
+    
 
-    public static void test5(){
-        String json = "{\n" +
-                "    \"States\": {\n" +
-                "        \"/portal-medscimeeting/recommendMeetingstate\": {\n" +
-                "            \"Type\": \"ServiceTask\",\n" +
-                "            \"Input\": {\n" +
-                "                \"code\": \"00000000\",\n" +
-                "                \"backOnUrl\": \"$.[/portal-medscimeeting/recommendMeetingstate][backOnUrl]\",\n" +
-                "                \"requestData\": \"$.[/portal-medscimeeting/recommendMeetingstate][requestData]\"\n" +
-                "            },\n" +
-                "            \"ServiceName\": \"defaultInvokeSao\",\n" +
-                "            \"Next\": \"Succeed\",\n" +
-                "            \"Output\": {\n" +
-                "                \"/portal-medscimeeting/recommendMeetingstateResult\": \"$.#root\"\n" +
-                "            },\n" +
-                "            \"ServiceMethod\": \"invokeHandler\"\n" +
-                "        },\n" +
-                "        \"/test/concurrentTeststate\": {\n" +
-                "            \"Type\": \"ServiceTask\",\n" +
-                "            \"Input\": {\n" +
-                "                \"code\": \"00000000\",\n" +
-                "                \"backOnUrl\": \"$.[/test/concurrentTeststate][backOnUrl]\",\n" +
-                "                \"requestData\": \"$.[/test/concurrentTeststate][requestData]\"\n" +
-                "            },\n" +
-                "            \"ServiceName\": \"paramsConverter\",\n" +
-                "            \"Output\": {\n" +
-                "                \"/test/concurrentTeststateResult\": \"$.#root\"\n" +
-                "            },\n" +
-                "            \"ServiceMethod\": \"convert\"\n" +
-                "        },\n" +
-                "        \"/top/weekTopstate\": {\n" +
-                "            \"Type\": \"ServiceTask\",\n" +
-                "            \"Input\": {\n" +
-                "                \"code\": \"00000000\",\n" +
-                "                \"backOnUrl\": \"$.[/top/weekTopstate][backOnUrl]\",\n" +
-                "                \"requestData\": \"$.[/top/weekTopstate][requestData]\"\n" +
-                "            },\n" +
-                "            \"ServiceName\": \"defaultInvokeSao\",\n" +
-                "            \"Output\": {\n" +
-                "                \"/top/weekTopstateResult\": \"$.#root\"\n" +
-                "            },\n" +
-                "            \"Next\": \"/test/concurrentTeststate\",\n" +
-                "            \"ServiceMethod\": \"invokeHandler\"\n" +
-                "        },\n" +
-                "        \"Succeed\": {\n" +
-                "            \"Type\": \"Succeed\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"Comment\": \"并发测试接口的状态机\",\n" +
-                "    \"Version\": \"0.0.2\",\n" +
-                "    \"StartState\": \"/top/weekTopstate\",\n" +
-                "    \"Name\": \"/test/concurrentTeststate\"\n" +
-                "}";
-        Map<String, Object> node = JSON.parseObject(json, Map.class, Feature.IgnoreAutoType, Feature.OrderedField);
-        System.out.println(node);
-    }
 }

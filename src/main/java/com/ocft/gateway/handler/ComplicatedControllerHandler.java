@@ -2,6 +2,8 @@ package com.ocft.gateway.handler;
 
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.entity.GatewayInterface;
+import io.seata.saga.engine.StateMachineEngine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,10 @@ import java.util.Map;
  */
 @Component
 public class ComplicatedControllerHandler extends AbstractControllerHandler {
+
+    @Autowired
+    private StateMachineEngine engine;
+
     @Override
     public String buildReqHeader() {
         return null;
@@ -23,11 +29,15 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
 
     @Override
     public String buildReqBody(String body) {
-        return null;
+        return body;
     }
 
     @Override
     public String sendToBacon(GatewayContext gatewayContext) {
+        //获取状态机引擎
+        //获取状态机脚本
+        //设置状态机参数
+        //执行
         return null;
     }
 
