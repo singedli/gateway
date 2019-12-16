@@ -85,7 +85,6 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
         if ((this.sizeof() + size) / this.maxCacheSize > 0.75) {
             //异步执行扫描任务，将已过期的数据从缓存中剔除
             Thread thread = new Thread(new ClearExpiredCacheTask(this));
-            thread.setDaemon(true);
             thread.start();
         }
         return currentCacheSize += size;
