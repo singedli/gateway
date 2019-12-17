@@ -12,6 +12,7 @@ import com.ocft.gateway.cache.GatewayLocalCache;
 public class TestCreateCache {
     public static void main(String[] args) throws InterruptedException {
         GatewayLocalCache cache = new GatewayLocalCache(1300L);
+        System.out.println(cache.sizeof());
         cache.put("a","1");
         cache.put("b","2");
         cache.put("c","3");
