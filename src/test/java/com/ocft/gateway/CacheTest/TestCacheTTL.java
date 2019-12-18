@@ -14,12 +14,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class TestCacheTTL {
     public static void main(String[] args) throws InterruptedException {
-        GatewayLocalCache cache = new GatewayLocalCache(1300L);
+        GatewayLocalCache cache = new GatewayLocalCache(4500L);
+        System.out.println(cache.sizeof());
         cache.put("a", "1", 1000 *5);
+        System.out.println(cache.sizeof());
         cache.put("b", "2");
+        System.out.println(cache.sizeof());
         cache.put("c", "3");
+        System.out.println(cache.sizeof());
         cache.put("d", "4");
+        System.out.println(cache.sizeof());
         cache.put("e", "5");
+        System.out.println(cache.sizeof());
 
         cache.get("a");
         cache.get("a");
@@ -33,9 +39,9 @@ public class TestCacheTTL {
         cache.get("e");
         cache.get("e");
         System.out.println(cache);
-        TimeUnit.SECONDS.sleep(5);
+        TimeUnit.SECONDS.sleep(6);
         System.out.println("-----------");
-        System.out.println(cache.get("a"));
+        //System.out.println(cache.get("a"));
         System.out.println(cache);
     }
 }
