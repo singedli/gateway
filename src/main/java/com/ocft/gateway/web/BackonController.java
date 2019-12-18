@@ -1,5 +1,6 @@
 package com.ocft.gateway.web;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.Backon;
@@ -12,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,6 +109,22 @@ public class BackonController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResultUtil.bizExceptionResult(new GatewayException("500", "删除出错"));
+        }
+    }
+
+    @PostMapping("/getAllSystem")
+    public Map<String, Object> getAllSystem() {
+        try {
+            QueryWrapper<Backon> backonQueryWrapper = new QueryWrapper<>();
+            backonQueryWrapper.eq("is_deleted",0);
+            backonQueryWrapper.eq("status",1);
+            List<Backon> Backons = iBackonService.list(backonQueryWrapper);
+            List<String> systems = new ArrayList<>();
+            Backons.stream().forEach(backon -> systems.add(backon.getSystem()));
+            return  ResultUtil.createResult(systems);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResultUtil.exceptionResult();
         }
     }
 }

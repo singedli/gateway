@@ -36,9 +36,9 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
 //     */
 //    protected static final ReentrantReadWriteLock.WriteLock writeLock = cacheLock.writeLock();
     /**
-     * 缓存在堆中占用的最大内存，默认为2000MB
+     * 缓存在堆中占用的最大内存，默认为4000MB
      */
-    protected long maxCacheSize = RamUsageEstimator.ONE_MB * 2000;
+    protected long maxCacheSize = RamUsageEstimator.ONE_MB * 4000;
     /**
      * 缓存当前所占用的内存大小
      */

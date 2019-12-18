@@ -2,8 +2,8 @@ package com.ocft.gateway.cache;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.util.RamUsageEstimator;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -30,7 +30,9 @@ public class ClearExpiredCacheTask<K, V> implements Runnable {
     public void run() {
         log.info("本地缓存后台线程开启：{}",Thread.currentThread().getName());
         while (true){
-            if ((cache.sizeof()) / cache.maxCacheSize > 0.75) {
+            BigDecimal sizeof = new BigDecimal(cache.sizeof());
+            BigDecimal maxCacheSize = new BigDecimal(cache.maxCacheSize);
+            if ( sizeof.divide(maxCacheSize,2,BigDecimal.ROUND_HALF_UP).doubleValue()> 0.75) {
                 Iterator<Map.Entry<K, CacheDataWrapper<K, V>>> iterator = cache.getIterator();
                 while (iterator.hasNext()) {
                     Map.Entry<K, CacheDataWrapper<K, V>> next = iterator.next();
