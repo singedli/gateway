@@ -39,10 +39,10 @@ public class GatewayInterfaceController {
         }
     }
 
-    @GetMapping("/detail")
-    public Map<String,Object> getGatewayInterface(@RequestParam("id")String id){
+    @PostMapping("/detail")
+    public Map<String,Object> getGatewayInterface(@RequestBody GatewayInterface req){
         try{
-            GatewayInterface gatewayInterface = gatewayInterfaceService.getById(id);
+            GatewayInterface gatewayInterface = gatewayInterfaceService.getById(req.getId());
             return  ResultUtil.createResult(gatewayInterface);
         }catch (Exception e){
             return  ResultUtil.exceptionResult();

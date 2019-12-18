@@ -15,8 +15,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -71,6 +69,7 @@ public class StateMachineConfig {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(invokeConfig.getBytes());
                 Resource resource = new InputStreamResource(inputStream);
                 resources.add(resource);
+                log.info(invokeConfig);
             }
         }
         log.info("状态机脚本初始化完成,共加载脚本 {} 个",resources.size());

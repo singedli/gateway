@@ -72,10 +72,4 @@ public abstract class AbstractControllerHandler implements IControllerHandler {
         return retToClient(responseString, gatewayContext.getRequest());
     }
 
-//    public Map<String, Object> handle(List<GatewayContext> gatewayContexts) throws Exception{
-//        for (GatewayContext gatewayContext : gatewayContexts) {
-//            //String requestHeader = this.buildReqHeader();
-//        }
-//        return null;
-//    }
 }

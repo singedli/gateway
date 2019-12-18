@@ -11,5 +11,7 @@ import lombok.Data;
  */
 @Data
 public class ConvertServiceArrangeRequest {
-    private String tasks;
+    private String nodes;
+    private String edges;
+    private String gatewayInterface;
 }

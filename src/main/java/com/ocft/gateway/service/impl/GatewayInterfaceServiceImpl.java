@@ -33,4 +33,6 @@ public class GatewayInterfaceServiceImpl extends ServiceImpl<GatewayInterfaceMap
         List<GatewayInterface> gatewayInterfaces = gatewayInterfaceMapper.queryGateWayInterfaces(page, request);
         return page.setRecords(gatewayInterfaces);
     }
+
+
 }

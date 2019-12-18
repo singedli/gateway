@@ -1,11 +1,25 @@
 package com.ocft.gateway.web;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ocft.gateway.common.converter.ServiceArrangeJsonConverter;
+import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.service.IGatewayInterfaceService;
+import com.ocft.gateway.spring.SpringContextHolder;
+import com.ocft.gateway.stateMachine.StateLangGenerator;
+import com.ocft.gateway.utils.ResultUtil;
 import com.ocft.gateway.web.dto.request.ConvertServiceArrangeRequest;
+import io.seata.saga.engine.StateMachineEngine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,9 +32,32 @@ import java.util.Map;
 @RestController
 @RequestMapping("/serviceArrange")
 public class ServiceArrangeController {
+    @Autowired
+    private IGatewayInterfaceService gatewayInterfaceService;
 
-    public Map<String, Object> getStateMachineConfig(ConvertServiceArrangeRequest req){
-        //JSONObject converter = ServiceArrangeJsonConverter.converter(req.getTasks());
-        return null;
+    @Autowired
+    private StateMachineEngine stateMachineEngine;
+
+    @RequestMapping("/addServiceArrange")
+    public Map<String, Object> getStateMachineConfig(@RequestBody String data){
+        StateLangGenerator generator = SpringContextHolder.getBean("stateLangGenerator");
+        String generate = generator.generate(data);
+        JSONObject jsonObject = JSONObject.parseObject(data);
+        GatewayInterface gatewayInterface = jsonObject.getObject("gatewayInterface", GatewayInterface.class);
+        gatewayInterface.setInvokeConfig(generate);
+        jsonObject.remove("gatewayInterface");
+        gatewayInterface.setFlowConfig(jsonObject.toJSONString());
+        gatewayInterfaceService.updateById(gatewayInterface);
+        List<Resource> resourceList = new ArrayList<>();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(generate.getBytes());
+        Resource resource = new InputStreamResource(inputStream);
+        resourceList.add(resource);
+        Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
+        try {
+            stateMachineEngine.getStateMachineConfig().getStateMachineRepository().registryByResources(resources,null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.successResult();
     }
 }

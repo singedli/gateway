@@ -84,10 +84,14 @@ public abstract class AbstractBaseOut {
 
     //设置关联方的返回数据类型
     protected void setThirdResponseEntry(InvokeThirdDTO req, String code, String msg, String data, String successCode) {
-        req.setCode(code);
-        req.setMsg(msg);
-        req.setData(data);
-        req.setSuccess(successCode);
+        if(!org.springframework.util.StringUtils.hasText(req.getCode()))
+            req.setCode(code);
+        if(!org.springframework.util.StringUtils.hasText(req.getMsg()))
+            req.setMsg(msg);
+        if(!org.springframework.util.StringUtils.hasText(req.getData()))
+            req.setData(data);
+        if(!org.springframework.util.StringUtils.hasText(req.getSuccess()))
+            req.setSuccess(successCode);
 
     }
 

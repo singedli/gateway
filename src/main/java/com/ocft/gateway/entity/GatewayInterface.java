@@ -71,6 +71,8 @@ public class GatewayInterface implements Serializable {
 
     private String invokeConfig;
 
+    private String flowConfig;
+
     private Date createTime;
 
     private Date updateTime;

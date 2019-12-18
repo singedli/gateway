@@ -21,6 +21,7 @@
         <result column="update_time" property="updateTime"/>
         <result column="create_by" property="createBy"/>
         <result column="update_by" property="updateBy"/>
+        <result column="flow_config" property="flowConfig"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -41,6 +42,7 @@
             i.pre_interceptors,
             i.post_interceptors,
             i.invoke_config,
+            i.flow_config,
             i.create_time,
             i.create_by,
             i.update_time,

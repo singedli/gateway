@@ -107,6 +107,27 @@ public class StateMachine {
         // System.err.println(JSONObject.toJSONString(endParams));
     }
 
-    
+    @Test
+    public void test5() {
+        Map<String, Object> map1 = new HashMap<>();
+        Map<String, String> hashMap1 = new HashMap<>();
+
+        hashMap1.put("backOnUrl", "http://localhost:10000/test/weatherTest/getWeatherByName");
+        hashMap1.put("requestData", "{\"cityName\":\"上海\"}");
+        hashMap1.put("code", "code");
+        map1.put("L3dlYXRoZXJUZXN0L2dldFdlYXRoZXJCeU5hbWVfdGFzaw",hashMap1);
+
+        Map<String, String> hashMap2 = new HashMap<>();
+        hashMap2.put("backOnUrl", "http://localhost:10000/test/weatherTest/getWeatherType");
+        hashMap2.put("code", "code");
+        map1.put("L3dlYXRoZXJUZXN0L2dldFdlYXRoZXJUeXBlX3Rhc2s",hashMap2);
+
+        StateMachineInstance machine = engine.start("L3dlYXRoZXIvcXVlcnlfc3RhdGU", null, map1);
+        Map<String, Object> context = machine.getContext();
+        Map<String, Object> endParams = machine.getEndParams();
+
+    }
+
+
 
 }

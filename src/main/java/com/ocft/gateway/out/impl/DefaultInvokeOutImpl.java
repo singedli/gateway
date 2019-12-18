@@ -23,7 +23,8 @@ import java.util.Map;
 public class DefaultInvokeOutImpl extends AbstractBaseOut {
     private static final Logger logger = LoggerFactory.getLogger(DefaultInvokeOutImpl.class);
 
-    private static final String THIRD_RES_CODE = "status";//第三方系统响应码属性名
+//    private static final String THIRD_RES_CODE = "status";//第三方系统响应码属性名
+    private static final String THIRD_RES_CODE = "code";//第三方系统响应码属性名
     private static final String THIRD_RES_MSG = "message";//第三方系统响应信息属性名
     private static final String THIRD_RES_DATA = "data";//第三方系统响应数据属性名
     private static final String THIRD_RES_SUCCESS = "200";//第三方系统响应成功码
@@ -32,6 +33,7 @@ public class DefaultInvokeOutImpl extends AbstractBaseOut {
 
     @Override
     protected void handlerRequest(InvokeThirdDTO req) {
+
         //包装第三方系统响应参数名
         this.setThirdResponseEntry(req, THIRD_RES_CODE, THIRD_RES_MSG, THIRD_RES_DATA, THIRD_RES_SUCCESS);
         //包装请求头信息
