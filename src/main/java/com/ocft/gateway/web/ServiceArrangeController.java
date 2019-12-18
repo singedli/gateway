@@ -54,7 +54,7 @@ public class ServiceArrangeController {
         resourceList.add(resource);
         Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
         try {
-            stateMachineEngine.getStateMachineConfig().getStateMachineRepository().registryByResources(resources,null);
+            stateMachineEngine.getStateMachineConfig().getStateMachineRepository().registryByResources(resources,"000001");
         } catch (IOException e) {
             e.printStackTrace();
         }
