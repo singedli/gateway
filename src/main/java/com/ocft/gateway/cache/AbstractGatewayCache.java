@@ -2,6 +2,7 @@ package com.ocft.gateway.cache;
 
 import org.apache.lucene.util.RamUsageEstimator;
 import org.aspectj.util.SoftHashMap;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,23 +20,25 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
     /**
      * 缓存，使用软引用，会在内存不够时将缓存回收
      */
-    public Map<K, CacheDataWrapper<K, V>> cache = new SoftHashMap<>();
+    //public Map<K, CacheDataWrapper<K, V>> cache = new SoftHashMap<>();
+      public Map<K, CacheDataWrapper<K, V>> cache = new ConcurrentReferenceHashMap<>(16, ConcurrentReferenceHashMap.ReferenceType.SOFT);
+
+//    /**
+//     * 缓存锁
+//     */
+//    protected static final ReentrantReadWriteLock cacheLock = new ReentrantReadWriteLock();
+//    /**
+//     * 读锁
+//     */
+//    protected static final ReentrantReadWriteLock.ReadLock readLock = cacheLock.readLock();
+//    /**
+//     * 写锁
+//     */
+//    protected static final ReentrantReadWriteLock.WriteLock writeLock = cacheLock.writeLock();
     /**
-     * 缓存锁
+     * 缓存在堆中占用的最大内存，默认为2000MB
      */
-    protected static final ReentrantReadWriteLock cacheLock = new ReentrantReadWriteLock();
-    /**
-     * 读锁
-     */
-    protected static final ReentrantReadWriteLock.ReadLock readLock = cacheLock.readLock();
-    /**
-     * 写锁
-     */
-    protected static final ReentrantReadWriteLock.WriteLock writeLock = cacheLock.writeLock();
-    /**
-     * 缓存在堆中占用的最大内存，默认为200MB
-     */
-    protected long maxCacheSize = RamUsageEstimator.ONE_MB * 200;
+    protected long maxCacheSize = RamUsageEstimator.ONE_MB * 2000;
     /**
      * 缓存当前所占用的内存大小
      */
@@ -43,22 +46,24 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
 
     @Override
     public void put(K key, V value) {
-        writeLock.lock();
-        try {
-            doPut(key, value, -1);
-        } finally {
-            writeLock.unlock();
-        }
+//        writeLock.lock();
+//        try {
+//            doPut(key, value, -1);
+//        } finally {
+//            writeLock.unlock();
+//        }
+        doPut(key, value, -1);
     }
 
     @Override
     public void put(K key, V value, long ttl) {
-        writeLock.lock();
-        try {
-            doPut(key, value, ttl);
-        } finally {
-            writeLock.unlock();
-        }
+//        writeLock.lock();
+//        try {
+//            doPut(key, value, ttl);
+//        } finally {
+//            writeLock.unlock();
+//        }
+        doPut(key, value, ttl);
     }
 
     private void doPut(K key, V value, long ttl) {
@@ -84,6 +89,7 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
          */
         if ((this.sizeof() + size) / this.maxCacheSize > 0.75) {
             //异步执行扫描任务，将已过期的数据从缓存中剔除
+
         }
         return currentCacheSize += size;
     }
@@ -91,15 +97,24 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
 
     @Override
     public V get(K key) {
-        readLock.lock();
-        CacheDataWrapper<K, V> dataWrapper = null;
-        try {
-            dataWrapper = this.cache.get(key);
-            if (dataWrapper == null) {
-                return null;
-            }
-        } finally {
-            readLock.unlock();
+//        readLock.lock();
+//        CacheDataWrapper<K, V> dataWrapper = null;
+//        try {
+//            dataWrapper = this.cache.get(key);
+//            if (dataWrapper == null) {
+//                return null;
+//            }
+//        } finally {
+//            readLock.unlock();
+//        }
+        CacheDataWrapper<K, V> dataWrapper = this.cache.get(key);
+        if (dataWrapper == null) {
+            return null;
+        }
+
+        dataWrapper = this.cache.get(key);
+        if (dataWrapper == null) {
+            return null;
         }
         if (dataWrapper.isExpired()) {
             this.remove(key);
@@ -109,72 +124,85 @@ public abstract class AbstractGatewayCache<K, V> implements GatewayCache<K, V> {
 
     @Override
     public void remove(K key) {
-        writeLock.lock();
-        try {
-            this.cache.remove(key);
-        } finally {
-            writeLock.unlock();
-        }
+//        writeLock.lock();
+//        try {
+//            this.cache.remove(key);
+//        } finally {
+//            writeLock.unlock();
+//        }
+        this.cache.remove(key);
     }
 
     @Override
     public int size() {
-        readLock.lock();
-        try {
-            return this.cache.size();
-        } finally {
-            readLock.unlock();
-        }
+//        readLock.lock();
+//        try {
+//            return this.cache.size();
+//        } finally {
+//            readLock.unlock();
+//        }
+        return this.cache.size();
     }
 
     @Override
     public long sizeof() {
-        readLock.lock();
-        try {
-            return RamUsageEstimator.sizeOf(this.cache);
-        } finally {
-            readLock.unlock();
-        }
+//        readLock.lock();
+//        try {
+//            return RamUsageEstimator.sizeOf(this.cache);
+//        } finally {
+//            readLock.unlock();
+//        }
+        return RamUsageEstimator.sizeOf(this.cache);
     }
 
     @Override
     public boolean isEmpty() {
-        readLock.lock();
-        try {
-            return this.cache.isEmpty();
-        } finally {
-            readLock.unlock();
-        }
+//        readLock.lock();
+//        try {
+//            return this.cache.isEmpty();
+//        } finally {
+//            readLock.unlock();
+//        }
+        return this.cache.isEmpty();
     }
 
     @Override
     public boolean containsKey(K key) {
-        readLock.lock();
-        try {
-            CacheDataWrapper<K, V> dataWrapper = this.cache.get(key);
-            if (dataWrapper == null) {
-                return Boolean.FALSE;
-            }
+//        readLock.lock();
+//        try {
+//            CacheDataWrapper<K, V> dataWrapper = this.cache.get(key);
+//            if (dataWrapper == null) {
+//                return Boolean.FALSE;
+//            }
+//
+//            if (dataWrapper.isExpired()) {
+//                remove(key);
+//            }
+//        } finally {
+//            readLock.unlock();
+//        }
+        CacheDataWrapper<K, V> dataWrapper = this.cache.get(key);
+        if (dataWrapper == null) {
+            return Boolean.FALSE;
+        }
 
-            if (dataWrapper.isExpired()) {
-                remove(key);
-            }
-        } finally {
-            readLock.unlock();
+        if (dataWrapper.isExpired()) {
+            remove(key);
         }
         return Boolean.TRUE;
     }
 
     @Override
     public int clear() {
-        writeLock.lock();
-        int total = cache.size();
-        try {
-            cache.clear();
-        } finally {
-            writeLock.unlock();
-        }
-        return total;
+//        writeLock.lock();
+//        int total = cache.size();
+//        try {
+//            cache.clear();
+//        } finally {
+//            writeLock.unlock();
+//        }
+        cache.clear();
+        return cache.size();
     }
 
     @Override

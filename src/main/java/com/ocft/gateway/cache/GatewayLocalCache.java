@@ -24,6 +24,9 @@ public class GatewayLocalCache<K, V> extends AbstractGatewayCache<K, V> {
      *                     n * RamUsageEstimator.ONE_GB; 表示nG大小
      */
     public GatewayLocalCache(long maxCacheSize) {
+        Thread thread = new Thread(new ClearExpiredCacheTask(this));
+        thread.setDaemon(true);
+        thread.start();
         super.maxCacheSize = maxCacheSize;
     }
 
@@ -64,12 +67,13 @@ public class GatewayLocalCache<K, V> extends AbstractGatewayCache<K, V> {
             for (Map.Entry<K, CacheDataWrapper<K, V>> entry : entries) {
                 CacheDataWrapper<K, V> dataWrapper = entry.getValue();
                 if (dataWrapper.getAccessCount() - minAccessCount <= 0) {
-                    writeLock.lock();
-                    try {
-                        this.cache.remove(entry.getKey());
-                    } finally {
-                        writeLock.unlock();
-                    }
+//                    writeLock.lock();
+//                    try {
+//                        this.cache.remove(entry.getKey());
+//                    } finally {
+//                        writeLock.unlock();
+//                    }
+                    this.cache.remove(entry.getKey());
                     count++;
                 }
             }
