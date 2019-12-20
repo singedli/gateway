@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -112,4 +113,32 @@ public class BackonInterfaceController {
             return  ResultUtil.exceptionResult();
         }
     }
+
+    @PostMapping("/getBackonInterfacesBySystem")
+    public Map<String,Object> getBackonInterfacesBySystem(@RequestBody BackonInterfaceRequest req){
+
+        List<BackonInterface> result = null;
+        try{
+            result = backonInterfaceService.getBackonInterfaceListBySystem(req);
+        }catch (Exception e){
+            log.error("修改后台接口配置发生异常:{}",e);
+            return  ResultUtil.exceptionResult();
+        }
+        return ResultUtil.createResult(result);
+    }
+
+    @PostMapping("/getBackonInterfacesByUrl")
+    public Map<String,Object> getBackonInterfacesByUrl(@RequestBody BackonInterfaceRequest req){
+
+        BackonInterface result = null;
+        try{
+            result = backonInterfaceService.getBackonInterfaceListByUrl(req);
+        }catch (Exception e){
+            log.error("修改后台接口配置发生异常:{}",e);
+            return  ResultUtil.exceptionResult();
+        }
+        return ResultUtil.createResult(result);
+    }
+
+
 }

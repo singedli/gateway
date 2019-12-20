@@ -75,4 +75,14 @@ public class BackonInterfaceServiceImpl extends ServiceImpl<BackonInterfaceMappe
         IPage<BackonInterface> page = this.page(new Page<>(request.getCurrent(), request.getSize()),queryWrapper);
         return page;
     }
+
+    @Override
+    public List<BackonInterface> getBackonInterfaceListBySystem(BackonInterfaceRequest request) {
+        return this.baseMapper.selectList(new QueryWrapper<BackonInterface>().eq("system",request.getSystem()).eq("status","1").eq("is_deleted","0"));
+    }
+
+    @Override
+    public BackonInterface getBackonInterfaceListByUrl(BackonInterfaceRequest request) {
+        return this.baseMapper.selectOne(new QueryWrapper<BackonInterface>().eq("url",request.getUrl()).eq("status","1").eq("is_deleted","0"));
+    }
 }

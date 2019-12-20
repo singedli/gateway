@@ -1,5 +1,6 @@
 package com.ocft.gateway.web;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IGatewayInterfaceService;
@@ -44,6 +45,20 @@ public class ServiceArrangeController {
         String generate = generator.generate(data);
         JSONObject jsonObject = JSONObject.parseObject(data);
         GatewayInterface gatewayInterface = jsonObject.getObject("gatewayInterface", GatewayInterface.class);
+        JSONArray nodes = jsonObject.getJSONArray("nodes");
+        List<JSONObject>  backonAndUrlList= new ArrayList<>();
+        for (int i = 0; i < nodes.size(); i++) {
+            JSONObject node = nodes.getJSONObject(i);
+            if("task".equalsIgnoreCase(node.getString("stateType"))){
+                JSONObject backonAndUrl = new JSONObject();
+                String url = node.getString("url");
+                String system = node.getString("system");
+                backonAndUrl.put("system",system);
+                backonAndUrl.put("backonUrl",url);
+                backonAndUrlList.add(backonAndUrl);
+            }
+        }
+        gatewayInterface.setBackonUrl(JSONArray.toJSONString(backonAndUrlList));
         gatewayInterface.setInvokeConfig(generate);
         jsonObject.remove("gatewayInterface");
         gatewayInterface.setFlowConfig(jsonObject.toJSONString());

@@ -6,6 +6,7 @@ import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.web.dto.request.BackonInterfaceRequest;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,4 +23,6 @@ public interface IBackonInterfaceService extends IService<BackonInterface> {
     Map<String,String> getBackonInterfaceMethod(GatewayInterface gatewayInterface);
 
     IPage<BackonInterface> getBackonInterfaceList(BackonInterfaceRequest request);
+    List<BackonInterface> getBackonInterfaceListBySystem(BackonInterfaceRequest request);
+    BackonInterface getBackonInterfaceListByUrl(BackonInterfaceRequest request);
 }

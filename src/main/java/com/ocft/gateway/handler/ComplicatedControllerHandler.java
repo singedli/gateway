@@ -1,5 +1,6 @@
 package com.ocft.gateway.handler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,14 +16,13 @@ import com.ocft.gateway.web.response.HttpResponseModel;
 import io.seata.saga.engine.StateMachineConfig;
 import io.seata.saga.engine.StateMachineEngine;
 import io.seata.saga.statelang.domain.StateMachineInstance;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author lijiaxing
@@ -35,6 +35,7 @@ import java.util.Set;
 public class ComplicatedControllerHandler extends AbstractControllerHandler {
 
     private static final String RESULT_SUFFIX = "_result";
+
 
     @Autowired
     private StateMachineEngine engine;
@@ -60,27 +61,39 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
         //获取状态机脚本
         GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
         String url = gatewayInterface.getUrl();
-        String stateMachineName = StateLangGenerator.safeEncodeStateUrl(url  + "_state");
+        String stateMachineName = StateLangGenerator.safeEncodeStateUrl(url + "_state");
         //设置状态机参数
-        String backonUrl = gatewayInterface.getBackonUrl();
-        String[] backonUrls = backonUrl.split(",");
-        Map<String,Object> params = new HashMap<>();
-        for (int i = 0; i < backonUrls.length; i++) {
-            BackonInterface backonInterface = backonInterfaceMapper.selectOne(new QueryWrapper<BackonInterface>().eq("url", backonUrls[i]).eq("status", 1).eq("is_deleted", "0"));
-            String system = backonInterface.getSystem();
-            Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", 1).eq("is_deleted", "0"));
-            String backOnUrl = backon.getDomain()+ backonUrls[i] + backon.getSuffix();
-            String requestData = gatewayContext.getRequestBody();
-            Map<String,Object> param = new HashMap<>();
-            param.put("backOnUrl",backOnUrl);
-            if(i == 0)
-                param.put("requestData",requestData);
-            String stateName = StateLangGenerator.safeEncodeStateUrl(backonUrls[i]+"_task");
-            params.put(stateName,param);
+        String flowConfig = gatewayInterface.getFlowConfig();
+        JSONObject flowConfigObject = JSONObject.parseObject(flowConfig);
+        JSONArray edges = flowConfigObject.getJSONArray("edges");
+        JSONArray nodes = flowConfigObject.getJSONArray("nodes");
+        List<JSONObject> nodeList = nodes.toJavaList(JSONObject.class);
+
+        Map<String, Object> params = new HashMap<>();
+        LinkedList<String> nodeOrder = StateLangGenerator.buildList(edges);
+        for (int i = 0; i < nodeOrder.size(); i++) {
+            String id = nodeOrder.remove(i);
+            JSONObject node = nodeList.stream().filter(n -> n.getString("id").equals(id)).findFirst().get();
+            if ("task".equalsIgnoreCase(node.getString("stateType"))) {
+                BackonInterface backonInterface = backonInterfaceMapper.selectOne(new QueryWrapper<BackonInterface>().eq("id", id).eq("status", 1).eq("is_deleted", "0"));
+                String system = backonInterface.getSystem();
+                String url1 = backonInterface.getUrl();
+                Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", 1).eq("is_deleted", "0"));
+                String backOnUrl = backon.getDomain() + backonInterface.getUrl() + backon.getSuffix();
+                String requestData = gatewayContext.getRequestBody();
+                Map<String, Object> param = new HashMap<>();
+                param.put("backOnUrl", backOnUrl);
+                if (i == 0) {
+                    param.put("requestData", requestData);
+                }
+                String stateName = StateLangGenerator.safeEncodeStateUrl(url1 + "_task");
+                params.put(stateName, param);
+            }
         }
         //执行
         StateMachineInstance instance = engine.start(stateMachineName, null, params);
         Map<String, Object> endParams = instance.getEndParams();
+        Exception exception = instance.getException();
 
         return decodeUrlForResp(endParams);
     }
@@ -91,25 +104,23 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
         return ResultUtil.createResult(JSONObject.parseObject(resout));
     }
 
-    private String decodeUrlForResp(Map<String, Object> data){
+    private String decodeUrlForResp(Map<String, Object> data) {
         Iterator<Map.Entry<String, Object>> iterator = data.entrySet().iterator();
         JSONObject newData = new JSONObject();
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             String key = iterator.next().getKey();
             Object value = data.get(key);
-            if(key.endsWith(RESULT_SUFFIX)){
-                key = key.substring(0,key.length()-RESULT_SUFFIX.length());
-                key = StateLangGenerator.getUrlFromEncodeStateName(key)+RESULT_SUFFIX;
-            }else{
+            if (key.endsWith(RESULT_SUFFIX)) {
+                key = key.substring(0, key.length() - RESULT_SUFFIX.length());
+                key = StateLangGenerator.getUrlFromEncodeStateName(key) + RESULT_SUFFIX;
+            } else {
                 key = StateLangGenerator.getUrlFromEncodeStateName(key);
             }
             iterator.remove();
-            newData.put(key,value);
+            newData.put(key, value);
         }
-        return JSONObject.toJSONString(newData,SerializerFeature.WriteMapNullValue);
+        return JSONObject.toJSONString(newData, SerializerFeature.WriteMapNullValue);
     }
-
-
 
 
 }

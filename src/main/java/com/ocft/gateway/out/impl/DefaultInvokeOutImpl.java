@@ -2,6 +2,7 @@ package com.ocft.gateway.out.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.exceptions.GatewayException;
+import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.out.AbstractBaseOut;
 import com.ocft.gateway.utils.HttpUtil;
 import com.ocft.gateway.utils.KV;
@@ -69,8 +70,9 @@ public class DefaultInvokeOutImpl extends AbstractBaseOut {
             responseModel = this.success(req, res);
             logger.info("DefaultInvokeSaoImpl_handlerResponse_Success");
         } else {
-            responseModel = this.fail(req, res);
-            logger.info("DefaultInvokeSaoImpl_handlerResponse_fail");
+            throw new GatewayException(ResponseEnum.INVOKE_BACKON_INTERFACE_FAIL);
+            //responseModel = this.fail(req, res);
+            //logger.info("DefaultInvokeSaoImpl_handlerResponse_fail");
         }
         return responseModel;
     }
