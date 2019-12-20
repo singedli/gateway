@@ -1,14 +1,21 @@
 package com.ocft.gateway.handler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.exceptions.GatewayException;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.enums.ErrorCode;
 import com.ocft.gateway.enums.ResponseEnum;
+import com.ocft.gateway.out.AbstractBaseOut;
 import com.ocft.gateway.utils.HttpUtil;
+import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.InvokeThirdDTO;
+import com.ocft.gateway.web.response.HttpResponseModel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -27,6 +34,9 @@ import java.util.Map;
 @Slf4j
 @Component
 public class PassThroughControllerHandler extends AbstractControllerHandler {
+    @Autowired
+    private AbstractBaseOut httpOut;
+
     @Override
     public String buildReqHeader() {
         return "";
@@ -40,37 +50,44 @@ public class PassThroughControllerHandler extends AbstractControllerHandler {
     @Override
     public String sendToBacon(GatewayContext gatewayContext) {
         GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
-        String requestBody = gatewayContext.getRequestBody();
-        String reqUrl = buildUrl(gatewayInterface);
 
-        String backonRes = null;
-        String httpMethod = backonInterfaceService.getBackonInterfaceMethod(gatewayInterface.getBackonUrl());
-        if (HttpMethod.GET.matches(httpMethod)) {
-            Map<String, Object> queries = JSONObject.parseObject(requestBody, Map.class);
-            backonRes = HttpUtil.get(reqUrl, queries);
-        } else if (HttpMethod.POST.matches(httpMethod)) {
-            backonRes = HttpUtil.postJsonParams(reqUrl, requestBody);
-        } else {
-            throw new GatewayException(ResponseEnum.HTTP_METHOD_NOT_EXIST_SUPPORTED);
-        }
-        return backonRes;
+        String requestBody = gatewayContext.getRequestBody();
+
+        String backonSystemAndUrl = gatewayInterface.getBackonUrl();
+        JSONArray jsonArray = JSONArray.parseArray(backonSystemAndUrl);
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        String system = jsonObject.getString("system");
+        Assert.hasText(system,ResponseEnum.BACKON_NOT_EXIST.getMessage());
+        String backonUrl = jsonObject.getString("backonUrl");
+        Assert.hasText(backonUrl,ResponseEnum.BACKON_INTERFACE_NOT_EXIST.getMessage());
+
+        Backon backon = backonService.getOne(new QueryWrapper<Backon>().eq("system", system).eq("status","1").eq("is_deleted","0"));
+        Assert.notNull(backon, ResponseEnum.BACKON_NOT_EXIST.getMessage());
+
+        String domain = backon.getDomain();
+        String suffix = backon.getSuffix();
+        String reqUrl = domain + backonUrl + suffix;
+        String httpMethod = backonInterfaceService.getBackonInterfaceMethod(backonUrl);
+        InvokeThirdDTO invokeThirdDTO = new InvokeThirdDTO()
+                .setBackOnUrl(reqUrl)
+                .setMethod(httpMethod)
+                .setRequestData(requestBody)
+                .setCode(backon.getSuccessCode())
+                .setSuccess(backon.getSuccessValue());
+
+        HttpResponseModel<Object> objectHttpResponseModel = httpOut.invokeHandler(invokeThirdDTO);
+//        String result = "";
+//        if(ErrorCode.SYSTEM_SUCCESS.getCode().equalsIgnoreCase(objectHttpResponseModel.getCode())){
+//            JSONObject resultObj = (JSONObject)objectHttpResponseModel.getData();
+//            result = resultObj.toJSONString();
+//        }
+        return JSONObject.toJSONString(objectHttpResponseModel);
     }
 
 
     @Override
     public Map<String, Object> retToClient(String resout, HttpServletRequest request) {
-        return null;
-    }
-
-
-    private String buildUrl(GatewayInterface gatewayInterface) {
-        log.info("构建请求后台接口url，网关接口为：{}", gatewayInterface);
-        String system = gatewayInterface.getSystem();
-        Backon backon = backonService.getOne(new QueryWrapper<Backon>().eq("system", system).eq("status","1").eq("is_deleted","0"));
-        Assert.notNull(backon, ResponseEnum.BACKON_NOT_EXIST.getMessage());
-        String domain = backon.getDomain();
-        String suffix = backon.getSuffix();
-        return domain + gatewayInterface.getBackonUrl() + suffix;
+        return ResultUtil.createResult(resout);
     }
 
 }

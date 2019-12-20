@@ -1,6 +1,7 @@
 package com.ocft.gateway.web.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @description: 调用外部接口实体类
  **/
 @Data
+@Accessors(chain=true)
 public class InvokeThirdDTO {
 
     //请求方法

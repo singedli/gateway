@@ -1,5 +1,6 @@
 package com.ocft.gateway.common.converter;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.task.ConcurrentInvokeTask;
@@ -29,14 +30,17 @@ public class GatewayContextConverter {
         List<ConcurrentInvokeTask> taskList = new ArrayList<>();
         GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
         String backonUrls = gatewayInterface.getBackonUrl();
+        JSONArray backonUrlsArray = JSONArray.parseArray(backonUrls);
         IBackonInterfaceService backonInterfaceService = SpringContextHolder.getBean(IBackonInterfaceService.class);
         IBackonService backonService = SpringContextHolder.getBean(IBackonService.class);
-        for (String backonUrl : backonUrls.split(",")) {
+        for (int i = 0; i < backonUrlsArray.size(); i++) {
+            String backonUrl = backonUrlsArray.getJSONObject(i).getString("backonUrl");
+            String system = backonUrlsArray.getJSONObject(i).getString("system");
             BackonInterface backonInterface = backonInterfaceService.getBackonInterface(backonUrl);
-            Backon backon = backonService.getBackon(backonInterface.getSystem());
+            Backon backon = backonService.getBackon(system);
             backonUrl =backon.getDomain()+backonUrl+backon.getSuffix();
             ConcurrentInvokeTask concurrentInvokeTask = new ConcurrentInvokeTask()
-                    //.setHeaders(backonInterface.getHttpHeader())
+                    .setHeaders(backonInterface.getHttpHeader())
                     .setHttpMethod(backonInterface.getHttpMethod())
                     .setLatch(latch)
                     .setRequestBody(gatewayContext.getRequestBody())

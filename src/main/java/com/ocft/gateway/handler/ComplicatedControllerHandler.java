@@ -93,7 +93,6 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
         //执行
         StateMachineInstance instance = engine.start(stateMachineName, null, params);
         Map<String, Object> endParams = instance.getEndParams();
-        Exception exception = instance.getException();
 
         return decodeUrlForResp(endParams);
     }

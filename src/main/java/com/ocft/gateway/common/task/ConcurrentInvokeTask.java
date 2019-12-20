@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
 @Accessors(chain=true)
 public class ConcurrentInvokeTask implements Runnable {
     private String url;
-    private Map<String,String> headers;
+    private String headers;
     private String requestBody;
     private String httpMethod;
     private Map<String,Object> getParams;

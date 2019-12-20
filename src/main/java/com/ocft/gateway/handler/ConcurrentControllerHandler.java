@@ -1,5 +1,6 @@
 package com.ocft.gateway.handler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.common.converter.GatewayContextConverter;
@@ -43,7 +44,9 @@ public class ConcurrentControllerHandler extends AbstractControllerHandler {
     @Override
     public String sendToBacon(GatewayContext gatewayContext) {
         GatewayInterface gatewayInterface = gatewayContext.getGatewayInterface();
-        int count = gatewayInterface.getBackonUrl().split(",").length;
+        String backonAndUrl = gatewayInterface.getBackonUrl();
+        JSONArray backonAndUrlArray = JSONArray.parseArray(backonAndUrl);
+        int count =  backonAndUrlArray.size();
         CountDownLatch latch = new CountDownLatch(count);
         List<ConcurrentInvokeTask> tasks = GatewayContextConverter.convert(gatewayContext, latch);
         for (ConcurrentInvokeTask task : tasks) {
