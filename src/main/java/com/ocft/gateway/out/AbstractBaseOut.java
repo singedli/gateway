@@ -102,7 +102,8 @@ public abstract class AbstractBaseOut {
             error(new GatewayException("500", "AbstraccBaseSao_isSuccess_res_isNull"));
         }
         String code = res.getString(req.getCode());
-        return req.getSuccess().equalsIgnoreCase(code);
+        res.getString("status");
+        return req.getSuccess().equalsIgnoreCase(res.getString("status"));
     }
 
     // 请求成功封装返回参数

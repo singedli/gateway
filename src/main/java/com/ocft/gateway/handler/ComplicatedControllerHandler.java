@@ -8,6 +8,7 @@ import com.ocft.gateway.common.context.GatewayContext;
 import com.ocft.gateway.entity.Backon;
 import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
+import com.ocft.gateway.enums.ResponseEnum;
 import com.ocft.gateway.mapper.BackonInterfaceMapper;
 import com.ocft.gateway.mapper.BackonMapper;
 import com.ocft.gateway.stateMachine.StateLangGenerator;
@@ -16,6 +17,7 @@ import com.ocft.gateway.web.response.HttpResponseModel;
 import io.seata.saga.engine.StateMachineConfig;
 import io.seata.saga.engine.StateMachineEngine;
 import io.seata.saga.statelang.domain.StateMachineInstance;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import java.util.*;
  * @date 2019/11/21下午6:22
  * @Description: 复杂类型处理器
  */
+@Slf4j
 @Component
 public class ComplicatedControllerHandler extends AbstractControllerHandler {
 
@@ -75,7 +78,8 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
             String id = nodeOrder.remove(i);
             JSONObject node = nodeList.stream().filter(n -> n.getString("id").equals(id)).findFirst().get();
             if ("task".equalsIgnoreCase(node.getString("stateType"))) {
-                BackonInterface backonInterface = backonInterfaceMapper.selectOne(new QueryWrapper<BackonInterface>().eq("id", id).eq("status", 1).eq("is_deleted", "0"));
+                String backUrl = node.getString("url");
+                BackonInterface backonInterface = backonInterfaceMapper.selectOne(new QueryWrapper<BackonInterface>().eq("url", backUrl).eq("status", 1).eq("is_deleted", "0"));
                 String system = backonInterface.getSystem();
                 String url1 = backonInterface.getUrl();
                 Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", 1).eq("is_deleted", "0"));
@@ -93,7 +97,11 @@ public class ComplicatedControllerHandler extends AbstractControllerHandler {
         //执行
         StateMachineInstance instance = engine.start(stateMachineName, null, params);
         Map<String, Object> endParams = instance.getEndParams();
-
+        Exception exception = instance.getException();
+        if(null != exception){
+            log.error(ResponseEnum.STATE_MACHINE_EXECUTED_ERROR.getMessage(),exception);
+            throw new RuntimeException(ResponseEnum.STATE_MACHINE_EXECUTED_ERROR.getMessage());
+        }
         return decodeUrlForResp(endParams);
     }
 

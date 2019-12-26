@@ -67,7 +67,6 @@ public class JsonOperateEvalutor {
         JsonOperateParser.getKeepStylePath("",pathMap,resultSet);
         keepKeysByGivenKeySet(resultSet,t);
         return t;
-
     }
 
 

@@ -71,6 +71,8 @@ public class BackonInterfaceServiceImpl extends ServiceImpl<BackonInterfaceMappe
             queryWrapper.eq("http_method",request.getHttpMethod());
         }
 
+        queryWrapper.orderByDesc("update_time");
+
         IPage<BackonInterface> page = this.page(new Page<>(request.getCurrent(), request.getSize()),queryWrapper);
         return page;
     }

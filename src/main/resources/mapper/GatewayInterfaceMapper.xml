@@ -67,6 +67,7 @@
                 and i.status = #{req.status,jdbcType=VARCHAR}
             </if>
             and i.is_deleted = 0
+            order by i.update_time desc
 
         </where>
 

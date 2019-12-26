@@ -23,7 +23,11 @@ public enum ResponseEnum {
 
 
     HTTP_METHOD_NOT_EXIST_SUPPORTED("20000000","未知的HTTP请求方法"),
-    PARSE_ENCODE_URL_ERROT("30000000","解析编码url失败");
+    PARSE_ENCODE_URL_ERROR("30000000","解析编码url失败"),
+
+    STATE_MACHINE_EXECUTED_ERROR("40000000","状态机执行失败");
+
+
 
     private String code;
     private String message;

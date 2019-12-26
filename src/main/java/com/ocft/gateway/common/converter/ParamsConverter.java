@@ -42,7 +42,7 @@ public class ParamsConverter {
         }
         String requestConfig = messageConverter.getRequestConfig();
         String requestStruct = messageConverter.getRequestStruct();
-        JSONObject template = JSONObject.parseObject(requestStruct);
+        JSONObject template =JSONObject .parseObject(requestStruct);
         JSONObject param = JsonStructureConverter.convertStructure(result1, template, requestConfig);
         return param.toJSONString();
     }

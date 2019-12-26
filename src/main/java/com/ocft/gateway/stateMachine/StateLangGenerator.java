@@ -141,8 +141,8 @@ public class StateLangGenerator {
                 Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", "1").eq("is_deleted", "0"));
                 String successCode = backon.getSuccessCode();
                 String successValue = backon.getSuccessValue();
-                input.put(PARAM_CODE, "$.[" + stateName + "]["+successCode+"]");
-                input.put(PARAM_SUCCESS_VALUE, "$.[" + stateName + "]["+successValue+"]");
+                input.put(successCode, "$.[" + stateName + "]["+successCode+"]");
+                input.put(successValue, "$.[" + stateName + "]["+successValue+"]");
             }
             List<Map<String, String>> inputs = new ArrayList<>();
             inputs.add(input);
@@ -171,7 +171,7 @@ public class StateLangGenerator {
         } else if (decode.endsWith(UNDERSCORE + STATE_CONVERTER)) {
             url = decode.substring(0, decode.length() - (UNDERSCORE + STATE_CONVERTER).length());
         } else {
-            throw new GatewayException(ResponseEnum.PARSE_ENCODE_URL_ERROT);
+            throw new GatewayException(ResponseEnum.PARSE_ENCODE_URL_ERROR);
         }
         return url;
     }

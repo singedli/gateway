@@ -6,6 +6,7 @@ import java.util.Map;
 import com.ocft.gateway.spring.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +127,9 @@ public class HttpUtil {
      */
     public static String postJsonParams(String url, String jsonParams) {
         log.info(">>>>>> http post请求,请求url为:\n {},\n请求参数为:\n{} \n<<<<<<",url,jsonParams);
+        if(StringUtils.isEmpty(jsonParams)){
+            jsonParams = "{\"aaa\":\"111\"}";
+        }
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonParams);
         Request request = new Request.Builder()
                 .url(url)
