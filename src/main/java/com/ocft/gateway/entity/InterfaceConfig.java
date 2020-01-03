@@ -48,6 +48,11 @@ public class InterfaceConfig implements Serializable {
      */
     private Boolean status;
 
+    /**
+     * 树形结构字符串,用于勾选节点
+     */
+    private String jsontree;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -55,6 +60,7 @@ public class InterfaceConfig implements Serializable {
     private String createBy;
 
     private String updateBy;
+
 
 
 }

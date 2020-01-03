@@ -10,6 +10,7 @@
         <result column="max_count" property="maxCount" />
         <result column="time_unit" property="timeUnit" />
         <result column="status" property="status" />
+        <result column="jsontree" property="jsontree" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="create_by" property="createBy" />
@@ -19,7 +20,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id,
-        url, key_limit, max_count,time_unit, status, create_time, update_time, create_by, update_by
+        url, key_limit, max_count,time_unit, status, jsontree,create_time, update_time, create_by, update_by
     </sql>
 
     <select id="queryInterfaceConfigs" parameterType="com.ocft.gateway.web.dto.request.QueryInterfaceRequest" resultType="com.ocft.gateway.entity.InterfaceConfig">
@@ -27,6 +28,7 @@
         i.id,
         i.url,
         i.status,
+        i.jsontree,
         i.key_limit,
         i.max_count,
         i.time_unit,
@@ -53,7 +55,5 @@
         </if>
 
     </select>
-
-
 
 </mapper>

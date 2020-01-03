@@ -93,6 +93,7 @@ CREATE TABLE
 IF NOT EXISTS `interface_config` (
 	`id` VARCHAR (64) NOT NULL,
 	`url` varchar(255) NOT NULL  DEFAULT '' COMMENT '接口地址，对应gateway_interface中的url',
+	`jsonTree` blob DEFAULT NULL  COMMENT '树形结构保存',
 	`time_unit` varchar(5) NOT NULL COMMENT '单位时间',
 	`key_limit` varchar(255) NOT NULL COMMENT '该接口需要验证的参数的key',
 	`max_count` double(50) NOT NULL COMMENT '单位时间内最大的访问次数',
