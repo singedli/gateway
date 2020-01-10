@@ -6,8 +6,10 @@ import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.service.IGatewayInterfaceService;
 import com.ocft.gateway.spring.SpringContextHolder;
 import com.ocft.gateway.stateMachine.StateLangGenerator;
+import com.ocft.gateway.stateMachineBak.StateLangConverter;
 import com.ocft.gateway.utils.ResultUtil;
 import com.ocft.gateway.web.dto.request.ConvertServiceArrangeRequest;
+import com.ocft.gateway.web.dto.request.FlowStateLangRequest;
 import io.seata.saga.engine.StateMachineEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -73,6 +75,13 @@ public class ServiceArrangeController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return ResultUtil.successResult();
+    }
+
+    @RequestMapping("/addServiceArrangeBak")
+    public Map<String, Object> getStateMachineConfigBak(@RequestBody FlowStateLangRequest req){
+        StateLangConverter converter = SpringContextHolder.getBean("stateLangConverter");
+        String convert = converter.convert(req);
         return ResultUtil.successResult();
     }
 }
