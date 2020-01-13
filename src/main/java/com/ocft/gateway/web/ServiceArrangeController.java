@@ -8,6 +8,7 @@ import com.ocft.gateway.spring.SpringContextHolder;
 import com.ocft.gateway.stateMachine.StateLangGenerator;
 import com.ocft.gateway.stateMachineBak.StateLangConverter;
 import com.ocft.gateway.utils.ResultUtil;
+import com.ocft.gateway.web.dto.FlowNode;
 import com.ocft.gateway.web.dto.request.ConvertServiceArrangeRequest;
 import com.ocft.gateway.web.dto.request.FlowStateLangRequest;
 import io.seata.saga.engine.StateMachineEngine;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +84,33 @@ public class ServiceArrangeController {
     public Map<String, Object> getStateMachineConfigBak(@RequestBody FlowStateLangRequest req){
         StateLangConverter converter = SpringContextHolder.getBean("stateLangConverter");
         String convert = converter.convert(req);
+
+        List<Map<String,String>>  systemAndUrlList= new ArrayList<>();
+        for (FlowNode node: req.getNodes()) {
+            if("task".equalsIgnoreCase(node.getStateType())){
+                Map<String,String> systemAndUrl = new HashMap<>();
+                systemAndUrl.put("system",node.getSystem());
+                systemAndUrl.put("backonUrl",node.getUrl());
+                systemAndUrlList.add(systemAndUrl);
+            }
+        }
+        GatewayInterface gatewayInterface = req.getGatewayInterface();
+        gatewayInterface.setBackonUrl(JSONArray.toJSONString(systemAndUrlList));
+        gatewayInterface.setInvokeConfig(convert);
+        gatewayInterface.setFlowConfig(req.toString());
+        gatewayInterfaceService.updateById(gatewayInterface);
+
+        //状态机注册
+        List<Resource> resourceList = new ArrayList<>();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(convert.getBytes());
+        Resource resource = new InputStreamResource(inputStream);
+        resourceList.add(resource);
+        Resource[] resources = resourceList.toArray(new Resource[resourceList.size()]);
+        try {
+            stateMachineEngine.getStateMachineConfig().getStateMachineRepository().registryByResources(resources,"000001");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ResultUtil.successResult();
     }
 }
