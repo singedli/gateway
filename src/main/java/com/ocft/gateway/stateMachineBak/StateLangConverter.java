@@ -7,6 +7,7 @@ import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
 import com.ocft.gateway.mapper.BackonInterfaceMapper;
 import com.ocft.gateway.mapper.BackonMapper;
+import com.ocft.gateway.stateMachineBak.state.BuildState;
 import com.ocft.gateway.utils.StateMachineUtil;
 import com.ocft.gateway.web.dto.FlowEdge;
 import com.ocft.gateway.web.dto.FlowNode;
@@ -28,10 +29,7 @@ import java.util.*;
 public class StateLangConverter {
 
     @Autowired
-    private BackonMapper backonMapper;
-
-    @Autowired
-    private BackonInterfaceMapper backonInterfaceMapper;
+    private BuildState buildState;
 
     public  String convert(FlowStateLangRequest req) {
         //生成StateMachine对象
@@ -56,15 +54,46 @@ public class StateLangConverter {
             String targetStateName = StateMachineUtil.getEncodedStateName(targetNode);
             String sourceStateName = StateMachineUtil.getEncodedStateName(sourceNode);
 
+            String stateType = null;
+
+            if(STATE_TYPE_TASK.equals(sourceNode.getStateType())||STATE_TYPE_CONVERTER.equals(sourceNode.getStateType())){
+                stateType = STATE_DEFAULT_TYPE;
+            } else {
+                stateType = sourceNode.getStateType();
+            }
+
             //生成State对象
-            State state = buildState(sourceNode,targetStateName,sourceStateName,beforeStateName,targetId);
-            beforeStateName = sourceStateName;
-//            buildStateOutput(sourceNode,state);
+            State state =null;
+            switch(stateType){
+                case "ServiceTask" :
+                    state = buildState.buildServiceTask(sourceNode,targetStateName,sourceStateName,beforeStateName,targetId);
+                    beforeStateName = sourceStateName;
+                    break;
+                case "CompensationTrigger" :
+                    state = buildState.buildCompensationTrigger(sourceNode);
+                    break;
+                case "Choice" :
+                    state = buildState.buildChoice(sourceNode);
+                    break;
+                case "Succeed" :
+                    state = buildState.buildSucceed(sourceNode);
+                    break;
+                case "Fail" :
+                    state = buildState.buildFail(sourceNode);
+                    break;
+                case "SubStateMachine" :
+                    state = buildState.buildSubStateMachine(sourceNode);
+                    break;
+                case "CompensateSubMachine" :
+                    state = buildState.buildCompensateSubMachine(sourceNode);
+                    break;
+            }
+
             states.put(sourceStateName, state);
 
             if (STATE_MACHINE_FLOW_END.equals(targetId)) {
                 targetNode.setStateType(SUCCEED);
-                State endState = buildState(targetNode);
+                State endState = buildState.buildSucceed(targetNode);
                 states.put(SUCCEED, endState);
             }
         }
@@ -88,110 +117,6 @@ public class StateLangConverter {
         stateMachine.setComment(STATE_MACHINE_COMMENT_PREFIX + gatewayInterfaceName + STATE_MACHINE_COMMENT_SUFFIX);
         stateMachine.setVersion(STATE_MACHINE_DEFAULT_VERSION);
         return stateMachine;
-    }
-
-    /**
-     * 构建状态机中的子状态
-     * @param flowNode
-     * @return
-     */
-    public  State buildState(FlowNode flowNode){
-        return buildState(flowNode,null,null,null,null);
-    }
-
-    /**
-     * 构建状态机中的子状态
-     * @param flowNode
-     * @return
-     */
-    public  State buildState(FlowNode flowNode,String next,String stateName,String beforeStateName,String targetId) {
-        String stateType = null;
-
-        if(STATE_TYPE_TASK.equals(flowNode.getStateType())||STATE_TYPE_CONVERTER.equals(flowNode.getStateType())){
-            stateType = STATE_DEFAULT_TYPE;
-        } else {
-            stateType = flowNode.getStateType();
-        }
-
-        State state = null;
-        switch(stateType){
-            case "ServiceTask" :
-                state = new ServiceTask();
-                state.setType(stateType);
-                List<Object> inputs = new ArrayList<>();
-                Map<String, String> input = new HashMap<>();
-                if (STATE_TYPE_CONVERTER.equals(flowNode.getStateType())) {
-                    ((ServiceTask) state).setServiceName("paramsConverter");
-                    ((ServiceTask) state).setServiceMethod("convert");
-
-                    String lastStateResult = beforeStateName + "_result";
-                    input.put("data", "$.[" + lastStateResult + "].data");
-                    input.put("context", "$.#root");
-                    input.put("current", stateName);
-                } else if (STATE_TYPE_TASK.equals(flowNode.getStateType())){
-                    ((ServiceTask) state).setServiceName("defaultInvokeOut");
-                    ((ServiceTask) state).setServiceMethod("invokeHandler");
-
-                    if (StringUtils.isEmpty(beforeStateName)){
-                        input.put("requestData", "$.[" + stateName + "][requestData]");
-                    } else {
-                        input.put("requestData", "$.[" + beforeStateName + "][requestData]");
-                    }
-                    input.put("backOnUrl", "$.[" + stateName + "][backOnUrl]");
-                    BackonInterface backonInterface = backonInterfaceMapper.selectOne(new QueryWrapper<BackonInterface>().eq("url", flowNode.getUrl()).eq("status", 1).eq("is_deleted", "0"));
-                    String system = backonInterface.getSystem();
-                    Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", "1").eq("is_deleted", "0"));
-                    String successCode = backon.getSuccessCode();
-                    String successValue = backon.getSuccessValue();
-                    input.put(successCode, "$.[" + stateName + "]["+successCode+"]");
-                    input.put(successValue, "$.[" + stateName + "]["+successValue+"]");
-                }
-                inputs.add(input);
-                Map<String,Object> output = new HashMap<>();
-                output.put(stateName + "_result", DEFAULT_RESULT_VALUE);
-
-                if (STATE_MACHINE_FLOW_END.equals(targetId)){
-                    ((ServiceTask) state).setNext(SUCCEED);
-                } else {
-                    ((ServiceTask) state).setNext(next);
-                }
-                ((ServiceTask) state).setInput(inputs);
-                ((ServiceTask) state).setOutput(output);
-                break;
-            case "Choice" :
-                state =  new Choice();
-                state.setType(stateType);
-                ((Choice) state).setDefaultValue("Fail");
-                //TODO
-            case "CompensationTrigger" :
-                state = new CompensationTrigger();
-                state.setType(stateType);
-                ((CompensationTrigger) state).setNext("Fail");
-                //TODO
-                break;
-            case "Succeed" :
-                state = new Succeed();
-                state.setType(stateType);
-                break;
-            case "Fail" :
-                state = new Fail();
-                state.setType(stateType);
-                ((Fail) state).setMessage("purchase failed");
-                ((Fail) state).setErrorCode("PURCHASE_FAILED");
-                break;
-            case "SubStateMachine" :
-                state = new SubStateMachine();
-                state.setType(stateType);
-                ((CompensationTrigger) state).setNext("Succeed");
-                //TODO
-                break;
-            case "CompensateSubMachine" :
-                state = new CompensateSubMachine();
-                state.setType(stateType);
-                //TODO
-                break;
-        }
-        return state;
     }
 
     /**

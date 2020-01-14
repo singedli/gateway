@@ -18,6 +18,10 @@ public class BizConstantPool {
     public static final String STATE_DEFAULT_TYPE = "ServiceTask";
     public static final String STATE_TYPE_CONVERTER = "converter";
     public static final String STATE_TYPE_TASK = "task";
+    public static final String STATE_TYPE_CHOICE = "Choice";
+    public static final String STATE_TYPE_COMPENSATIONTRIGGER = "CompensationTrigger";
+    public static final String STATE_TYPE_SUBSTATEMACHINE = "SubStateMachine";
+    public static final String STATE_TYPE_COMPENSATESUBMACHINE = "CompensateSubMachine";
     public static final String DEFAULT_RESULT = "result";
     public static final String DEFAULT_RESULT_VALUE = "$.#root";
     public static final String STATE_EXCEPTION_NAME = "java.lang.Throwable";

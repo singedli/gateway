@@ -33,8 +33,16 @@ public class StateMachineUtil {
             stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_TASK;
         } else if (STATE_TYPE_CONVERTER.equalsIgnoreCase(stateType)) {
             stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_CONVERTER;
+        } else if (STATE_TYPE_CHOICE.equalsIgnoreCase(stateType)) {
+            stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_CHOICE;
+        }else if (STATE_TYPE_COMPENSATIONTRIGGER.equalsIgnoreCase(stateType)) {
+            stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_COMPENSATIONTRIGGER;
+        }else if (STATE_TYPE_SUBSTATEMACHINE.equalsIgnoreCase(stateType)) {
+            stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_SUBSTATEMACHINE;
+        }else if (STATE_TYPE_COMPENSATESUBMACHINE.equalsIgnoreCase(stateType)) {
+            stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_COMPENSATESUBMACHINE;
         }else {
-            stateName = url + STATE_DEFAULT_SEPARATOR + STATE_TYPE_TASK;
+            stateName = url + STATE_DEFAULT_SEPARATOR + flowNode.getStateType();
         }
         return stateName;
     }
