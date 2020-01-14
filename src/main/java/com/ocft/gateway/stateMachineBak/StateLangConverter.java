@@ -38,7 +38,7 @@ public class StateLangConverter {
         StateMachine stateMachine = buildStateMachine(req);
         Map<String, State> states = new HashMap<>();
         List<FlowEdge> edges = req.getEdges();
-        System.out.println(edges);
+
         //前一个状态
         String beforeStateName = null;
         for (FlowEdge edge: edges) {
@@ -62,9 +62,9 @@ public class StateLangConverter {
 //            buildStateOutput(sourceNode,state);
             states.put(sourceStateName, state);
 
-            if(STATE_MACHINE_FLOW_END.equals(targetId)){
+            if (STATE_MACHINE_FLOW_END.equals(targetId)) {
                 targetNode.setStateType(SUCCEED);
-                State endState = buildState(targetNode,null,null,null,null);
+                State endState = buildState(targetNode);
                 states.put(SUCCEED, endState);
             }
         }
@@ -95,6 +95,15 @@ public class StateLangConverter {
      * @param flowNode
      * @return
      */
+    public  State buildState(FlowNode flowNode){
+        return buildState(flowNode,null,null,null,null);
+    }
+
+    /**
+     * 构建状态机中的子状态
+     * @param flowNode
+     * @return
+     */
     public  State buildState(FlowNode flowNode,String next,String stateName,String beforeStateName,String targetId) {
         String stateType = null;
 
@@ -111,7 +120,7 @@ public class StateLangConverter {
                 state.setType(stateType);
                 List<Object> inputs = new ArrayList<>();
                 Map<String, String> input = new HashMap<>();
-                if(STATE_TYPE_CONVERTER.equals(flowNode.getStateType())){
+                if (STATE_TYPE_CONVERTER.equals(flowNode.getStateType())) {
                     ((ServiceTask) state).setServiceName("paramsConverter");
                     ((ServiceTask) state).setServiceMethod("convert");
 
@@ -119,13 +128,13 @@ public class StateLangConverter {
                     input.put("data", "$.[" + lastStateResult + "].data");
                     input.put("context", "$.#root");
                     input.put("current", stateName);
-                } else if(STATE_TYPE_TASK.equals(flowNode.getStateType())){
+                } else if (STATE_TYPE_TASK.equals(flowNode.getStateType())){
                     ((ServiceTask) state).setServiceName("defaultInvokeOut");
                     ((ServiceTask) state).setServiceMethod("invokeHandler");
 
-                    if(StringUtils.isEmpty(beforeStateName)){
+                    if (StringUtils.isEmpty(beforeStateName)){
                         input.put("requestData", "$.[" + stateName + "][requestData]");
-                    }else {
+                    } else {
                         input.put("requestData", "$.[" + beforeStateName + "][requestData]");
                     }
                     input.put("backOnUrl", "$.[" + stateName + "][backOnUrl]");
@@ -141,9 +150,9 @@ public class StateLangConverter {
                 Map<String,Object> output = new HashMap<>();
                 output.put(stateName + "_result", DEFAULT_RESULT_VALUE);
 
-                if(STATE_MACHINE_FLOW_END.equals(targetId)){
+                if (STATE_MACHINE_FLOW_END.equals(targetId)){
                     ((ServiceTask) state).setNext(SUCCEED);
-                }else {
+                } else {
                     ((ServiceTask) state).setNext(next);
                 }
                 ((ServiceTask) state).setInput(inputs);

@@ -1,0 +1,33 @@
+spring:
+  # 数据库配置
+  datasource:
+      name: druidDataSource
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://106.14.226.254:3306/gateway?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: root123
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      druid:
+        initial-size: 10
+        min-idle: 10
+        max-active: 50
+        max-wait: 6000
+        test-on-borrow: false
+        test-on-return: false
+        test-while-idle: true
+        validation-query: SELECT 'X'
+        connection-init-sqls: SELECT 'X'
+        time-between-eviction-runs-millis: 600
+  # redis
+  redis:  
+      database: 0
+      host: 106.14.226.254
+      port: 6390
+      password: wnmb$*@3!xwh
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 100
+          max-idle: 10
+          min-idle: 0
+          max-wait: -1ms

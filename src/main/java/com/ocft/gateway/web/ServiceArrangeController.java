@@ -43,6 +43,9 @@ public class ServiceArrangeController {
     @Autowired
     private StateMachineEngine stateMachineEngine;
 
+    @Autowired
+    private StateLangConverter converter;
+
     @RequestMapping("/addServiceArrange")
     public Map<String, Object> getStateMachineConfig(@RequestBody String data){
         StateLangGenerator generator = SpringContextHolder.getBean("stateLangGenerator");
@@ -82,7 +85,6 @@ public class ServiceArrangeController {
 
     @RequestMapping("/addServiceArrangeBak")
     public Map<String, Object> getStateMachineConfigBak(@RequestBody FlowStateLangRequest req){
-        StateLangConverter converter = SpringContextHolder.getBean("stateLangConverter");
         String convert = converter.convert(req);
 
         List<Map<String,String>>  systemAndUrlList= new ArrayList<>();
