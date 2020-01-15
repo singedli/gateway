@@ -1,5 +1,6 @@
 package com.ocft.gateway.stateMachineBak.buildState;
 
+import com.ocft.gateway.stateMachineBak.state.CompensateSubMachine;
 import com.ocft.gateway.stateMachineBak.state.State;
 import com.ocft.gateway.web.dto.FlowNode;
 import org.checkerframework.checker.units.qual.C;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 public class BuildCompensateSubMachine implements BuildState {
     @Override
     public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeStateName) {
-        return null;
+        CompensateSubMachine compensateSubMachine = new CompensateSubMachine();
+        compensateSubMachine.setType(sourceNode.getStateType());
+        return compensateSubMachine;
     }
 }

@@ -24,9 +24,6 @@ import java.util.*;
 @Component
 public class StateLangConverter {
 
-    @Autowired
-    private BuildState buildState;
-
     public  String convert(FlowStateLangRequest req) {
         //生成StateMachine对象
         StateMachine stateMachine = buildStateMachine(req);
@@ -47,6 +44,7 @@ public class StateLangConverter {
                 continue;
             }
 
+            //状态名称
             String targetStateName = StateMachineUtil.getEncodedStateName(targetNode);
             String sourceStateName = StateMachineUtil.getEncodedStateName(sourceNode);
 

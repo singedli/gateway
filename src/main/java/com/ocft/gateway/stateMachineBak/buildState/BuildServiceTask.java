@@ -37,9 +37,13 @@ public class BuildServiceTask implements BuildState{
 
 
     @Override
-    public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeStateName) {
+    public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeNode) {
         String stateType = sourceNode.getStateType();
         String stateName = StateMachineUtil.getEncodedStateName(sourceNode);
+        String beforeStateName = "";
+        if(beforeNode != null){
+            beforeStateName = StateMachineUtil.getEncodedStateName(beforeNode);
+        }
 
         ServiceTask serviceTask = new ServiceTask();
         serviceTask.setType(stateType);
@@ -57,7 +61,7 @@ public class BuildServiceTask implements BuildState{
             serviceTask.setServiceName("defaultInvokeOut");
             serviceTask.setServiceMethod("invokeHandler");
 
-            if (StringUtils.isEmpty(StateMachineUtil.getEncodedStateName(beforeStateName))){
+            if (StringUtils.isEmpty(beforeStateName)){
                 input.put("requestData", "$.[" + stateName + "][requestData]");
             } else {
                 input.put("requestData", "$.[" + beforeStateName + "][requestData]");
@@ -82,6 +86,18 @@ public class BuildServiceTask implements BuildState{
         }
         serviceTask.setInput(inputs);
         serviceTask.setOutput(output);
+        serviceTask.setCatchs(buildException());
         return serviceTask;
+    }
+
+    private static List<Map<String,Object>> buildException(){
+        List<Map<String,Object>> exceptionList = new ArrayList<>();
+        List<String> exceptions = new ArrayList<>();
+        exceptions.add(STATE_EXCEPTION_NAME);
+        Map<String, Object> exceptionConfig = new HashMap<>();
+        exceptionConfig.put(STATE_EXCEPTION_KEY,exceptions);
+        exceptionConfig.put(Next,FAIL);
+        exceptionList.add(exceptionConfig);
+        return exceptionList;
     }
 }
