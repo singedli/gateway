@@ -1,6 +1,7 @@
 package com.ocft.gateway.stateMachineBak;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.ocft.gateway.stateMachineBak.state.State;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,4 +1,4 @@
-package com.ocft.gateway.stateMachineBak;
+package com.ocft.gateway.stateMachineBak.state;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

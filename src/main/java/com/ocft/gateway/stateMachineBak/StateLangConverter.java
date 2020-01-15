@@ -1,18 +1,14 @@
 package com.ocft.gateway.stateMachineBak;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ocft.gateway.entity.Backon;
-import com.ocft.gateway.entity.BackonInterface;
 import com.ocft.gateway.entity.GatewayInterface;
-import com.ocft.gateway.mapper.BackonInterfaceMapper;
-import com.ocft.gateway.mapper.BackonMapper;
-import com.ocft.gateway.stateMachineBak.state.BuildState;
+import com.ocft.gateway.spring.SpringContextHolder;
+import com.ocft.gateway.stateMachineBak.buildState.*;
+import com.ocft.gateway.stateMachineBak.state.State;
 import com.ocft.gateway.utils.StateMachineUtil;
 import com.ocft.gateway.web.dto.FlowEdge;
 import com.ocft.gateway.web.dto.FlowNode;
 import com.ocft.gateway.web.dto.request.FlowStateLangRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -38,7 +34,7 @@ public class StateLangConverter {
         List<FlowEdge> edges = req.getEdges();
 
         //前一个状态
-        String beforeStateName = null;
+        FlowNode beforeNode = null;
         for (FlowEdge edge: edges) {
             String sourceId = edge.getSource();
             String targetId = edge.getTarget();
@@ -66,26 +62,33 @@ public class StateLangConverter {
             State state =null;
             switch(stateType){
                 case "ServiceTask" :
-                    state = buildState.buildServiceTask(sourceNode,targetStateName,sourceStateName,beforeStateName,targetId);
-                    beforeStateName = sourceStateName;
+                    BuildState serviceTask = SpringContextHolder.getBean(BuildServiceTask.class);
+                    state = serviceTask.buildState(sourceNode,targetNode,beforeNode);
+                    beforeNode = sourceNode;
                     break;
                 case "CompensationTrigger" :
-                    state = buildState.buildCompensationTrigger(sourceNode);
+                    BuildState compensationTrigger = SpringContextHolder.getBean(BuildCompensationTrigger.class);
+                    state = compensationTrigger.buildState(sourceNode,targetNode,beforeNode);
                     break;
                 case "Choice" :
-                    state = buildState.buildChoice(sourceNode);
+                    BuildState choice  = SpringContextHolder.getBean(BuildChoice.class);
+                    state = choice.buildState(sourceNode,targetNode,beforeNode);
                     break;
                 case "Succeed" :
-                    state = buildState.buildSucceed(sourceNode);
+                    BuildState succeed = SpringContextHolder.getBean(BuildSucceed.class);
+                    state = succeed.buildState(sourceNode,targetNode,beforeNode);
                     break;
                 case "Fail" :
-                    state = buildState.buildFail(sourceNode);
+                    BuildState fail = SpringContextHolder.getBean(BuildFail.class);
+                    state = fail.buildState(sourceNode,targetNode,beforeNode);
                     break;
                 case "SubStateMachine" :
-                    state = buildState.buildSubStateMachine(sourceNode);
+                    BuildState subStateMachine = SpringContextHolder.getBean(BuildSubStateMachine.class);
+                    state = subStateMachine.buildState(sourceNode,targetNode,beforeNode);
                     break;
                 case "CompensateSubMachine" :
-                    state = buildState.buildCompensateSubMachine(sourceNode);
+                    BuildState compensateSubMachine = SpringContextHolder.getBean(BuildCompensateSubMachine.class);
+                    state = compensateSubMachine.buildState(sourceNode,targetNode,beforeNode);
                     break;
             }
 
@@ -93,7 +96,8 @@ public class StateLangConverter {
 
             if (STATE_MACHINE_FLOW_END.equals(targetId)) {
                 targetNode.setStateType(SUCCEED);
-                State endState = buildState.buildSucceed(targetNode);
+                BuildState succeed = SpringContextHolder.getBean(BuildSucceed.class);
+                State endState = succeed.buildState(sourceNode,targetNode,beforeNode);
                 states.put(SUCCEED, endState);
             }
         }

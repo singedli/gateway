@@ -1,4 +1,4 @@
-package com.ocft.gateway.stateMachineBak;
+package com.ocft.gateway.stateMachineBak.state;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-public class Choice extends State{
+public class Choice extends State {
 
     @JSONField(name = "Choices")
     private List<Map<String,Object>> choices;//可选的分支列表
