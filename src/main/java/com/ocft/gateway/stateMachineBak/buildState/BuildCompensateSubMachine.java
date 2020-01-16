@@ -3,7 +3,7 @@ package com.ocft.gateway.stateMachineBak.buildState;
 import com.ocft.gateway.stateMachineBak.state.CompensateSubMachine;
 import com.ocft.gateway.stateMachineBak.state.State;
 import com.ocft.gateway.web.dto.FlowNode;
-import org.checkerframework.checker.units.qual.C;
+import static com.ocft.gateway.common.BizConstantPool.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +16,7 @@ public class BuildCompensateSubMachine implements BuildState {
     @Override
     public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeStateName) {
         CompensateSubMachine compensateSubMachine = new CompensateSubMachine();
-        compensateSubMachine.setType(sourceNode.getStateType());
+        compensateSubMachine.setType(STATE_TYPE_COMPENSATESUBMACHINE);
         return compensateSubMachine;
     }
 }

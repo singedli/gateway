@@ -3,7 +3,7 @@ package com.ocft.gateway.stateMachineBak.buildState;
 import com.ocft.gateway.stateMachineBak.state.CompensationTrigger;
 import com.ocft.gateway.stateMachineBak.state.State;
 import com.ocft.gateway.web.dto.FlowNode;
-import org.checkerframework.checker.units.qual.C;
+import static com.ocft.gateway.common.BizConstantPool.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,8 +16,8 @@ public class BuildCompensationTrigger implements BuildState{
     @Override
     public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeStateName) {
         CompensationTrigger compensationTrigger = new CompensationTrigger();
-        compensationTrigger.setType(sourceNode.getStateType());
-        compensationTrigger.setNext("Fail");
+        compensationTrigger.setType(STATE_TYPE_COMPENSATIONTRIGGER);
+        compensationTrigger.setNext(FAIL);
         return compensationTrigger;
     }
 }

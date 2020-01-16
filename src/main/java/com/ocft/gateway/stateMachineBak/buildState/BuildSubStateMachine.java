@@ -4,6 +4,7 @@ import com.ocft.gateway.stateMachineBak.state.State;
 import com.ocft.gateway.stateMachineBak.state.SubStateMachine;
 import com.ocft.gateway.web.dto.FlowNode;
 import org.springframework.stereotype.Component;
+import static com.ocft.gateway.common.BizConstantPool.*;
 
 /**
  * @Auther: 梵高先生
@@ -15,8 +16,8 @@ public class BuildSubStateMachine implements BuildState{
     @Override
     public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeStateName) {
         SubStateMachine subStateMachine = new SubStateMachine();
-        subStateMachine.setType(sourceNode.getStateType());
-        subStateMachine.setNext("Succeed");
+        subStateMachine.setType(STATE_TYPE_SUBSTATEMACHINE);
+        subStateMachine.setNext(SUCCEED);
         //TODO
         return subStateMachine;
     }

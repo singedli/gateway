@@ -46,7 +46,7 @@ public class BuildServiceTask implements BuildState{
         }
 
         ServiceTask serviceTask = new ServiceTask();
-        serviceTask.setType(stateType);
+        serviceTask.setType(STATE_DEFAULT_TYPE);
         List<Object> inputs = new ArrayList<>();
         Map<String, String> input = new HashMap<>();
         if (STATE_TYPE_CONVERTER.equals(stateType)) {

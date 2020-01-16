@@ -93,7 +93,6 @@ public class StateLangConverter {
             states.put(sourceStateName, state);
 
             if (STATE_MACHINE_FLOW_END.equals(targetId)) {
-                targetNode.setStateType(SUCCEED);
                 BuildState succeed = SpringContextHolder.getBean(BuildSucceed.class);
                 State endState = succeed.buildState(sourceNode,targetNode,beforeNode);
                 states.put(SUCCEED, endState);
