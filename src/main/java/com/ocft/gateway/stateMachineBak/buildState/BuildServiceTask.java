@@ -37,19 +37,29 @@ public class BuildServiceTask implements BuildState{
 
 
     @Override
-    public State buildState(FlowNode sourceNode, FlowNode targetNode, FlowNode beforeNode) {
+    public State buildState(FlowNode sourceNode, List<FlowNode> targetNodes, FlowNode beforeNode) {
         String stateType = sourceNode.getStateType();
+
+        ServiceTask serviceTask = new ServiceTask();
+        serviceTask.setType(STATE_DEFAULT_TYPE);
+
         String stateName = StateMachineUtil.getEncodedStateName(sourceNode);
         String beforeStateName = "";
         if(beforeNode != null){
             beforeStateName = StateMachineUtil.getEncodedStateName(beforeNode);
         }
 
-        ServiceTask serviceTask = new ServiceTask();
-        serviceTask.setType(STATE_DEFAULT_TYPE);
         List<Object> inputs = new ArrayList<>();
         Map<String, String> input = new HashMap<>();
-        if (STATE_TYPE_CONVERTER.equals(stateType)) {
+
+        if(STATE_TYPE_COMPENSATESTATE.equals(stateType)){  //补偿状态
+            serviceTask.setServiceName("defaultCompensate");
+            serviceTask.setServiceMethod("invokeCompensate");
+
+            String lastStateResult = beforeStateName + "_result";
+            input.put("data", "$.[" + lastStateResult + "].data");
+
+        } else if (STATE_TYPE_CONVERTER.equals(stateType)) { //转换器
             serviceTask.setServiceName("paramsConverter");
             serviceTask.setServiceMethod("convert");
 
@@ -60,6 +70,13 @@ public class BuildServiceTask implements BuildState{
         } else if (STATE_TYPE_TASK.equals(stateType)){
             serviceTask.setServiceName("defaultInvokeOut");
             serviceTask.setServiceMethod("invokeHandler");
+
+            //补偿状态
+            FlowNode compensateState = targetNodes.stream().filter(node -> STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())).findFirst().get();
+            if(compensateState != null){
+                String compensateStateName = StateMachineUtil.getEncodedStateName(compensateState);
+                serviceTask.setCompensateState(compensateStateName);
+            }
 
             if (StringUtils.isEmpty(beforeStateName)){
                 input.put("requestData", "$.[" + stateName + "][requestData]");
@@ -79,14 +96,19 @@ public class BuildServiceTask implements BuildState{
         Map<String,Object> output = new HashMap<>();
         output.put(stateName + "_result", DEFAULT_RESULT_VALUE);
 
+        FlowNode targetNode = targetNodes.stream().filter(node -> !STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())).findFirst().get();
         if (STATE_MACHINE_FLOW_END.equals(targetNode.getId())){
             serviceTask.setNext(SUCCEED);
         } else {
             serviceTask.setNext(StateMachineUtil.getEncodedStateName(targetNode));
         }
+
+        if( !STATE_TYPE_COMPENSATESTATE.equals(stateType)){
+            serviceTask.setOutput(output);
+            serviceTask.setCatchs(buildException());
+        }
+
         serviceTask.setInput(inputs);
-        serviceTask.setOutput(output);
-        serviceTask.setCatchs(buildException());
         return serviceTask;
     }
 

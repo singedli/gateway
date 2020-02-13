@@ -19,6 +19,7 @@ public class BizConstantPool {
     public static final String STATE_TYPE_CONVERTER = "converter";
     public static final String STATE_TYPE_TASK = "task";
     public static final String STATE_TYPE_CHOICE = "Choice";
+    public static final String STATE_TYPE_COMPENSATESTATE = "compensate";
     public static final String STATE_TYPE_COMPENSATIONTRIGGER = "CompensationTrigger";
     public static final String STATE_TYPE_SUBSTATEMACHINE = "SubStateMachine";
     public static final String STATE_TYPE_COMPENSATESUBMACHINE = "CompensateSubMachine";

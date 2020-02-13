@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 
 import static com.ocft.gateway.common.BizConstantPool.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: 梵高先生
@@ -29,31 +30,44 @@ public class StateLangConverter {
         StateMachine stateMachine = buildStateMachine(req);
         Map<String, State> states = new HashMap<>();
         List<FlowEdge> edges = req.getEdges();
+        List<FlowNode> nodes = req.getNodes();
 
         //前一个状态
         FlowNode beforeNode = null;
-        for (FlowEdge edge: edges) {
-            String sourceId = edge.getSource();
-            String targetId = edge.getTarget();
-            FlowNode sourceNode = getFlowNodeById(req, sourceId);
-            FlowNode targetNode = getFlowNodeById(req, targetId);
+        for (FlowNode node: nodes) {
+            String nodeId = node.getId();
 
-            if (STATE_MACHINE_FLOW_START.equals(sourceId)) {
-                String startState = StateMachineUtil.getEncodedStateName(targetNode);
-                stateMachine.setStartState(startState);
-                continue;
-            }
+            //开始节点跳过
+            if(STATE_MACHINE_FLOW_START.equals(nodeId)) continue;
 
             //状态名称
-            String targetStateName = StateMachineUtil.getEncodedStateName(targetNode);
-            String sourceStateName = StateMachineUtil.getEncodedStateName(sourceNode);
+            String stateName = null;
+            if(STATE_MACHINE_FLOW_END.equals(nodeId)) {
+                stateName = SUCCEED;
+            }else {
+                stateName = StateMachineUtil.getEncodedStateName(node);
+            }
 
+            List<FlowNode> targetNodes = new ArrayList<>();
+
+            //如果不是补偿节点和结束节点则需要确定下一个节点的集合
+            if( !STATE_TYPE_COMPENSATESTATE.equals(node.getStateType()) ||
+                    !STATE_MACHINE_FLOW_END.equals(nodeId)){
+                List<FlowEdge> flowEdgeOfNode= edges.stream().filter( edge -> nodeId.equals(edge.getSource())).collect(Collectors.toList());
+                for(FlowEdge flowEdge : flowEdgeOfNode){
+                    FlowNode targetNode = nodes.stream().filter( n -> flowEdge.getTarget().equals(n.getId())).findFirst().get();
+                    targetNodes.add(targetNode);
+                }
+            }
+
+            //确定类型
             String stateType = null;
-
-            if(STATE_TYPE_TASK.equals(sourceNode.getStateType())||STATE_TYPE_CONVERTER.equals(sourceNode.getStateType())){
+            if(STATE_TYPE_TASK.equals(node.getStateType())||
+                    STATE_TYPE_CONVERTER.equals(node.getStateType())||
+                    STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())){
                 stateType = STATE_DEFAULT_TYPE;
             } else {
-                stateType = sourceNode.getStateType();
+                stateType = node.getStateType();
             }
 
             //生成State对象
@@ -61,43 +75,38 @@ public class StateLangConverter {
             switch(stateType){
                 case "ServiceTask" :
                     BuildState serviceTask = SpringContextHolder.getBean(BuildServiceTask.class);
-                    state = serviceTask.buildState(sourceNode,targetNode,beforeNode);
-                    beforeNode = sourceNode;
+                    state = serviceTask.buildState(node,targetNodes,beforeNode);
+                    beforeNode = node;
                     break;
                 case "CompensationTrigger" :
                     BuildState compensationTrigger = SpringContextHolder.getBean(BuildCompensationTrigger.class);
-                    state = compensationTrigger.buildState(sourceNode,targetNode,beforeNode);
+                    state = compensationTrigger.buildState(node,targetNodes,beforeNode);
                     break;
                 case "Choice" :
                     BuildState choice  = SpringContextHolder.getBean(BuildChoice.class);
-                    state = choice.buildState(sourceNode,targetNode,beforeNode);
+                    state = choice.buildState(node,targetNodes,beforeNode);
                     break;
                 case "Succeed" :
                     BuildState succeed = SpringContextHolder.getBean(BuildSucceed.class);
-                    state = succeed.buildState(sourceNode,targetNode,beforeNode);
+                    state = succeed.buildState(node,targetNodes,beforeNode);
                     break;
                 case "Fail" :
                     BuildState fail = SpringContextHolder.getBean(BuildFail.class);
-                    state = fail.buildState(sourceNode,targetNode,beforeNode);
+                    state = fail.buildState(node,targetNodes,beforeNode);
                     break;
                 case "SubStateMachine" :
                     BuildState subStateMachine = SpringContextHolder.getBean(BuildSubStateMachine.class);
-                    state = subStateMachine.buildState(sourceNode,targetNode,beforeNode);
+                    state = subStateMachine.buildState(node,targetNodes,beforeNode);
                     break;
                 case "CompensateSubMachine" :
                     BuildState compensateSubMachine = SpringContextHolder.getBean(BuildCompensateSubMachine.class);
-                    state = compensateSubMachine.buildState(sourceNode,targetNode,beforeNode);
+                    state = compensateSubMachine.buildState(node,targetNodes,beforeNode);
                     break;
             }
 
-            states.put(sourceStateName, state);
-
-            if (STATE_MACHINE_FLOW_END.equals(targetId)) {
-                BuildState succeed = SpringContextHolder.getBean(BuildSucceed.class);
-                State endState = succeed.buildState(sourceNode,targetNode,beforeNode);
-                states.put(SUCCEED, endState);
-            }
+            states.put(stateName, state);
         }
+
         stateMachine.setStates(states);
         return JSONObject.toJSONString(stateMachine);
     }
