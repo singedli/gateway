@@ -66,7 +66,9 @@ public class StateLangConverter {
                     STATE_TYPE_CONVERTER.equals(node.getStateType())||
                     STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())){
                 stateType = STATE_DEFAULT_TYPE;
-            } else {
+            } else if(STATE_MACHINE_FLOW_END.equals(nodeId)){
+                stateType = SUCCEED;
+            }else {
                 stateType = node.getStateType();
             }
 

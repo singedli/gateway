@@ -45,14 +45,14 @@ public class BuildServiceTask implements BuildState{
 
         String stateName = StateMachineUtil.getEncodedStateName(sourceNode);
         String beforeStateName = "";
-        if(beforeNode != null){
+        if (beforeNode != null) {
             beforeStateName = StateMachineUtil.getEncodedStateName(beforeNode);
         }
 
         List<Object> inputs = new ArrayList<>();
         Map<String, String> input = new HashMap<>();
 
-        if(STATE_TYPE_COMPENSATESTATE.equals(stateType)){  //补偿状态
+        if (STATE_TYPE_COMPENSATESTATE.equals(stateType)) {  //补偿状态
             serviceTask.setServiceName("defaultCompensate");
             serviceTask.setServiceMethod("invokeCompensate");
 
@@ -67,18 +67,18 @@ public class BuildServiceTask implements BuildState{
             input.put("data", "$.[" + lastStateResult + "].data");
             input.put("context", "$.#root");
             input.put("current", stateName);
-        } else if (STATE_TYPE_TASK.equals(stateType)){
+        } else if (STATE_TYPE_TASK.equals(stateType)) {
             serviceTask.setServiceName("defaultInvokeOut");
             serviceTask.setServiceMethod("invokeHandler");
 
             //补偿状态
             FlowNode compensateState = targetNodes.stream().filter(node -> STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())).findFirst().get();
-            if(compensateState != null){
+            if (compensateState != null) {
                 String compensateStateName = StateMachineUtil.getEncodedStateName(compensateState);
                 serviceTask.setCompensateState(compensateStateName);
             }
 
-            if (StringUtils.isEmpty(beforeStateName)){
+            if (StringUtils.isEmpty(beforeStateName)) {
                 input.put("requestData", "$.[" + stateName + "][requestData]");
             } else {
                 input.put("requestData", "$.[" + beforeStateName + "][requestData]");
@@ -89,18 +89,21 @@ public class BuildServiceTask implements BuildState{
             Backon backon = backonMapper.selectOne(new QueryWrapper<Backon>().eq("system", system).eq("status", "1").eq("is_deleted", "0"));
             String successCode = backon.getSuccessCode();
             String successValue = backon.getSuccessValue();
-            input.put(successCode, "$.[" + stateName + "]["+successCode+"]");
-            input.put(successValue, "$.[" + stateName + "]["+successValue+"]");
+            input.put(successCode, "$.[" + stateName + "][" + successCode + "]");
+            input.put(successValue, "$.[" + stateName + "][" + successValue + "]");
         }
         inputs.add(input);
-        Map<String,Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>();
         output.put(stateName + "_result", DEFAULT_RESULT_VALUE);
 
-        FlowNode targetNode = targetNodes.stream().filter(node -> !STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())).findFirst().get();
-        if (STATE_MACHINE_FLOW_END.equals(targetNode.getId())){
-            serviceTask.setNext(SUCCEED);
-        } else {
-            serviceTask.setNext(StateMachineUtil.getEncodedStateName(targetNode));
+        //有下一个节点则配置下一个节点属性
+        if(targetNodes.size() != 0){
+            FlowNode targetNode = targetNodes.stream().filter(node -> !STATE_TYPE_COMPENSATESTATE.equals(node.getStateType())).findFirst().get();
+            if (STATE_MACHINE_FLOW_END.equals(targetNode.getId())) {
+                serviceTask.setNext(SUCCEED);
+            } else {
+                serviceTask.setNext(StateMachineUtil.getEncodedStateName(targetNode));
+            }
         }
 
         if( !STATE_TYPE_COMPENSATESTATE.equals(stateType)){
