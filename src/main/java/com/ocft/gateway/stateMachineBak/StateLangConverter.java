@@ -47,6 +47,7 @@ public class StateLangConverter {
             }else {
                 stateName = StateMachineUtil.getEncodedStateName(node);
             }
+            stateMachine.setStartState(stateName);
 
             List<FlowNode> targetNodes = new ArrayList<>();
 
